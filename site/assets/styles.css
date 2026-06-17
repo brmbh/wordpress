@@ -237,32 +237,12 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 }
 .ide__title { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-surface-3); }
 
-.ide__main { display: grid; grid-template-columns: 178px 1fr; height: 384px; }
+.ide__main { display: block; }
 .ide__explorer {
-  border-right: 1px solid var(--border);
+  max-height: 440px;
   overflow: auto;
-  padding: 0.5rem 0.25rem;
-  font-family: var(--font-mono); font-size: 0.74rem;
-}
-.ide__editor { display: flex; flex-direction: column; min-width: 0; }
-.ide__tab {
-  display: flex; align-items: center; gap: 0.45rem;
-  padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid var(--border); background: var(--surface-3);
-  font-family: var(--font-mono); font-size: 0.74rem; color: var(--on-surface-1);
-}
-.ide__agent {
-  display: flex; align-items: center; gap: 0.45rem;
-  padding: 0.4rem 0.85rem;
-  font-family: var(--font-eyebrow); font-size: 0.7rem; color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border-bottom: 1px solid var(--border);
-}
-.ide__code {
-  margin: 0; flex: 1; overflow: auto;
-  padding: 0.85rem 1rem;
-  font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.6;
-  color: var(--on-surface-1); white-space: pre; tab-size: 2;
+  padding: 0.6rem 0.55rem;
+  font-family: var(--font-mono); font-size: 0.78rem;
 }
 
 /* file tree */
@@ -307,9 +287,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
   padding: 0.02rem 0.4rem;
 }
 @media (max-width: 600px) {
-  .ide__main { grid-template-columns: 1fr; height: auto; }
-  .ide__explorer { max-height: 190px; border-right: 0; border-bottom: 1px solid var(--border); }
-  .ide__code { max-height: 260px; }
+  .ide__explorer { max-height: 320px; }
 }
 
 /* ----- header ------------------------------------------------------------ */

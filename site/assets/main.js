@@ -19,39 +19,24 @@
     });
   }
 
-  /* ---- interactive IDE file explorer ----------------------------------- */
+  /* ---- file-tree sidebar (collapsible folders) ------------------------- */
   const ide = document.querySelector('[data-ide]');
   if (ide) {
-    const codeEl = ide.querySelector('[data-ide-code]');
-    const tabEl = ide.querySelector('.ide__tabname');
-    const banner = ide.querySelector('[data-agent-banner]');
-    const snips = {};
-    document.querySelectorAll('#ide-snippets [data-snip]').forEach((s) => {
-      snips[s.getAttribute('data-snip')] = s.textContent.replace(/^\n/, '').replace(/\s+$/, '');
-    });
-
-    const select = (row) => {
-      ide.querySelectorAll('.ft-file').forEach((f) => f.classList.remove('is-active'));
-      row.classList.add('is-active');
-      const path = row.getAttribute('data-file');
-      tabEl.textContent = row.querySelector('.ft-name').textContent;
-      codeEl.textContent = snips[path] || '// ' + path;
-      banner.hidden = !row.hasAttribute('data-agent');
-    };
-
+    const collapseByDefault = ['inc', 'template-parts', 'assets/src/scss', 'AGENTS', 'tools'];
     ide.querySelectorAll('.ft-folder').forEach((f) => {
+      const kids = f.nextElementSibling;
+      const hasKids = kids && kids.classList.contains('ft-children');
+      if (hasKids && collapseByDefault.includes(f.querySelector('.ft-name').textContent)) {
+        f.classList.add('is-collapsed');
+        kids.classList.add('is-collapsed');
+      }
       f.addEventListener('click', () => {
-        const kids = f.nextElementSibling;
-        if (kids && kids.classList.contains('ft-children')) {
+        if (hasKids) {
           f.classList.toggle('is-collapsed');
           kids.classList.toggle('is-collapsed');
         }
       });
     });
-    ide.querySelectorAll('.ft-file').forEach((f) => f.addEventListener('click', () => select(f)));
-
-    const def = ide.querySelector('[data-file="template.php"]');
-    if (def) select(def);
   }
 
   /* ---- copy-to-clipboard ------------------------------------------------ */
