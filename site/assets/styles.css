@@ -429,6 +429,30 @@ td { color: var(--on-surface-2); }
 .power__mark--mcp span:nth-child(2) { background: var(--bauhaus-yellow); height: 20px; align-self: center; }
 .power__mark--mcp span:nth-child(3) { background: var(--bauhaus-red); }
 
+/* ----- human in the loop / grounded -------------------------------------- */
+
+.manifesto {
+  border-left: 3px solid var(--accent);
+  padding-left: clamp(1.25rem, 3vw, 2.25rem);
+  margin: 1.25rem 0 2.75rem;
+  max-width: 62ch;
+}
+.manifesto__lead { margin-bottom: 1.1rem; max-width: 20ch; }
+
+.grounded {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ground { background: var(--surface-1); padding: clamp(1.5rem, 3vw, 2.25rem); }
+.ground__k { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.ground h4 { margin: 0.55rem 0 0.5rem; font-size: 1.1rem; }
+.ground p { font-size: 0.9rem; color: var(--on-surface-2); }
+
 /* ----- comparison table -------------------------------------------------- */
 
 .compare { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
@@ -480,6 +504,7 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
   .levels__panel.is-active { grid-template-columns: 1fr; }
   .levels__copy { order: -1; }
   .power { grid-template-columns: 1fr; }
+  .grounded { grid-template-columns: 1fr; }
   .docs { grid-template-columns: 1fr; }
   .docs-side { position: static; max-height: none; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
 }
