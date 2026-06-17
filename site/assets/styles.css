@@ -54,6 +54,11 @@ a { color: inherit; text-decoration: none; }
 /* ----- layout primitives ------------------------------------------------- */
 
 .wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+/* full-bleed variant: content edge lands exactly on the container rails.
+   max-width = maxw + 2·gutter so the gutter padding brings content in to the
+   rails (same math the page-frame uses). For card grids, not text. */
+.wrap--flush { max-width: calc(var(--maxw) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap--flush > .grid { position: relative; z-index: 2; border-radius: 0; }
 
 .section { padding-block: clamp(4rem, 9vw, 8rem); border-top: 1px solid var(--border); }
 .section--flush { border-top: 0; }
