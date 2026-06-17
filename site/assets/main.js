@@ -9,6 +9,18 @@
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---- crop-mark corners on bordered modules --------------------------- */
+  // Injected (not in HTML) so markup stays clean. Absolutely positioned, so
+  // they don't become grid items in the modules they decorate.
+  document.querySelectorAll('[data-marks]').forEach((el) => {
+    ['tl', 'tr', 'bl', 'br'].forEach((pos) => {
+      const m = document.createElement('span');
+      m.className = 'corner-mark ' + pos;
+      m.setAttribute('aria-hidden', 'true');
+      el.appendChild(m);
+    });
+  });
+
   /* ---- mobile nav toggle ------------------------------------------------ */
   const toggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');

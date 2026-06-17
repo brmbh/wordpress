@@ -516,9 +516,83 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 .icons-ready .cell__icon span { transition: transform 0.34s cubic-bezier(.34, 1.56, .64, 1); }
 .icons-ready .cell:hover .cell__icon span { transform: scale(1.18) rotate(9deg); }
 
+/* ==========================================================================
+   Blueprint detailing (Firecrawl-inspired, adapted to dark monochrome)
+   Framed column · registration crosshairs · crop-mark corners · dot grid
+   ========================================================================== */
+
+/* persistent framed column — two dashed guide rails at the content edges */
+.page-frame {
+  position: fixed;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin-inline: auto;
+  max-width: calc(var(--maxw) + 2 * var(--gutter));
+  pointer-events: none;
+  z-index: 1;
+}
+.page-frame::before, .page-frame::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0;
+  width: 1px;
+  background-image: repeating-linear-gradient(to bottom, var(--border) 0 5px, transparent 5px 11px);
+}
+.page-frame::before { left: var(--gutter); }
+.page-frame::after { right: var(--gutter); }
+
+/* dashed section dividers + a registration crosshair centred on the column */
+.section { border-top: 1px dashed var(--border); position: relative; }
+.section::after {
+  content: '+';
+  position: absolute; top: 0; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono); font-size: 0.9rem; line-height: 1;
+  color: var(--on-surface-3);
+  background: var(--surface-1);
+  padding: 0 0.45rem;
+}
+.section--flush::after { content: none; }
+
+/* crop-mark corners on bordered modules (spans injected by JS) */
+[data-marks] { position: relative; }
+.corner-mark { position: absolute; width: 9px; height: 9px; z-index: 3; pointer-events: none; opacity: 0.55; }
+.corner-mark::before, .corner-mark::after { content: ''; position: absolute; background: var(--on-surface-2); }
+.corner-mark::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); }
+.corner-mark::after { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-50%); }
+.corner-mark.tl { top: 7px; left: 7px; }
+.corner-mark.tr { top: 7px; right: 7px; }
+.corner-mark.bl { bottom: 7px; left: 7px; }
+.corner-mark.br { bottom: 7px; right: 7px; }
+
+/* dot-grid texture (used on the CTA / quick-start), faded top & bottom */
+.dotgrid {
+  background-image: radial-gradient(var(--border) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  background-position: center;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+}
+
+/* thin top status bar */
+.announce {
+  position: relative; z-index: 60;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 0.73rem; letter-spacing: 0.03em;
+  color: var(--on-surface-2);
+}
+.announce .spark { color: var(--accent); }
+.announce a { color: var(--on-surface-1); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); }
+.announce a:hover { text-decoration-color: var(--accent); }
+
+/* keep section content above the fixed frame's z-layer where they share space */
+.site-header, .announce, .site-footer { position: relative; }
+
 /* ----- responsive -------------------------------------------------------- */
 
 @media (max-width: 900px) {
+  .page-frame { display: none; }
   .hero__grid, .split { grid-template-columns: 1fr; }
   .grid { grid-template-columns: 1fr 1fr; }
   .pillars { grid-template-columns: 1fr; }
