@@ -387,25 +387,46 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 
 /* ----- feature grid ------------------------------------------------------ */
 
+/* Artisanal bento: 6-col grid, hairline dividers (1px gap over --border),
+   intentional spans. One lead cell anchors the composition. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--border);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
 }
 .cell {
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   background: var(--surface-1);
+  padding: clamp(1.6rem, 2.4vw, 2.4rem);
+  display: flex;
+  flex-direction: column;
+  grid-column: span 2;          /* default → three per row */
   transition: background 0.18s;
 }
 .cell:hover { background: var(--surface-2); }
-.cell__icon { width: 30px; height: 30px; margin-bottom: 1rem; display: flex; }
+.cell--lead { grid-column: span 3; grid-row: span 2; }
+.cell--half { grid-column: span 3; }
+
+.cell__icon { width: 26px; height: 26px; margin-bottom: 1.5rem; display: flex; }
 .cell__icon span { background: var(--accent); }
-.cell h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
-.cell p { font-size: 0.92rem; color: var(--on-surface-2); }
+.cell--lead .cell__icon { width: 34px; height: 34px; }
+
+/* type harmony: bold title · muted body · accent link — shared across cards */
+.cell h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: var(--on-surface-1); margin-bottom: 0.55rem; }
+.cell--lead h3 { font-size: 1.5rem; }
+.cell p { font-size: 0.94rem; color: var(--on-surface-2); line-height: 1.55; max-width: 42ch; }
+.cell__link {
+  margin-top: auto; padding-top: 1.4rem;
+  font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.02em;
+  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: gap 0.18s ease;
+}
+.cell__link::after { content: '›'; font-size: 1.1em; line-height: 1; }
+.cell__link:hover { gap: 0.7rem; }
 
 /* ----- pillars / commands ------------------------------------------------ */
 
@@ -714,6 +735,7 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
   .browser-wrap { perspective: none; }
   .browser { transform: none; width: 100%; }
   .grid { grid-template-columns: 1fr 1fr; }
+  .cell, .cell--lead, .cell--half { grid-column: auto; grid-row: auto; }
   .pillars { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr 1fr; }
   .levels__panel.is-active { grid-template-columns: 1fr; }
