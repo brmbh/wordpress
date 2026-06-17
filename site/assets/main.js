@@ -19,9 +19,61 @@
     });
   }
 
-  /* ---- file-tree sidebar (collapsible folders) ------------------------- */
+  /* ---- file-tree sidebar: collapsible folders + per-file info ----------- */
   const ide = document.querySelector('[data-ide]');
   if (ide) {
+    // What each file is — shown in the info pane on click (role + one line).
+    const INFO = {
+      'block.json': { role: 'ACF block', desc: "WordPress-standard block registration. Drop a folder with this in and the factory registers the block — apiVersion 2 with in-canvas editing." },
+      'fields.php': { role: 'ACF block', desc: "The ACF field group, returned as an array and auto-registered on acf/init. Defines exactly what the editor fills in." },
+      'template.php': { role: 'ACF block', desc: "The block's server render. Plain PHP with Bootstrap utilities and design tokens — no hardcoded colors or pixel sizes." },
+      '_style.scss': { role: 'ACF block', desc: "Block-scoped styles, auto-imported via _loader.scss. Prefer Bootstrap utilities; only add what they can't express." },
+      'loader.php': { role: 'Block factory', desc: "Scans my-acf-blocks/* and self-registers every folder that has a block.json. No manual wiring, ever." },
+      'inc/scaffold.php': { role: 'Theme logic', desc: "Idempotent first-run setup — creates starter pages and menus on activation. Safe to re-run any time." },
+      'inc/block-patterns.php': { role: 'Theme logic', desc: "Registers native Gutenberg section patterns, so editors compose layouts without typing a single Bootstrap class." },
+      'inc/post-types/speaker.php': { role: 'Custom post type', desc: "One file per entity: the CPT, its ACF fields, and helpers. Blocks reference it through an ACF relationship field." },
+      'inc/dependencies.php': { role: 'Theme logic', desc: "Declares the hard dependency on ACF Pro and shows an admin notice if it is missing." },
+      'template-parts/content.php': { role: 'Partial', desc: "A reusable content partial, pulled in with get_template_part(). Standard WordPress composition." },
+      'assets/src/scss/style.scss': { role: 'Styles', desc: "The SCSS entry point, compiled to assets/dist by the build. Imports tokens, variables, and every block's styles." },
+      'assets/src/scss/_tokens.scss': { role: 'Design tokens', desc: "Design tokens as CSS custom properties, synced from Figma Variables — the single source of truth for spacing, color and radius." },
+      'AGENTS/create-block.md': { role: 'Agent skill', desc: "The skill for building a block from a Figma frame or screenshot. Canonical source — Claude, Cursor and Windsurf wrappers are generated from it." },
+      'AGENTS/deploy.md': { role: 'Agent skill', desc: "The skill for shipping the built theme to a remote environment over SSH." },
+      'tools/deploy.sh': { role: 'Ops', desc: "Rsync deploy. Reads a per-environment env file and pushes the built theme — works even with IP-restricted hosts CI can't reach." },
+      'tools/sync-tokens.mjs': { role: 'Build tool', desc: "Pulls Figma Variables into _tokens.scss through the Figma MCP. Deterministic — no LLM in this path." },
+      'style.css': { role: 'Required by WP', desc: "The header comment here is the theme's identity — name, version, author, license — shown in Appearance." },
+      'functions.php': { role: 'Theme setup', desc: "Theme bootstrap: registers theme supports and menus, and wires up the block factory, scaffold, and dependency checks." },
+      'index.php': { role: 'Template', desc: "Required fallback in the template hierarchy. Renders the main query." },
+      'front-page.php': { role: 'Template', desc: "The homepage — composed entirely from ACF blocks and native section patterns." },
+      'header.php': { role: 'Template', desc: "Opening markup and wp_head(). Outputs the document head and the primary navigation." },
+      'footer.php': { role: 'Template', desc: "Closing markup, the footer menu, and wp_footer()." },
+      'page.php': { role: 'Template', desc: "Template for static pages, using the constrained block layout." },
+      'single.php': { role: 'Template', desc: "Template for a single post." },
+      '404.php': { role: 'Template', desc: "The not-found template." },
+      'theme.json': { role: 'Editor config', desc: "Global editor settings — content width, and locking down custom colors and font sizes so the design system holds." },
+      'package.json': { role: 'Build', desc: "The build toolchain — npm scripts that compile SCSS and bundle JS with webpack." },
+      'screenshot.png': { role: 'Asset', desc: "The theme thumbnail shown in Appearance → Themes." },
+    };
+
+    const nameEl = ide.querySelector('[data-info-name]');
+    const roleEl = ide.querySelector('[data-info-role]');
+    const descEl = ide.querySelector('[data-info-desc]');
+    const noteEl = ide.querySelector('[data-info-note]');
+    const infoPane = ide.querySelector('[data-ide-info]');
+
+    const showInfo = (row) => {
+      ide.querySelectorAll('.ft-file').forEach((f) => f.classList.remove('is-active'));
+      row.classList.add('is-active');
+      const info = INFO[row.getAttribute('data-file')] || { role: '', desc: '' };
+      nameEl.textContent = row.querySelector('.ft-name').textContent;
+      roleEl.textContent = info.role;
+      roleEl.hidden = !info.role;
+      descEl.textContent = info.desc;
+      noteEl.hidden = !row.hasAttribute('data-agent');
+      if (infoPane && window.gsap && !prefersReduced) {
+        window.gsap.fromTo(infoPane, { opacity: 0.35, y: 6 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+      }
+    };
+
     const collapseByDefault = ['inc', 'template-parts', 'assets/src/scss', 'AGENTS', 'tools'];
     ide.querySelectorAll('.ft-folder').forEach((f) => {
       const kids = f.nextElementSibling;
@@ -37,6 +89,10 @@
         }
       });
     });
+    ide.querySelectorAll('.ft-file').forEach((f) => f.addEventListener('click', () => showInfo(f)));
+
+    const def = ide.querySelector('[data-file="template.php"]');
+    if (def) showInfo(def);
   }
 
   /* ---- copy-to-clipboard ------------------------------------------------ */
