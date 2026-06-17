@@ -220,7 +220,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 .terminal__body .head { color: var(--on-surface-1); font-weight: 600; }
 .terminal__body .dim { color: var(--on-surface-3); }
 
-/* ----- IDE file-explorer panel ------------------------------------------- */
+/* ----- interactive IDE (explorer + editor) ------------------------------- */
 
 .ide {
   background: var(--surface-2);
@@ -236,21 +236,51 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
   background: var(--surface-3);
 }
 .ide__title { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-surface-3); }
-.ide__body { padding: 0.6rem 0.4rem; font-family: var(--font-mono); font-size: 0.8rem; }
 
+.ide__main { display: grid; grid-template-columns: 178px 1fr; height: 384px; }
+.ide__explorer {
+  border-right: 1px solid var(--border);
+  overflow: auto;
+  padding: 0.5rem 0.25rem;
+  font-family: var(--font-mono); font-size: 0.74rem;
+}
+.ide__editor { display: flex; flex-direction: column; min-width: 0; }
+.ide__tab {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--border); background: var(--surface-3);
+  font-family: var(--font-mono); font-size: 0.74rem; color: var(--on-surface-1);
+}
+.ide__agent {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  font-family: var(--font-eyebrow); font-size: 0.7rem; color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.ide__code {
+  margin: 0; flex: 1; overflow: auto;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.6;
+  color: var(--on-surface-1); white-space: pre; tab-size: 2;
+}
+
+/* file tree */
 .ft-row {
   position: relative;
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.28rem 0.6rem;
-  padding-left: calc(0.6rem + var(--d, 0) * 1.05rem);
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.22rem 0.45rem;
   border-radius: 3px;
   color: var(--on-surface-2);
-  white-space: nowrap;
+  cursor: pointer; white-space: nowrap; user-select: none;
 }
 .ft-row:hover { background: var(--surface-3); }
-.ft-chevron { color: var(--on-surface-3); font-size: 0.62rem; width: 0.7rem; flex: none; }
+.ft-chevron { color: var(--on-surface-3); font-size: 0.58rem; width: 0.6rem; flex: none; transition: transform 0.15s ease; }
+.ft-folder.is-collapsed .ft-chevron { transform: rotate(-90deg); }
 .ft-folder .ft-name { color: var(--on-surface-1); font-weight: 500; }
-.ft-file .ft-name { position: relative; padding-left: 1rem; }
+.ft-children { padding-left: 0.8rem; }
+.ft-children.is-collapsed { display: none; }
+.ft-file .ft-name { position: relative; padding-left: 0.95rem; }
 .ft-file .ft-name::before {
   content: ''; position: absolute; left: 0; top: 50%;
   width: 7px; height: 7px; transform: translateY(-50%);
@@ -262,20 +292,24 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 .ft--json { --ext: var(--bauhaus-yellow); }
 .ft--md   { --ext: var(--on-surface-3); }
 .ft--sh   { --ext: #3fb950; }
+.ft--js   { --ext: #e5c07b; }
+.ft--css  { --ext: #b07be0; }
+.ft--img  { --ext: var(--on-surface-3); }
 
-.ft-row.is-active { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--on-surface-1); }
-.ft-row.is-active::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 2px; background: var(--accent);
-}
+.ft-row.is-active { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--on-surface-1); }
+.ft-row.is-active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); }
 .ft-tag {
-  margin-left: auto;
+  margin-left: 0.5rem;
   font-family: var(--font-eyebrow); font-weight: 700;
-  font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--accent); border-radius: 999px;
+  padding: 0.02rem 0.4rem;
+}
+@media (max-width: 600px) {
+  .ide__main { grid-template-columns: 1fr; height: auto; }
+  .ide__explorer { max-height: 190px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .ide__code { max-height: 260px; }
 }
 
 /* ----- header ------------------------------------------------------------ */

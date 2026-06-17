@@ -42,9 +42,8 @@
     <div class="wrap">
       <div class="hero__grid">
         <div>
-          <span class="eyebrow eyebrow--circle eyebrow--blue" data-reveal>Open source · Bootstrap 5 · Gutenberg · ACF</span>
           <h1 class="display hero__title" data-reveal>
-            WordPress themes your<br /><span class="accent">AI agent</span> can actually build.
+            A WordPress theme<br />powered by<br /><span class="accent">AI agents</span>
           </h1>
           <p class="lead" data-reveal>
             brmbh is a modern starter theme with an ACF block factory and agent skills baked in.
@@ -118,25 +117,70 @@
             <span class="terminal__dot terminal__dot--r"></span>
             <span class="terminal__dot terminal__dot--y"></span>
             <span class="terminal__dot terminal__dot--g"></span>
-            <span class="ide__title">brmbh-theme</span>
+            <span class="ide__title">brmbh-theme — click a file</span>
           </div>
-          <div class="ide__body">
-            <div class="ft-row ft-folder" style="--d:0"><span class="ft-chevron">▾</span><span class="ft-name">my-acf-blocks</span></div>
-            <div class="ft-row ft-folder" style="--d:1"><span class="ft-chevron">▾</span><span class="ft-name">hero</span></div>
-            <div class="ft-row ft-file ft--json" style="--d:2"><span class="ft-name">block.json</span></div>
-            <div class="ft-row ft-file ft--php" style="--d:2"><span class="ft-name">fields.php</span></div>
-            <div class="ft-row ft-file ft--php is-active" style="--d:2"><span class="ft-name">template.php</span><span class="ft-tag">agent writes</span></div>
-            <div class="ft-row ft-file ft--scss" style="--d:2"><span class="ft-name">_style.scss</span></div>
-            <div class="ft-row ft-file ft--php" style="--d:1"><span class="ft-name">loader.php</span></div>
-            <div class="ft-row ft-folder" style="--d:0"><span class="ft-chevron">▾</span><span class="ft-name">inc</span></div>
-            <div class="ft-row ft-file ft--php" style="--d:1"><span class="ft-name">post-types/speaker.php</span></div>
-            <div class="ft-row ft-file ft--php" style="--d:1"><span class="ft-name">scaffold.php</span></div>
-            <div class="ft-row ft-folder" style="--d:0"><span class="ft-chevron">▾</span><span class="ft-name">AGENTS</span></div>
-            <div class="ft-row ft-file ft--md" style="--d:1"><span class="ft-name">create-block.md</span></div>
-            <div class="ft-row ft-folder" style="--d:0"><span class="ft-chevron">▾</span><span class="ft-name">tools</span></div>
-            <div class="ft-row ft-file ft--sh" style="--d:1"><span class="ft-name">deploy.sh</span></div>
-            <div class="ft-row ft-file ft--php" style="--d:0"><span class="ft-name">functions.php</span></div>
-            <div class="ft-row ft-file ft--json" style="--d:0"><span class="ft-name">theme.json</span></div>
+          <div class="ide__main" data-ide>
+            <div class="ide__explorer">
+              <div class="ft">
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">my-acf-blocks</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">hero</span><span class="ft-tag">agent-built</span></div>
+                  <div class="ft-children">
+                    <div class="ft-row ft-file ft--json" data-file="block.json" data-agent><span class="ft-name">block.json</span></div>
+                    <div class="ft-row ft-file ft--php" data-file="fields.php" data-agent><span class="ft-name">fields.php</span></div>
+                    <div class="ft-row ft-file ft--php" data-file="template.php" data-agent><span class="ft-name">template.php</span></div>
+                    <div class="ft-row ft-file ft--scss" data-file="_style.scss" data-agent><span class="ft-name">_style.scss</span></div>
+                  </div>
+                  <div class="ft-row ft-file ft--php" data-file="loader.php"><span class="ft-name">loader.php</span></div>
+                </div>
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">inc</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-file ft--php" data-file="inc/scaffold.php"><span class="ft-name">scaffold.php</span></div>
+                  <div class="ft-row ft-file ft--php" data-file="inc/block-patterns.php"><span class="ft-name">block-patterns.php</span></div>
+                  <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">post-types</span></div>
+                  <div class="ft-children">
+                    <div class="ft-row ft-file ft--php" data-file="inc/post-types/speaker.php"><span class="ft-name">speaker.php</span></div>
+                  </div>
+                  <div class="ft-row ft-file ft--php" data-file="inc/dependencies.php"><span class="ft-name">dependencies.php</span></div>
+                </div>
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">template-parts</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-file ft--php" data-file="template-parts/content.php"><span class="ft-name">content.php</span></div>
+                </div>
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">assets/src/scss</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-file ft--scss" data-file="assets/src/scss/style.scss"><span class="ft-name">style.scss</span></div>
+                  <div class="ft-row ft-file ft--scss" data-file="assets/src/scss/_tokens.scss"><span class="ft-name">_tokens.scss</span></div>
+                </div>
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">AGENTS</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-file ft--md" data-file="AGENTS/create-block.md"><span class="ft-name">create-block.md</span></div>
+                  <div class="ft-row ft-file ft--md" data-file="AGENTS/deploy.md"><span class="ft-name">deploy.md</span></div>
+                </div>
+                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">tools</span></div>
+                <div class="ft-children">
+                  <div class="ft-row ft-file ft--sh" data-file="tools/deploy.sh"><span class="ft-name">deploy.sh</span></div>
+                  <div class="ft-row ft-file ft--js" data-file="tools/sync-tokens.mjs"><span class="ft-name">sync-tokens.mjs</span></div>
+                </div>
+                <div class="ft-row ft-file ft--css" data-file="style.css"><span class="ft-name">style.css</span></div>
+                <div class="ft-row ft-file ft--php" data-file="functions.php"><span class="ft-name">functions.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="index.php"><span class="ft-name">index.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="front-page.php"><span class="ft-name">front-page.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="header.php"><span class="ft-name">header.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="footer.php"><span class="ft-name">footer.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="page.php"><span class="ft-name">page.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="single.php"><span class="ft-name">single.php</span></div>
+                <div class="ft-row ft-file ft--php" data-file="404.php"><span class="ft-name">404.php</span></div>
+                <div class="ft-row ft-file ft--json" data-file="theme.json"><span class="ft-name">theme.json</span></div>
+                <div class="ft-row ft-file ft--json" data-file="package.json"><span class="ft-name">package.json</span></div>
+                <div class="ft-row ft-file ft--img" data-file="screenshot.png"><span class="ft-name">screenshot.png</span></div>
+              </div>
+            </div>
+            <div class="ide__editor">
+              <div class="ide__tab"><span class="ide__tabname">template.php</span></div>
+              <div class="ide__agent" data-agent-banner hidden><span aria-hidden="true">✦</span> Agent-generated — one of the 4 files the agent writes for this block</div>
+              <pre class="ide__code" data-ide-code></pre>
+            </div>
           </div>
         </div>
       </div>
@@ -483,6 +527,283 @@
       </nav>
     </div>
   </footer>
+
+  <!-- file contents for the interactive IDE (read as plain text by main.js) -->
+  <div id="ide-snippets" hidden aria-hidden="true">
+<script type="text/plain" data-snip="block.json">
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "acf/hero",
+  "title": "Hero",
+  "category": "brmbh-sections",
+  "acf": { "mode": "preview", "renderTemplate": "template.php" },
+  "supports": { "align": ["full"], "anchor": true, "mode": true }
+}
+</script>
+<script type="text/plain" data-snip="fields.php">
+<?php
+// ACF field group — auto-registered by loader.php on acf/init.
+return [
+    'key'    => 'group_hero',
+    'title'  => 'Hero',
+    'fields' => [
+        [ 'key' => 'field_hero_heading', 'name' => 'heading', 'type' => 'text' ],
+        [ 'key' => 'field_hero_cta',     'name' => 'cta',     'type' => 'link' ],
+    ],
+    'location' => [ [ [ 'param' => 'block', 'operator' => '==', 'value' => 'acf/hero' ] ] ],
+];
+</script>
+<script type="text/plain" data-snip="template.php">
+<?php
+/** Hero — render template. Bootstrap utilities + tokens, no hardcoded px. */
+$heading = get_field( 'heading' );
+$cta     = get_field( 'cta' );
+?>
+<section class="hero section">
+    <div class="container">
+        <h1 class="display-3"><?php echo esc_html( $heading ); ?></h1>
+        <?php if ( $cta ) : ?>
+            <a class="btn btn-primary" href="<?php echo esc_url( $cta['url'] ); ?>">
+                <?php echo esc_html( $cta['title'] ); ?>
+            </a>
+        <?php endif; ?>
+    </div>
+</section>
+</script>
+<script type="text/plain" data-snip="_style.scss">
+// Hero — block styles. Prefer Bootstrap utilities; add only what they can't.
+.hero {
+  background: var(--brand-color-secondary-light);
+
+  .display-3 { text-wrap: balance; }
+}
+</script>
+<script type="text/plain" data-snip="loader.php">
+<?php
+// ACF block factory — scans my-acf-blocks/* and self-registers each folder.
+add_action( 'init', function () {
+    foreach ( glob( __DIR__ . '/*', GLOB_ONLYDIR ) as $dir ) {
+        if ( file_exists( "$dir/block.json" ) ) {
+            register_block_type( $dir );
+        }
+    }
+} );
+</script>
+<script type="text/plain" data-snip="inc/scaffold.php">
+<?php
+// Idempotent first-run scaffold — starter pages + menus on activation.
+add_action( 'after_switch_theme', function () {
+    brmbh_ensure_page( 'Home', 'front-page' );
+    brmbh_ensure_menu( 'Primary' );
+} );
+</script>
+<script type="text/plain" data-snip="inc/block-patterns.php">
+<?php
+// Native Gutenberg section patterns — editors never type a Bootstrap class.
+register_block_pattern( 'brmbh/hero', [
+    'title'      => 'Section: Hero',
+    'categories' => [ 'brmbh-sections' ],
+    'content'    => '<!-- wp:group {"align":"full"} --> … <!-- /wp:group -->',
+] );
+</script>
+<script type="text/plain" data-snip="inc/post-types/speaker.php">
+<?php
+// One file per entity — CPT + ACF fields + helpers.
+add_action( 'init', function () {
+    register_post_type( 'speaker', [
+        'public'       => false,
+        'show_ui'      => true,
+        'show_in_rest' => true,
+        'supports'     => [ 'title', 'thumbnail', 'revisions' ],
+    ] );
+} );
+</script>
+<script type="text/plain" data-snip="inc/dependencies.php">
+<?php
+// Hard ACF Pro dependency — admin notice if it is missing.
+add_action( 'admin_notices', function () {
+    if ( ! class_exists( 'ACF' ) ) {
+        echo '<div class="notice notice-error"><p>brmbh requires ACF Pro.</p></div>';
+    }
+} );
+</script>
+<script type="text/plain" data-snip="template-parts/content.php">
+<?php // Reusable content part — included via get_template_part(). ?>
+<article <?php post_class(); ?>>
+    <h2><?php the_title(); ?></h2>
+    <?php the_excerpt(); ?>
+</article>
+</script>
+<script type="text/plain" data-snip="assets/src/scss/style.scss">
+// SCSS entry — compiled to assets/dist/css/style.css by `brmbh dev`.
+@import "tokens";
+@import "variables";
+@import "../../../my-acf-blocks/loader";
+</script>
+<script type="text/plain" data-snip="assets/src/scss/_tokens.scss">
+// Design tokens — synced from Figma Variables via the Figma MCP.
+:root {
+  --space-m: 24px;
+  --space-l: 32px;
+  --corners-m: 24px;
+}
+</script>
+<script type="text/plain" data-snip="AGENTS/create-block.md">
+# /create-block
+
+Create a new ACF block in my-acf-blocks/{name}/ — the four-file convention.
+Ask all questions first, write files last.
+
+1. ACF group name + block name
+2. Read the Figma node or screenshot → infer fields + markup
+3. Write block.json, fields.php, template.php, _style.scss
+4. Append the SCSS import to _loader.scss
+</script>
+<script type="text/plain" data-snip="AGENTS/deploy.md">
+# /deploy
+
+Ship the built theme to a remote environment over SSH (rsync).
+Reads tools/env/{env}.env. Guarded so production stays safe.
+</script>
+<script type="text/plain" data-snip="tools/deploy.sh">
+#!/usr/bin/env bash
+# rsync the built theme to a remote env. Works with IP-restricted hosts.
+set -euo pipefail
+ENV="${1:?usage: deploy.sh <staging|prod>}"
+source "tools/env/${ENV}.env"
+npm run build
+rsync -az --delete assets/dist/ "${REMOTE}:${REMOTE_THEME}/assets/dist/"
+</script>
+<script type="text/plain" data-snip="tools/sync-tokens.mjs">
+// Pull Figma Variables → _tokens.scss via the Figma MCP. Deterministic.
+import { writeTokens } from './lib/figma.mjs';
+const tokens = await fetchFigmaVariables(process.env.FIGMA_FILE);
+writeTokens('assets/src/scss/_tokens.scss', tokens);
+</script>
+<script type="text/plain" data-snip="style.css">
+/*
+Theme Name:  brmbh
+Theme URI:   https://github.com/Schmandarine/brmbh-agentic-wp-suite
+Author:      Jan Brombach
+Description: Agentic WordPress starter — Bootstrap 5 + Gutenberg + ACF block factory.
+Version:     0.1.0
+License:     GPL-2.0-or-later
+Text Domain: brmbh
+*/
+</script>
+<script type="text/plain" data-snip="functions.php">
+<?php
+// Theme setup + asset pipeline.
+add_action( 'after_setup_theme', function () {
+    add_theme_support( 'title-tag' );
+    add_theme_support( 'post-thumbnails' );
+    add_theme_support( 'editor-styles' );
+    register_nav_menus( [ 'primary' => 'Primary' ] );
+} );
+
+require get_template_directory() . '/my-acf-blocks/loader.php';
+require get_template_directory() . '/inc/scaffold.php';
+require get_template_directory() . '/inc/dependencies.php';
+</script>
+<script type="text/plain" data-snip="index.php">
+<?php get_header(); ?>
+
+<main class="site-main is-layout-constrained">
+    <?php while ( have_posts() ) : the_post(); ?>
+        <?php the_content(); ?>
+    <?php endwhile; ?>
+</main>
+
+<?php get_footer();
+</script>
+<script type="text/plain" data-snip="front-page.php">
+<?php get_header(); ?>
+
+<main class="site-main">
+    <?php // Homepage — built from ACF blocks + native section patterns.
+    the_content(); ?>
+</main>
+
+<?php get_footer();
+</script>
+<script type="text/plain" data-snip="header.php">
+<?php ?><!doctype html>
+<html <?php language_attributes(); ?>>
+<head><?php wp_head(); ?></head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<header class="site-header">
+    <?php wp_nav_menu( [ 'theme_location' => 'primary' ] ); ?>
+</header>
+</script>
+<script type="text/plain" data-snip="footer.php">
+<footer class="site-footer">
+    <?php wp_nav_menu( [ 'theme_location' => 'footer' ] ); ?>
+</footer>
+<?php wp_footer(); ?>
+</body>
+</html>
+</script>
+<script type="text/plain" data-snip="page.php">
+<?php get_header(); ?>
+
+<main class="site-main is-layout-constrained">
+    <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
+</main>
+
+<?php get_footer();
+</script>
+<script type="text/plain" data-snip="single.php">
+<?php get_header(); ?>
+
+<main class="site-main is-layout-constrained">
+    <?php while ( have_posts() ) : the_post(); ?>
+        <h1><?php the_title(); ?></h1>
+        <?php the_content(); ?>
+    <?php endwhile; ?>
+</main>
+
+<?php get_footer();
+</script>
+<script type="text/plain" data-snip="404.php">
+<?php get_header(); ?>
+
+<main class="site-main">
+    <h1>404 — Page not found</h1>
+    <p>That page could not be found.</p>
+</main>
+
+<?php get_footer();
+</script>
+<script type="text/plain" data-snip="theme.json">
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "layout": { "contentSize": "1272px" },
+    "color": { "custom": false },
+    "typography": { "customFontSize": false }
+  }
+}
+</script>
+<script type="text/plain" data-snip="package.json">
+{
+  "name": "brmbh-theme",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "watch": "concurrently \"npm:watch:*\""
+  },
+  "dependencies": { "bootstrap": "^5.3.0", "gsap": "^3.12.0" }
+}
+</script>
+<script type="text/plain" data-snip="screenshot.png">
+[ binary file ]
+
+Theme thumbnail shown in Appearance → Themes.
+1200 × 900 px.
+</script>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
