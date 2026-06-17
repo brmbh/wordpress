@@ -24,6 +24,7 @@
         <a href="#features">Features</a>
         <a href="#commands">Commands</a>
         <a href="#agents">For agents</a>
+        <a href="#compare">Compare</a>
         <a href="docs.html">Docs</a>
         <a class="btn btn--ghost" href="https://github.com/Schmandarine/brmbh-agentic-wp-suite" target="_blank" rel="noopener">GitHub ↗</a>
       </nav>
@@ -74,8 +75,16 @@
   <span class="ok">✓</span> ACF Pro detected and active
   <span class="ok">✓</span> Theme activated
 
-  <span class="ok">✓</span> <span class="head">Created brmbh theme "my-site"</span>
-  <span class="dim">→ try: "create a hero block from this Figma frame"</span></div>
+  <span class="ok">✓</span> <span class="head">Created brmbh theme "my-site"</span></div>
+          </div>
+
+          <div class="agent-prompt" data-reveal>
+            <span class="agent-prompt__label mono">Then, in your AI editor</span>
+            <div class="agent-prompt__bar">
+              <span class="agent-prompt__spark" aria-hidden="true">✦</span>
+              <span class="agent-prompt__text" data-typewriter='["create a hero block from this Figma frame","add a speaker post type","write the scroll animation for the gallery","pull the production database","deploy to staging"]'>create a hero block from this Figma frame</span>
+              <span class="agent-prompt__caret" aria-hidden="true"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -181,46 +190,173 @@
     </div>
   </section>
 
-  <!-- agents dual-mode -->
+  <!-- agents dual-mode — interactive L1/L2/L3 -->
   <section class="section" id="agents">
     <div class="wrap">
-      <div class="split">
-        <div data-reveal>
-          <span class="tag">Built for agents</span>
-          <h2 class="h2">Every command speaks human <span class="accent">and machine.</span></h2>
-          <p class="muted" style="margin-top:1.2rem">
-            The same command that prints friendly steps for you returns a clean JSON envelope for an agent —
-            with a stable contract and a level that says exactly how to use the result. Deterministic work runs
-            in code; the reasoning stays with the model.
-          </p>
-          <ul class="pillar" style="background:none;padding:0;margin-top:1.5rem;list-style:none;display:flex;flex-direction:column;gap:0.7rem">
-            <li><span class="badge badge--l1">L1</span>&nbsp; raw data — the agent interprets</li>
-            <li><span class="badge badge--l2">L2</span>&nbsp; a <code class="mono">class</code> to branch on — like <code class="mono">doctor</code></li>
-            <li><span class="badge badge--l3">L3</span>&nbsp; a literal next-step procedure — like <code class="mono">create</code></li>
-          </ul>
+      <span class="eyebrow" data-reveal>Built for agents</span>
+      <h2 class="h2" style="margin:1rem 0 0.8rem;max-width:20ch" data-reveal>
+        Every command speaks human <span class="accent">and machine.</span>
+      </h2>
+      <p class="lead" data-reveal>
+        Pass <code class="mono">--json</code> and any command returns a clean envelope instead of prose. Each one
+        declares a <strong>level</strong> that tells an agent exactly how to use the result. Pick one:
+      </p>
+
+      <div class="levels" data-levels data-reveal>
+        <div class="levels__tabs" role="tablist" aria-label="Tool levels">
+          <button class="levels__tab is-active" role="tab" data-level="l1">
+            <span class="badge badge--l1">L1</span> Data
+          </button>
+          <button class="levels__tab" role="tab" data-level="l2">
+            <span class="badge badge--l2">L2</span> Classification
+          </button>
+          <button class="levels__tab" role="tab" data-level="l3">
+            <span class="badge badge--l3">L3</span> Instructions
+          </button>
         </div>
-        <div data-reveal>
-          <div class="terminal">
-            <div class="terminal__bar">
-              <span class="terminal__dot terminal__dot--r"></span>
-              <span class="terminal__dot terminal__dot--y"></span>
-              <span class="terminal__dot terminal__dot--g"></span>
-              <span class="terminal__title">brmbh doctor --json</span>
+
+        <div class="levels__stage">
+          <!-- L1 -->
+          <div class="levels__panel is-active" data-panel="l1">
+            <div class="levels__copy">
+              <h3 class="h3">Raw data → the agent interprets</h3>
+              <p class="muted">The tool reports facts and stays out of the decision. The agent reads the data and decides what to do next. Good when the situation is ambiguous.</p>
             </div>
+            <div class="terminal">
+              <div class="terminal__bar">
+                <span class="terminal__dot terminal__dot--r"></span><span class="terminal__dot terminal__dot--y"></span><span class="terminal__dot terminal__dot--g"></span>
+                <span class="terminal__title">brmbh dev --once --json</span>
+              </div>
+<div class="terminal__body"><span class="dim">$ brmbh dev --once --json</span>
+{
+  <span class="head">"ok"</span>: true,
+  <span class="head">"message"</span>: "Build complete",
+  <span class="step">"script"</span>: "build",
+  <span class="head">"themeDir"</span>: "wp-content/themes/my-site"
+}</div>
+            </div>
+          </div>
+
+          <!-- L2 -->
+          <div class="levels__panel" data-panel="l2">
+            <div class="levels__copy">
+              <h3 class="h3">A <code class="mono">class</code> → the agent branches</h3>
+              <p class="muted">The tool does the classifying and hands back a single field to switch on. No re-deriving health from raw output — just branch on <code class="mono">class</code>. This is <code class="mono">doctor</code>.</p>
+            </div>
+            <div class="terminal">
+              <div class="terminal__bar">
+                <span class="terminal__dot terminal__dot--r"></span><span class="terminal__dot terminal__dot--y"></span><span class="terminal__dot terminal__dot--g"></span>
+                <span class="terminal__title">brmbh doctor --json</span>
+              </div>
 <div class="terminal__body"><span class="dim">$ brmbh doctor --json</span>
 {
   <span class="head">"ok"</span>: true,
   <span class="head">"message"</span>: "Environment: ready",
-  <span class="step">"class"</span>: "ready",
+  <span class="step">"class"</span>: <span class="ok">"ready"</span>,
   <span class="head">"checks"</span>: [
     { "name": "node",    "status": "ok" },
-    { "name": "theme",   "status": "ok" },
     { "name": "build",   "status": "ok" },
     { "name": "acf-pro", "status": "ok" }
   ]
 }</div>
+            </div>
+          </div>
+
+          <!-- L3 -->
+          <div class="levels__panel" data-panel="l3">
+            <div class="levels__copy">
+              <h3 class="h3">A <code class="mono">next</code> procedure → the agent executes</h3>
+              <p class="muted">The tool returns a literal, ordered list of follow-up steps. The agent runs them verbatim — no guessing. This is <code class="mono">create</code> and <code class="mono">add</code>.</p>
+            </div>
+            <div class="terminal">
+              <div class="terminal__bar">
+                <span class="terminal__dot terminal__dot--r"></span><span class="terminal__dot terminal__dot--y"></span><span class="terminal__dot terminal__dot--g"></span>
+                <span class="terminal__title">brmbh add block hero --json</span>
+              </div>
+<div class="terminal__body"><span class="dim">$ brmbh add block hero --json</span>
+{
+  <span class="head">"ok"</span>: true,
+  <span class="head">"message"</span>: "Added block \"Hero\"",
+  <span class="head">"slug"</span>: "hero",
+  <span class="step">"next"</span>: [
+    "Define the ACF fields in fields.php",
+    "Render them with Bootstrap utilities + tokens",
+    "Rebuild styles: brmbh dev --once"
+  ]
+}</div>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- agent superpowers: full stack + wp-cli as MCP -->
+  <section class="section" id="superpowers">
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>Why this is powerful</span>
+      <h2 class="h2" style="margin:1rem 0 2.5rem;max-width:22ch" data-reveal>
+        Your agent doesn't just scaffold. It works the whole stack.
+      </h2>
+      <div class="power" data-reveal>
+        <article class="power__card">
+          <div class="power__mark" aria-hidden="true"><span></span><span></span></div>
+          <h3>Server <span class="dim">&amp;</span> client, both</h3>
+          <p>
+            The theme is vanilla PHP with a real JS build — no Blade, no black box. So an agent writes
+            <strong>both halves</strong>: server-side PHP (ACF blocks, custom post types, render templates) and
+            client-side JavaScript (Bootstrap behaviour, GSAP scroll animations, interactions). One agent, full stack.
+          </p>
+          <ul class="power__list">
+            <li><span class="mono accent">server</span> ACF blocks · CPTs · <code>template.php</code> · hooks</li>
+            <li><span class="mono accent">client</span> GSAP · Bootstrap JS · interactions · the build</li>
+          </ul>
+        </article>
+        <article class="power__card">
+          <div class="power__mark power__mark--mcp" aria-hidden="true"><span></span><span></span><span></span></div>
+          <h3>wp-cli as a backend MCP</h3>
+          <p>
+            WordPress ships <code>wp-cli</code> — a complete, scriptable interface to the backend. brmbh's
+            deterministic tools wrap it, so an agent can <strong>operate the CMS like an MCP tool surface</strong>:
+            create posts and pages, manage plugins, run search-replace, query the database, sync environments.
+          </p>
+          <ul class="power__list">
+            <li><span class="mono accent">read</span> query posts · options · plugin &amp; version drift</li>
+            <li><span class="mono accent">write</span> create content · activate plugins · DB pull/push</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- comparison -->
+  <section class="section" id="compare">
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>How it compares</span>
+      <h2 class="h2" style="margin:1rem 0 2.5rem" data-reveal>Honest about the trade-offs.</h2>
+      <div class="compare" data-reveal>
+        <table class="compare__table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="compare__hl">This suite</th>
+              <th>Underscores <span class="mono dim">_s</span></th>
+              <th>Understrap</th>
+              <th>Sage <span class="dim">(Roots)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>CSS framework</td><td class="compare__hl"><strong>Bootstrap 5</strong></td><td class="dim">none</td><td>Bootstrap</td><td>Tailwind</td></tr>
+            <tr><td>Bootstrap ↔ Gutenberg token bridge</td><td class="compare__hl yes">✅</td><td class="dim">—</td><td>partial</td><td class="dim">—</td></tr>
+            <tr><td>Self-registering ACF block factory</td><td class="compare__hl yes">✅</td><td class="dim">—</td><td class="dim">—</td><td class="dim">—</td></tr>
+            <tr><td>Agent skills (Claude/Cursor/Windsurf)</td><td class="compare__hl yes">✅</td><td class="dim">—</td><td class="dim">—</td><td class="dim">—</td></tr>
+            <tr><td>Figma → SCSS token sync</td><td class="compare__hl yes">✅</td><td class="dim">—</td><td class="dim">—</td><td class="dim">—</td></tr>
+            <tr><td>Deploy + DB-sync tooling included</td><td class="compare__hl yes">✅</td><td class="dim">—</td><td class="dim">—</td><td class="dim">—</td></tr>
+            <tr><td>Templating</td><td class="compare__hl">vanilla PHP</td><td>vanilla PHP</td><td>vanilla PHP</td><td>Blade</td></tr>
+            <tr><td>Build toolchain</td><td class="compare__hl">npm + Webpack + Sass</td><td class="dim">none</td><td>Gulp / npm</td><td>Bud + Composer</td></tr>
+            <tr><td>Requires ACF Pro</td><td class="compare__hl"><strong>yes</strong></td><td>no</td><td>no</td><td>no</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -234,12 +370,13 @@
         <div class="step-card">
           <span class="step-card__n">01</span>
           <h4>Open your themes folder</h4>
-          <p><code>cd wp-content/themes</code></p>
+          <button class="copycode" type="button" data-copy="cd wp-content/themes">cd wp-content/themes</button>
         </div>
         <div class="step-card">
           <span class="step-card__n">02</span>
           <h4>Scaffold</h4>
-          <p><code>npx create-brmbh my-site</code> — clone, install, build, skills, activate.</p>
+          <button class="copycode" type="button" data-copy="npx create-brmbh my-site">npx create-brmbh my-site</button>
+          <p>clone, install, build, skills, activate.</p>
         </div>
         <div class="step-card">
           <span class="step-card__n">03</span>
@@ -249,7 +386,7 @@
         <div class="step-card">
           <span class="step-card__n">04</span>
           <h4>Ship</h4>
-          <p><code>brmbh deploy staging</code></p>
+          <button class="copycode" type="button" data-copy="brmbh deploy staging">brmbh deploy staging</button>
         </div>
       </div>
       <div class="btn-row" style="margin-top:2.5rem" data-reveal>

@@ -351,14 +351,135 @@ td { color: var(--on-surface-2); }
 .badge--l2 { border-color: var(--accent); color: var(--accent); }
 .badge--l3 { border-color: var(--bauhaus-yellow); color: var(--bauhaus-yellow); }
 
+/* ----- hero agent prompt (the star) -------------------------------------- */
+
+.agent-prompt { margin-top: 1.5rem; }
+.agent-prompt__label {
+  display: block;
+  font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--on-surface-3); margin-bottom: 0.6rem;
+}
+.agent-prompt__bar {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent),
+              0 18px 50px -22px var(--accent);
+  position: relative; overflow: hidden;
+}
+.agent-prompt__bar::after {
+  /* slow sheen sweeping across the bar */
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%, color-mix(in srgb, var(--accent) 16%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: sheen 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+.agent-prompt__spark { color: var(--accent); font-size: 1.1rem; flex: none; }
+.agent-prompt__text {
+  font-size: clamp(1rem, 1.4vw, 1.15rem); font-weight: 600; color: var(--on-surface-1);
+  letter-spacing: -0.01em; min-height: 1.4em; flex: 1 1 auto;
+}
+.agent-prompt__caret {
+  width: 2px; height: 1.2em; background: var(--accent); flex: none;
+  animation: caret-blink 1.05s steps(1) infinite;
+}
+@keyframes caret-blink { 50% { opacity: 0; } }
+
+/* ----- interactive levels (Built for agents) ----------------------------- */
+
+.levels { margin-top: 2.5rem; }
+.levels__tabs { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem; }
+.levels__tab {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;
+  color: var(--on-surface-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem; cursor: pointer;
+  transition: color 0.18s, border-color 0.18s, background 0.18s, transform 0.18s;
+}
+.levels__tab:hover { color: var(--on-surface-1); transform: translateY(-2px); }
+.levels__tab.is-active { color: var(--on-surface-1); border-color: var(--border-strong); background: var(--surface-3); }
+.levels__stage { position: relative; }
+.levels__panel { display: none; }
+.levels__panel.is-active { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+.levels__copy h3 { margin-bottom: 0.8rem; }
+.levels__copy p { color: var(--on-surface-2); font-size: 0.98rem; }
+
+/* ----- agent superpowers ------------------------------------------------- */
+
+.power { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.power__card { background: var(--surface-1); padding: clamp(1.75rem, 3.5vw, 2.75rem); }
+.power__card h3 { font-size: 1.4rem; margin-bottom: 0.9rem; }
+.power__card p { color: var(--on-surface-2); font-size: 0.96rem; }
+.power__list { list-style: none; margin-top: 1.4rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.power__list li { font-size: 0.9rem; color: var(--on-surface-2); display: flex; gap: 0.7rem; align-items: baseline; }
+.power__list .mono { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; min-width: 3.4rem; }
+.power__list code { font-family: var(--font-mono); color: var(--on-surface-1); font-size: 0.82rem; }
+.power__mark { display: flex; gap: 6px; margin-bottom: 1.4rem; height: 30px; }
+.power__mark span { width: 30px; height: 30px; background: var(--accent); }
+.power__mark span:nth-child(2) { background: var(--bauhaus-red); border-radius: 50%; }
+.power__mark--mcp span { width: 14px; height: 30px; }
+.power__mark--mcp span:nth-child(1) { background: var(--bauhaus-blue); }
+.power__mark--mcp span:nth-child(2) { background: var(--bauhaus-yellow); height: 20px; align-self: center; }
+.power__mark--mcp span:nth-child(3) { background: var(--bauhaus-red); }
+
+/* ----- comparison table -------------------------------------------------- */
+
+.compare { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.compare__table { width: 100%; border-collapse: collapse; min-width: 680px; font-size: 0.92rem; margin: 0; }
+.compare__table th, .compare__table td { padding: 0.85rem 1.1rem; text-align: left; border-bottom: 1px solid var(--border); }
+.compare__table thead th { color: var(--on-surface-2); font-weight: 600; font-size: 0.85rem; border-bottom-color: var(--border-strong); }
+.compare__table tbody td:first-child { color: var(--on-surface-2); }
+.compare__table tbody td { color: var(--on-surface-1); }
+.compare__hl { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--accent); }
+.compare__table .yes { color: #3fb950; font-size: 1.05rem; }
+.compare__table tbody tr:last-child td { border-bottom: 0; }
+
+/* ----- inline copyable command chip -------------------------------------- */
+
+.copycode {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.85rem;
+  color: var(--accent);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.5rem 0.7rem; margin: 0.2rem 0 0.4rem;
+  cursor: pointer; text-align: left;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.copycode::after { content: '⧉'; color: var(--on-surface-3); font-size: 0.85rem; transition: color 0.15s; }
+.copycode:hover { border-color: var(--border-strong); background: var(--surface-3); }
+.copycode:hover::after { color: var(--on-surface-2); }
+.copycode.copied { color: var(--bauhaus-yellow); border-color: var(--bauhaus-yellow); }
+.copycode.copied::after { content: '✓'; color: var(--bauhaus-yellow); }
+
+/* ----- feature icon motion (web-motion principles) ----------------------- */
+/* Entrance is GSAP-driven (back.out overshoot + stagger). The hover transition
+   is gated behind .icons-ready (added by JS after the entrance completes) so the
+   CSS transition never fights GSAP's per-frame transform writes. */
+
+.cell__icon span { transform-origin: center; will-change: transform; }
+.icons-ready .cell__icon span { transition: transform 0.34s cubic-bezier(.34, 1.56, .64, 1); }
+.icons-ready .cell:hover .cell__icon span { transform: scale(1.18) rotate(9deg); }
+
 /* ----- responsive -------------------------------------------------------- */
 
 @media (max-width: 900px) {
   .hero__grid, .split { grid-template-columns: 1fr; }
-  .hero__media { order: -1; }
   .grid { grid-template-columns: 1fr 1fr; }
   .pillars { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr 1fr; }
+  .levels__panel.is-active { grid-template-columns: 1fr; }
+  .levels__copy { order: -1; }
+  .power { grid-template-columns: 1fr; }
   .docs { grid-template-columns: 1fr; }
   .docs-side { position: static; max-height: none; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
 }
