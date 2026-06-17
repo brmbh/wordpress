@@ -344,12 +344,12 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 .hero__title .accent { display: inline-block; }
 
 /* 3D browser window framing the AI input — breaks out over the frame rails */
-.hero__media { position: relative; z-index: 3; }
+.hero__media { position: relative; z-index: 3; transform: translateX(2.5rem); }
 .browser-wrap { perspective: 1200px; perspective-origin: 30% 50%; }
 .browser {
   transform: rotateY(7deg) skewY(-2deg);
   transform-origin: left center;
-  width: calc(100% + 3rem);
+  width: calc(100% + 6rem);
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
   border-radius: 10px;
@@ -710,6 +710,7 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 @media (max-width: 900px) {
   .page-frame { display: none; }
   .hero__grid, .split { grid-template-columns: 1fr; }
+  .hero__media { transform: none; }
   .browser-wrap { perspective: none; }
   .browser { transform: none; width: 100%; }
   .grid { grid-template-columns: 1fr 1fr; }
