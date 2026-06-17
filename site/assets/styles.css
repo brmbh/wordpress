@@ -58,7 +58,11 @@ a { color: inherit; text-decoration: none; }
    max-width = maxw + 2·gutter so the gutter padding brings content in to the
    rails (same math the page-frame uses). For card grids, not text. */
 .wrap--flush { max-width: calc(var(--maxw) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
-.wrap--flush > .grid { position: relative; z-index: 2; border-radius: 0; }
+.wrap--flush > .grid,
+.wrap--flush > .pillars,
+.wrap--flush > .power,
+.wrap--flush > .grounded,
+.wrap--flush > .steps { position: relative; z-index: 2; border-radius: 0; }
 /* if a flush grid is the last thing in a section, kill the section's bottom
    padding so the cards align flush with the section divider line below */
 .section:has(> .wrap--flush:last-child) { padding-bottom: 0; }
@@ -453,12 +457,17 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 
 /* ----- steps ------------------------------------------------------------- */
 
-.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; counter-reset: step; }
-.step-card { border-top: 2px solid var(--accent); padding-top: 1rem; }
-.step-card__n { font-family: var(--font-mono); font-size: 0.78rem; color: var(--on-surface-3); }
-.step-card h4 { font-size: 1rem; margin: 0.4rem 0 0.5rem; }
+.steps {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.step-card { background: var(--surface-1); padding: clamp(1.5rem, 2.4vw, 2.25rem); display: flex; flex-direction: column; }
+.step-card__n { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); letter-spacing: 0.08em; }
+.step-card h4 { font-size: 1.05rem; font-weight: 700; margin: 0.45rem 0 0.7rem; }
 .step-card p { font-size: 0.88rem; color: var(--on-surface-2); }
 .step-card code { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); }
+.step-card .copycode { align-self: flex-start; margin-top: auto; }
 
 /* ----- footer ------------------------------------------------------------ */
 
