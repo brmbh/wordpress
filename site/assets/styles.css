@@ -68,7 +68,7 @@ a { color: inherit; text-decoration: none; }
 .section:has(> .wrap--flush:last-child) { padding-bottom: 0; }
 /* breakout band: wider than the rails, but keeps a margin from the viewport
    edge. Used sparingly to give a section room and break the uniform rhythm. */
-.wrap--wide { width: min(calc(var(--maxw) + 12rem), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
+.wrap--wide { width: min(calc(var(--maxw) + 8rem), calc(100% - 3rem)); margin-inline: auto; }
 .wrap--wide > * { position: relative; z-index: 2; }
 
 .section { padding-block: clamp(4rem, 9vw, 8rem); border-top: 1px solid var(--border); }
