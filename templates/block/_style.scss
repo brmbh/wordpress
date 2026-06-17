@@ -1,0 +1,6 @@
+// {{ TITLE }} — block styles.
+// Prefer Bootstrap utilities in template.php over custom CSS. Only add what
+// utilities can't express. Imported via my-acf-blocks/_loader.scss.
+
+.{{ SLUG }} {
+}
