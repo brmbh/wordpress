@@ -220,6 +220,64 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 .terminal__body .head { color: var(--on-surface-1); font-weight: 600; }
 .terminal__body .dim { color: var(--on-surface-3); }
 
+/* ----- IDE file-explorer panel ------------------------------------------- */
+
+.ide {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8);
+}
+.ide__bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-3);
+}
+.ide__title { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-surface-3); }
+.ide__body { padding: 0.6rem 0.4rem; font-family: var(--font-mono); font-size: 0.8rem; }
+
+.ft-row {
+  position: relative;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.28rem 0.6rem;
+  padding-left: calc(0.6rem + var(--d, 0) * 1.05rem);
+  border-radius: 3px;
+  color: var(--on-surface-2);
+  white-space: nowrap;
+}
+.ft-row:hover { background: var(--surface-3); }
+.ft-chevron { color: var(--on-surface-3); font-size: 0.62rem; width: 0.7rem; flex: none; }
+.ft-folder .ft-name { color: var(--on-surface-1); font-weight: 500; }
+.ft-file .ft-name { position: relative; padding-left: 1rem; }
+.ft-file .ft-name::before {
+  content: ''; position: absolute; left: 0; top: 50%;
+  width: 7px; height: 7px; transform: translateY(-50%);
+  background: var(--ext, var(--on-surface-3));
+}
+/* file-type colours */
+.ft--php  { --ext: var(--bauhaus-blue); }
+.ft--scss { --ext: var(--bauhaus-red); }
+.ft--json { --ext: var(--bauhaus-yellow); }
+.ft--md   { --ext: var(--on-surface-3); }
+.ft--sh   { --ext: #3fb950; }
+
+.ft-row.is-active { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--on-surface-1); }
+.ft-row.is-active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--accent);
+}
+.ft-tag {
+  margin-left: auto;
+  font-family: var(--font-eyebrow); font-weight: 700;
+  font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+}
+
 /* ----- header ------------------------------------------------------------ */
 
 .site-header {
