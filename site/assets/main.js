@@ -9,6 +9,28 @@
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---- comet travelling the container rails (one per section) ---------- */
+  // Blue comet glides down the left rail + up the right rail of each section,
+  // staggered between sections. Speed is constant (duration = height / speed).
+  if (!prefersReduced) {
+    const SPEED = 70; // px per second
+    document.querySelectorAll('.section').forEach((sec, i) => {
+      const rails = document.createElement('div');
+      rails.className = 'rails';
+      rails.setAttribute('aria-hidden', 'true');
+      rails.innerHTML = '<span class="comet comet--down"></span><span class="comet comet--up"></span>';
+      sec.prepend(rails);
+      rails.style.setProperty('--delay', (-1.6 * i).toFixed(2) + 's');
+      const sync = () => {
+        const h = sec.clientHeight;
+        rails.style.setProperty('--h', h + 'px');
+        rails.style.setProperty('--dur', Math.max(4, h / SPEED).toFixed(2) + 's');
+      };
+      sync();
+      if (window.ResizeObserver) new ResizeObserver(sync).observe(sec);
+    });
+  }
+
   /* ---- mobile nav toggle ------------------------------------------------ */
   const toggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
