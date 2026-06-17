@@ -552,17 +552,6 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 }
 .section--flush::after { content: none; }
 
-/* crop-mark corners on bordered modules (spans injected by JS) */
-[data-marks] { position: relative; }
-.corner-mark { position: absolute; width: 9px; height: 9px; z-index: 3; pointer-events: none; opacity: 0.55; }
-.corner-mark::before, .corner-mark::after { content: ''; position: absolute; background: var(--on-surface-2); }
-.corner-mark::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); }
-.corner-mark::after { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-50%); }
-.corner-mark.tl { top: 7px; left: 7px; }
-.corner-mark.tr { top: 7px; right: 7px; }
-.corner-mark.bl { bottom: 7px; left: 7px; }
-.corner-mark.br { bottom: 7px; right: 7px; }
-
 /* dot-grid texture (used on the CTA / quick-start), faded top & bottom */
 .dotgrid {
   background-image: radial-gradient(var(--border) 1px, transparent 1.4px);
