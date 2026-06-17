@@ -485,6 +485,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1 !important; transform: none !important; }
   html { scroll-behavior: auto; }
+  .rail-comets { display: none; }
 }
 
 /* ----- docs layout ------------------------------------------------------- */
@@ -717,28 +718,25 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 }
 .section--flush::after { content: none; }
 
-/* animated comet travelling the container rails — one per section, staggered.
-   --h (section height) and --dur (height/speed) are set per section by JS. */
-.rails {
-  position: absolute; inset: 0;
+/* one glowing comet down the left rail, one up the right — fixed, travel the
+   viewport height, loop forever. Two total (not per section). */
+.rail-comets {
+  position: fixed; inset: 0;
   max-width: calc(var(--maxw) + 2 * var(--gutter));
   margin-inline: auto;
   pointer-events: none;
-  overflow: hidden;
   z-index: 5;
 }
-.comet { position: absolute; top: 0; width: 2px; height: 72px; will-change: transform; }
+.comet { position: absolute; top: 0; width: 2px; height: 80px; will-change: transform; }
 .comet--down {
   left: var(--gutter);
   background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 85%, transparent));
-  animation: comet-down var(--dur, 9s) linear infinite;
-  animation-delay: var(--delay, 0s);
+  animation: comet-down 7s linear infinite;
 }
 .comet--up {
   right: var(--gutter);
   background: linear-gradient(to top, transparent, color-mix(in srgb, var(--accent) 85%, transparent));
-  animation: comet-up var(--dur, 9s) linear infinite;
-  animation-delay: var(--delay, 0s);
+  animation: comet-up 7s linear infinite;
 }
 .comet::after {
   content: ''; position: absolute; left: 50%;
@@ -749,12 +747,12 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 .comet--down::after { bottom: 0; transform: translate(-50%, 40%); }
 .comet--up::after { top: 0; transform: translate(-50%, -40%); }
 @keyframes comet-down {
-  0%   { transform: translateY(-90px); }
-  100% { transform: translateY(calc(var(--h, 600px) + 24px)); }
+  0%   { transform: translateY(-100px); }
+  100% { transform: translateY(calc(100vh + 30px)); }
 }
 @keyframes comet-up {
-  0%   { transform: translateY(calc(var(--h, 600px) + 24px)); }
-  100% { transform: translateY(-90px); }
+  0%   { transform: translateY(calc(100vh + 30px)); }
+  100% { transform: translateY(-100px); }
 }
 
 /* dot-grid texture (used on the CTA / quick-start), faded top & bottom */
@@ -787,7 +785,7 @@ thead .compare__hl { color: var(--on-surface-1); border-bottom: 2px solid var(--
 
 @media (max-width: 900px) {
   .page-frame { display: none; }
-  .rails { display: none; }
+  .rail-comets { display: none; }
   .hero__grid, .split { grid-template-columns: 1fr; }
   .hero__media { transform: none; }
   .browser-wrap { perspective: none; }
