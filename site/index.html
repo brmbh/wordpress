@@ -44,22 +44,36 @@
       <div class="hero__grid">
         <div data-reveal>
           <h1 class="display hero__title">
-            A WordPress theme<br />powered by<br /><span class="accent">AI agents</span>
+            The <span class="accent">agentic suite</span> that runs WordPress end to end.
           </h1>
-          <p class="lead">
-            A modern starter theme with agent skills built in. Scaffold it in one command — then just ask your editor to build the rest.
-          </p>
 
-          <div class="cmd" data-copy="npm create brmbh@latest my-site">
-            <code><span class="prompt">$</span>npm create brmbh@latest my-site</code>
-            <button class="copy" type="button">Copy</button>
+          <div class="hero-toggle" data-hero-toggle>
+            <button class="hero-toggle__btn" data-audience="humans" type="button">For humans</button>
+            <button class="hero-toggle__btn hero-toggle__btn--active" data-audience="agents" type="button">For agents</button>
           </div>
 
-          <div class="btn-row">
-            <a class="btn btn--accent" href="docs.html">Get started →</a>
-            <a class="btn btn--ghost" href="https://github.com/Schmandarine/brmbh-agentic-wp-suite" target="_blank" rel="noopener">Star on GitHub</a>
+          <div data-hero-panel="humans" hidden>
+            <div class="cmd" data-copy="npx create-brmbh my-theme">
+              <code><span class="prompt">$</span>npx create-brmbh my-theme</code>
+              <button class="copy" type="button">Copy</button>
+            </div>
+            <p class="hero__note dim mono">MIT CLI · GPL-2.0 theme · Node ≥ 18 · zero runtime deps</p>
           </div>
-          <p class="hero__note dim mono">MIT CLI · GPL-2.0 theme · Node ≥ 18 · zero runtime deps</p>
+
+          <div data-hero-panel="agents">
+            <div class="cmd" data-copy="npx skills add brmbh/wordpress">
+              <code><span class="prompt">$</span>npx skills add brmbh/wordpress</code>
+              <button class="copy" type="button">Copy</button>
+            </div>
+            <div class="agent-logos">
+              <img src="assets/logos/claude.svg" alt="Claude Code" title="Claude Code" height="20" width="20">
+              <img src="assets/logos/cursor.svg" alt="Cursor" title="Cursor" height="20" width="20">
+              <img src="assets/logos/copilot.svg" alt="GitHub Copilot" title="GitHub Copilot" height="20" width="20">
+              <img src="assets/logos/windsurf.svg" alt="Windsurf" title="Windsurf" height="20" width="20">
+              <img src="assets/logos/vscode.svg" alt="VS Code" title="VS Code" height="20" width="20">
+              <span class="agent-logos__more dim mono">+30 agents</span>
+            </div>
+          </div>
         </div>
 
         <div class="hero__media" data-reveal>

@@ -9,6 +9,22 @@
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---- hero audience toggle (For humans / For agents) ------------------- */
+  const heroToggle = document.querySelector('[data-hero-toggle]');
+  if (heroToggle) {
+    heroToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-audience]');
+      if (!btn) return;
+      const audience = btn.getAttribute('data-audience');
+      heroToggle.querySelectorAll('[data-audience]').forEach((b) => {
+        b.classList.toggle('hero-toggle__btn--active', b === btn);
+      });
+      document.querySelectorAll('[data-hero-panel]').forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-hero-panel') !== audience;
+      });
+    });
+  }
+
   /* ---- mobile nav toggle ------------------------------------------------ */
   const toggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
