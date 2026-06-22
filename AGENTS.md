@@ -8,9 +8,7 @@ agents (Claude, Cursor, Windsurf) point here. Read it before making changes.
 An agentic WordPress starter: Bootstrap 5 + Gutenberg + an auto-registering ACF block factory.
 Content is driven by ACF blocks and native Gutenberg patterns — not page templates.
 
-**Hard dependency:** ACF Pro 6.0+. No fallback. `inc/dependencies.php` is the single source of
-truth (`brmbh_has_acf_pro()`); it surfaces admin notices and aborts `wp brmbh` commands when
-ACF Pro is missing.
+**Hard dependency:** SCF 6.0+ (Secure Custom Fields — free, wordpress.org/plugins/secure-custom-fields). ACF Pro also works — both define `ACF_PRO=true`. No fallback. `inc/dependencies.php` is the single source of truth (`brmbh_has_acf_pro()`); it surfaces admin notices and aborts `wp brmbh` commands when SCF is missing.
 
 ## Skills — everything an agent can do here
 

@@ -1,11 +1,14 @@
 <?php
 /**
- * Hard dependency check — Advanced Custom Fields PRO is MANDATORY.
+ * Hard dependency check — Secure Custom Fields (SCF) is MANDATORY.
  *
- * This theme is built around the ACF block factory. Without ACF Pro, the entire
- * block layer fails to register, the scaffold can't be inserted, and the site
- * renders empty. There is no "graceful degradation" path — if ACF Pro is not
- * active, we surface that loudly everywhere the user might look.
+ * SCF is a free WordPress.org plugin (wordpress.org/plugins/secure-custom-fields).
+ * ACF Pro also works — both define ACF_PRO=true and share the identical API.
+ *
+ * This theme is built around the ACF block factory. Without SCF (or ACF Pro), the
+ * entire block layer fails to register, the scaffold can't be inserted, and the site
+ * renders empty. There is no "graceful degradation" path — if SCF is not active, we
+ * surface that loudly everywhere the user might look.
  *
  * Surfaces:
  *   1. Admin notice (sticky, error-level, every wp-admin page)
@@ -23,17 +26,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Required ACF Pro minimum version.
+ * Required SCF/ACF minimum version.
  */
 const BRMBH_REQUIRED_ACF_VERSION = '6.0.0';
 
 /**
- * Single source of truth: is ACF Pro present and meeting version requirement?
+ * Single source of truth: is SCF (or ACF Pro) present and meeting version requirement?
+ * Both plugins define ACF_PRO=true — this check works for either.
  *
  * @return bool
  */
 function brmbh_has_acf_pro(): bool {
-	// ACF Pro defines this constant; free ACF does not.
+	// Both SCF and ACF Pro define this constant; free ACF does not.
 	if ( ! defined( 'ACF_PRO' ) || ! ACF_PRO ) {
 		return false;
 	}
@@ -50,21 +54,21 @@ function brmbh_has_acf_pro(): bool {
 function brmbh_acf_dependency_message(): string {
 	if ( ! defined( 'ACF_PRO' ) ) {
 		return sprintf(
-			/* translators: %s: required ACF Pro version */
-			__( '<strong>brmbh-agentic-wp-suite</strong> requires <strong>Advanced Custom Fields PRO %s or higher</strong>. ACF Pro is not installed or not active. Get it at <a href="https://www.advancedcustomfields.com/pro/" target="_blank" rel="noopener">advancedcustomfields.com/pro</a>.', 'brmbh-agentic-wp-suite' ),
+			/* translators: %s: required SCF version */
+			__( '<strong>brmbh-agentic-wp-suite</strong> requires <strong>Secure Custom Fields (SCF) %s or higher</strong>. SCF is not installed or not active. Install it free at <a href="https://wordpress.org/plugins/secure-custom-fields/" target="_blank" rel="noopener">wordpress.org/plugins/secure-custom-fields</a>. ACF Pro also works.', 'brmbh-agentic-wp-suite' ),
 			BRMBH_REQUIRED_ACF_VERSION
 		);
 	}
 	if ( function_exists( 'acf_get_setting' ) ) {
 		$version = acf_get_setting( 'version' );
 		return sprintf(
-			/* translators: 1: installed ACF version, 2: required ACF Pro version */
-			__( '<strong>brmbh-agentic-wp-suite</strong> requires Advanced Custom Fields PRO <strong>%2$s</strong> or higher. Installed version: <strong>%1$s</strong>. Please update ACF Pro.', 'brmbh-agentic-wp-suite' ),
+			/* translators: 1: installed SCF/ACF version, 2: required version */
+			__( '<strong>brmbh-agentic-wp-suite</strong> requires Secure Custom Fields (SCF) <strong>%2$s</strong> or higher. Installed version: <strong>%1$s</strong>. Please update SCF.', 'brmbh-agentic-wp-suite' ),
 			esc_html( $version ),
 			BRMBH_REQUIRED_ACF_VERSION
 		);
 	}
-	return __( '<strong>brmbh-agentic-wp-suite</strong> requires Advanced Custom Fields PRO. ACF Pro is installed but not loaded — check the plugin is active.', 'brmbh-agentic-wp-suite' );
+	return __( '<strong>brmbh-agentic-wp-suite</strong> requires Secure Custom Fields (SCF). SCF is installed but not loaded — check the plugin is active.', 'brmbh-agentic-wp-suite' );
 }
 
 /**
@@ -100,7 +104,7 @@ function brmbh_acf_dependency_post_activate_notice(): void {
 	}
 	delete_transient( 'brmbh_acf_missing_on_activate' );
 	echo '<div class="notice notice-error is-dismissible">';
-	echo '<p><strong>⚠️ ' . esc_html__( 'Theme activated, but ACF Pro is missing.', 'brmbh-agentic-wp-suite' ) . '</strong></p>';
+	echo '<p><strong>⚠️ ' . esc_html__( 'Theme activated, but Secure Custom Fields (SCF) is missing.', 'brmbh-agentic-wp-suite' ) . '</strong></p>';
 	echo '<p>' . wp_kses_post( brmbh_acf_dependency_message() ) . '</p>';
 	echo '</div>';
 }
@@ -109,7 +113,7 @@ add_action( 'admin_notices', 'brmbh_acf_dependency_post_activate_notice' );
 /**
  * Surface 3 — Hard error in WP-CLI.
  *
- * Any `wp brmbh` subcommand aborts with a clear message if ACF Pro is missing.
+ * Any `wp brmbh` subcommand aborts with a clear message if SCF/ACF is missing.
  * Called by inc/cli.php at the top of each subcommand.
  */
 function brmbh_acf_dependency_cli_guard(): void {

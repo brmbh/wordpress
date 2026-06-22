@@ -48,12 +48,12 @@ Pro, vanilla WordPress, and a set of conventions that automate the repetitive pa
 | Deploy + DB-sync tooling included | ✅ | — | — | — |
 | Templating | vanilla PHP | vanilla PHP | vanilla PHP | Blade |
 | Build toolchain | npm + Webpack + Sass | none | Gulp/npm | Bud + Composer |
-| Requires ACF Pro | **yes** | no | no | no |
+| Requires SCF | **yes (free)** | no | no | no |
 
 **Use it when** you build content-driven WordPress sites with ACF blocks and want a coding
 agent to do the repetitive block/scaffold/deploy work against a Bootstrap design system.
 **Skip it when** you want a block-theme/FSE (`theme.json`-only) setup, a Tailwind/Blade stack,
-or a theme with no ACF Pro dependency.
+or a theme with no ACF dependency.
 
 ---
 
@@ -127,7 +127,7 @@ cd wp-content/themes/brmbh-agentic-wp-suite
 npm install
 npm run build            # or: npm run watch  (live rebuild)
 
-# 3. Activate the theme in wp-admin (ACF Pro must be active).
+# 3. Activate the theme in wp-admin (SCF must be active).
 #    It scaffolds starter pages + menus once on activation.
 
 # 4. Re-run the scaffold any time — it's idempotent
@@ -175,7 +175,7 @@ codebase.
 
 ## Tech stack
 
-WordPress 6.4+ · PHP 8.0+ · ACF Pro 6.0+ · Bootstrap 5.3 · GSAP · Webpack · Dart Sass ·
+WordPress 6.4+ · PHP 8.0+ · SCF 6.0+ (free) · Bootstrap 5.3 · GSAP · Webpack · Dart Sass ·
 Node 18+ · WP-CLI (`wp brmbh` namespace) · Inter / InterDisplay variable fonts ·
 GPL-2.0-or-later.
 
