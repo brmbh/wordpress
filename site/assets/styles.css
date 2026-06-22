@@ -253,7 +253,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
 }
 .ide__title { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-surface-3); }
 
-.ide__main { display: grid; grid-template-columns: 220px 1fr; min-height: 320px; }
+.ide__main { display: grid; grid-template-columns: 168px 1fr; min-height: 410px; }
 .ide__explorer {
   border-right: 1px solid var(--border);
   max-height: 460px;
@@ -279,6 +279,160 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spac
   border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   border-radius: var(--radius); padding: 0.5rem 0.7rem;
 }
+
+/* ----- scrollytelling --------------------------------------------------- */
+.scrolly-section { padding-bottom: 0; }
+.scrolly-track { position: relative; height: 550vh; margin-top: 4rem; }
+.scrolly-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
+.scrolly-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* left steps */
+.scrolly-steps { display: flex; flex-direction: column; gap: 3rem; }
+.scrolly-step { opacity: 0.22; transition: opacity 0.5s ease; cursor: pointer; }
+.scrolly-step.is-active { opacity: 1; }
+.scrolly-step:not(.is-active):hover { opacity: 0.55; }
+.scrolly-step__num {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent);
+  margin-bottom: 0.5rem; letter-spacing: 0.06em;
+}
+.scrolly-step__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  color: var(--on-surface-1);
+  margin-bottom: 0.6rem; line-height: 1.2;
+}
+.scrolly-step__body { font-size: 0.95rem; color: var(--on-surface-2); line-height: 1.7; max-width: 36ch; }
+
+/* right visual */
+.scrolly-visual { min-width: 0; }
+
+/* responsive: drop the pin, stack steps over a static IDE showing the final state */
+@media (max-width: 880px) {
+  .scrolly-track { height: auto !important; margin-top: 2rem; }
+  .scrolly-pin { position: static; height: auto; display: block; }
+  .scrolly-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .scrolly-step { opacity: 1; }
+  .scrolly-step__body { max-width: none; }
+  .ide__main { grid-template-columns: 140px 1fr; }
+  .ide__stage { min-height: 280px; }
+}
+
+/* ----- IDE build animation ---------------------------------------------- */
+.build-item { opacity: 0; transform: translateX(-6px); }
+
+/* ----- IDE chat panel (agent scaffold demo) ------------------------------ */
+.ide__chat { display: flex; flex-direction: column; min-width: 0; }
+.ide__chat-head {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-3);
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-surface-3);
+}
+.ide__chat-icon { color: var(--accent); font-size: 0.8rem; }
+.ide__chat-body { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; }
+/* ide stage — morphs per scene (terminal → terminal → editor) */
+.ide__stage { position: relative; min-height: 410px; overflow: hidden; }
+.scene {
+  position: absolute; inset: 0;
+  padding: 1.4rem 1.5rem;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.45s ease;
+}
+.scene.is-active { opacity: 1; visibility: visible; }
+
+/* scene caption — tells the user exactly what kind of input this is */
+.scene__cap {
+  display: block;
+  font-family: var(--font-eyebrow); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--on-surface-3); margin-bottom: 0.7rem;
+}
+
+/* prompt bar — the designy "what you type to the agent" input (matches hero) */
+.prompt-bar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.7rem 0.9rem; margin-bottom: 1.2rem;
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent),
+              0 14px 38px -22px var(--accent);
+  position: relative; overflow: hidden;
+}
+.prompt-bar__spark { color: var(--accent); font-size: 0.95rem; flex: none; }
+.prompt-bar__text {
+  font-size: 0.95rem; font-weight: 600; color: var(--on-surface-1);
+  letter-spacing: -0.01em; flex: 1 1 auto; min-width: 0;
+}
+.prompt-bar__caret {
+  width: 2px; height: 1.1em; background: var(--accent); flex: none;
+  animation: caret-blink 1.05s steps(1) infinite;
+}
+
+/* compact copy button + contextual copy affordances */
+.copy--sm { font-size: 0.6rem; padding: 0.22rem 0.5rem; position: relative; z-index: 2; }
+.copy--bar { flex: none; }
+.term-copy { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.term-copy .term-cmd__txt { flex: 1 1 auto; }
+.term-copy .copy { opacity: 0; transition: opacity 0.15s ease; }
+.term-copy:hover .copy, .term-copy:focus-within .copy { opacity: 1; }
+
+/* terminal lines */
+.term { display: flex; flex-direction: column; gap: 0.55rem; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.5; }
+.term-line { opacity: 0; transform: translateY(4px); }
+.scene.is-active .term-line { animation: termIn 0.4s ease forwards; }
+.scene.is-active .term-line:nth-child(1) { animation-delay: 0.10s; }
+.scene.is-active .term-line:nth-child(2) { animation-delay: 0.30s; }
+.scene.is-active .term-line:nth-child(3) { animation-delay: 0.50s; }
+.scene.is-active .term-line:nth-child(4) { animation-delay: 0.70s; }
+.scene.is-active .term-line:nth-child(5) { animation-delay: 0.90s; }
+.scene.is-active .term-line:nth-child(6) { animation-delay: 1.10s; }
+.scene.is-active .term-line:nth-child(7) { animation-delay: 1.30s; }
+@keyframes termIn { to { opacity: 1; transform: none; } }
+.term-cmd { color: var(--on-surface-1); }
+.term-sym { color: var(--on-surface-3); margin-right: 0.4rem; }
+.term-ok { color: #3fb950; }
+.term-dim { color: var(--on-surface-3); }
+.term-accent { color: var(--accent); }
+.term-user { color: var(--on-surface-2); font-style: italic; }
+
+/* editor scene */
+.scene__prompt { font-family: var(--font-mono); font-size: 0.82rem; margin-bottom: 1rem; }
+.editor { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.editor__tab {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: var(--surface-3); border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-mono); font-size: 0.74rem; color: var(--on-surface-2);
+}
+.ft-dot { width: 7px; height: 7px; display: inline-block; background: var(--ext, var(--on-surface-3)); }
+.editor__code {
+  margin: 0; padding: 0.9rem 1.1rem;
+  background: var(--surface-1);
+  font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.6;
+  color: var(--on-surface-2); overflow-x: auto; white-space: pre;
+}
+.c-tag { color: #7ca7e8; }
+.c-atr { color: #c08ee0; }
+.c-str { color: #8fc98f; }
+.c-var { color: #e0b87a; }
+.c-cmt { color: var(--on-surface-3); font-style: italic; }
+
+/* step 3 file highlight */
+.step3-highlight { transition: background 0.4s ease, color 0.4s ease; }
+.step3-active .step3-highlight { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--on-surface-1); }
 
 /* file tree */
 .ft-row {

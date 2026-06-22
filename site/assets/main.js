@@ -35,69 +35,12 @@
     });
   }
 
-  /* ---- file-tree sidebar: collapsible folders + per-file info ----------- */
-  const ide = document.querySelector('[data-ide]');
-  if (ide) {
-    // What each file is — shown in the info pane on click (role + one line).
-    const INFO = {
-      'block.json': { role: 'agent-built', desc: "Registers the block with WordPress. The agent wrote it — standard format, nothing custom to learn." },
-      'fields.php': { role: 'agent-built', desc: "The fields your editor fills in. The agent shaped these to match your design." },
-      'template.php': { role: 'agent-built', desc: "The block's markup, written by the agent from your design. Plain PHP and Bootstrap — readable, and yours to tweak." },
-      '_style.scss': { role: 'agent-built', desc: "The block's styling. Mostly Bootstrap utilities, scoped to this block, written for you." },
-      'loader.php': { role: 'Block factory', desc: "Finds every block folder and registers it automatically — it's why a new block just works." },
-      'inc/scaffold.php': { role: 'Theme setup', desc: "Sets up your starter pages and menus the first time you activate the theme." },
-      'inc/block-patterns.php': { role: 'Editor', desc: "Ready-made section layouts your editors drop in — no code, no class names." },
-      'inc/post-types/speaker.php': { role: 'Content type', desc: "A custom content type — speakers, projects, whatever you need — kept in one tidy file." },
-      'inc/dependencies.php': { role: 'Theme setup', desc: "Checks that ACF Pro is active, and warns you clearly if it isn't." },
-      'template-parts/content.php': { role: 'Partial', desc: "A reusable chunk of markup — the standard WordPress way to stay tidy." },
-      'assets/src/scss/style.scss': { role: 'Styles', desc: "Where your styles start. Compiles down to a single stylesheet." },
-      'assets/src/scss/_tokens.scss': { role: 'Design tokens', desc: "Your colors, spacing and radii — kept in step with Figma." },
-      'AGENTS/create-block.md': { role: 'Agent skill', desc: "The playbook your AI editor follows to build a block from a design. This is the magic." },
-      'AGENTS/deploy.md': { role: 'Agent skill', desc: "The playbook your AI editor follows to ship the site." },
-      'tools/deploy.sh': { role: 'Ops', desc: "Ships your theme to staging or production over SSH." },
-      'tools/sync-tokens.mjs': { role: 'Build tool', desc: "Pulls your Figma variables into the project — no copy-pasting hex codes." },
-      'style.css': { role: 'Required by WP', desc: "Your theme's name card — title, version, author. WordPress needs it to exist." },
-      'functions.php': { role: 'Theme setup', desc: "Wires everything together when the theme loads." },
-      'index.php': { role: 'Template', desc: "The catch-all template WordPress falls back to." },
-      'front-page.php': { role: 'Template', desc: "Your homepage — built from blocks." },
-      'header.php': { role: 'Template', desc: "The top of every page — the document head and your navigation." },
-      'footer.php': { role: 'Template', desc: "The bottom of every page — footer menu and closing scripts." },
-      'page.php': { role: 'Template', desc: "The template behind your static pages." },
-      'single.php': { role: 'Template', desc: "The template behind a single post." },
-      '404.php': { role: 'Template', desc: "The friendly not-found page." },
-      'theme.json': { role: 'Guardrails', desc: "Locks the editor to your design system — set widths, no rogue colors." },
-      'package.json': { role: 'Build', desc: "The build setup — scripts that compile your CSS and JS." },
-      'screenshot.png': { role: 'Asset', desc: "The little preview WordPress shows in the theme picker." },
-    };
-
-    const nameEl = ide.querySelector('[data-info-name]');
-    const roleEl = ide.querySelector('[data-info-role]');
-    const descEl = ide.querySelector('[data-info-desc]');
-    const noteEl = ide.querySelector('[data-info-note]');
-    const infoPane = ide.querySelector('[data-ide-info]');
-
-    const showInfo = (row) => {
-      ide.querySelectorAll('.ft-file').forEach((f) => f.classList.remove('is-active'));
-      row.classList.add('is-active');
-      const info = INFO[row.getAttribute('data-file')] || { role: '', desc: '' };
-      nameEl.textContent = row.querySelector('.ft-name').textContent;
-      roleEl.textContent = info.role;
-      roleEl.hidden = !info.role;
-      descEl.textContent = info.desc;
-      noteEl.hidden = !row.hasAttribute('data-agent');
-      if (infoPane && window.gsap && !prefersReduced) {
-        window.gsap.fromTo(infoPane, { opacity: 0.35, y: 6 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
-      }
-    };
-
-    const collapseByDefault = ['inc', 'template-parts', 'assets/src/scss', 'AGENTS', 'tools'];
-    ide.querySelectorAll('.ft-folder').forEach((f) => {
+  /* ---- file-tree sidebar: collapsible folders ----------------------------- */
+  const ideMain = document.querySelector('[data-ide]');
+  if (ideMain) {
+    ideMain.querySelectorAll('.ft-folder').forEach((f) => {
       const kids = f.nextElementSibling;
       const hasKids = kids && kids.classList.contains('ft-children');
-      if (hasKids && collapseByDefault.includes(f.querySelector('.ft-name').textContent)) {
-        f.classList.add('is-collapsed');
-        kids.classList.add('is-collapsed');
-      }
       f.addEventListener('click', () => {
         if (hasKids) {
           f.classList.toggle('is-collapsed');
@@ -105,10 +48,85 @@
         }
       });
     });
-    ide.querySelectorAll('.ft-file').forEach((f) => f.addEventListener('click', () => showInfo(f)));
+  }
 
-    const def = ide.querySelector('[data-file="template.php"]');
-    if (def) showInfo(def);
+  /* ---- IDE scrollytelling — 3-step onboarding journey -------------------- */
+  // Step 1 (0 – 0.30): add skills  — terminal: skill install,  tree empty
+  // Step 2 (0.30 – 0.78): scaffold  — terminal: create-brmbh,   tree builds
+  // Step 3 (0.78 – 1): implement   — editor: real template.php, hero lit
+  const scrollyTrack = document.getElementById('scrolly-track');
+  const buildItems = Array.from(document.querySelectorAll('.build-item'));
+  const scrollyStepEls = Array.from(document.querySelectorAll('.scrolly-step'));
+  const scenes = Array.from(document.querySelectorAll('.scene'));
+  const ideExplorer = document.querySelector('.ide__explorer');
+  const ideTitle = document.getElementById('ide-title');
+  const TITLES = { 1: 'npx skills add', 2: 'npx create-brmbh my-site', 3: 'hero/template.php' };
+
+  let currentStep = 0;
+  function setActiveStep(step) {
+    if (step === currentStep) return;
+    currentStep = step;
+    scrollyStepEls.forEach((el) => el.classList.toggle('is-active', Number(el.dataset.step) === step));
+    scenes.forEach((el) => el.classList.toggle('is-active', Number(el.dataset.scene) === step));
+    if (ideExplorer) ideExplorer.classList.toggle('step3-active', step === 3);
+    if (ideTitle) ideTitle.textContent = TITLES[step] || '';
+  }
+
+  function revealTreeTo(count) {
+    buildItems.forEach((item, i) => {
+      const should = i < count;
+      if (should && !item._vis) {
+        if (window.gsap) gsap.to(item, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out', overwrite: true });
+        else { item.style.opacity = '1'; item.style.transform = 'none'; }
+        item._vis = true;
+      } else if (!should && item._vis) {
+        if (window.gsap) gsap.to(item, { opacity: 0, x: -6, duration: 0.2, overwrite: true });
+        else { item.style.opacity = '0'; }
+        item._vis = false;
+      }
+    });
+  }
+
+  if (scrollyTrack && buildItems.length) {
+    if (prefersReduced) {
+      buildItems.forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; el._vis = true; });
+      setActiveStep(3);
+    } else if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.set(buildItems, { opacity: 0, x: -6 });
+
+      const st = ScrollTrigger.create({
+        trigger: scrollyTrack,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.8,
+        onUpdate(self) {
+          const p = self.progress;
+          const step = p < 0.30 ? 1 : p < 0.78 ? 2 : 3;
+          setActiveStep(step);
+
+          // tree builds across step 2; full once we hit step 3
+          let count;
+          if (step === 1) count = 0;
+          else if (step === 3) count = buildItems.length;
+          else count = Math.round(((p - 0.30) / 0.48) * buildItems.length);
+          revealTreeTo(Math.max(0, Math.min(buildItems.length, count)));
+        },
+      });
+
+      // click a step on the left to jump straight to that scene
+      const STEP_TARGET = { 1: 0.12, 2: 0.52, 3: 0.92 };
+      scrollyStepEls.forEach((stepEl) => {
+        stepEl.addEventListener('click', () => {
+          const n = Number(stepEl.dataset.step);
+          const p = STEP_TARGET[n] ?? 0;
+          window.scrollTo({ top: st.start + p * (st.end - st.start), behavior: 'smooth' });
+        });
+      });
+    } else {
+      buildItems.forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; el._vis = true; });
+      setActiveStep(3);
+    }
   }
 
   /* ---- copy-to-clipboard ------------------------------------------------ */

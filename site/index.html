@@ -100,93 +100,148 @@
     </div>
   </section>
 
-  <!-- value prop -->
-  <section class="section" id="why">
+  <!-- value prop / scrollytelling -->
+  <section class="section scrolly-section" id="why">
     <div class="wrap">
-      <span class="eyebrow eyebrow--triangle eyebrow--yellow" data-reveal>The difference</span>
+      <span class="eyebrow eyebrow--triangle eyebrow--yellow" data-reveal>How it works</span>
       <h2 class="h2" style="margin:1rem 0 0;max-width:24ch" data-reveal>
-        Other starters give you an empty theme. brmbh gives you one <span class="accent">an agent can build.</span>
+        From install to your first block — <span class="accent">three prompts.</span>
       </h2>
-      <p class="lead" style="margin:1.5rem 0 2.75rem" data-reveal>
-        And it's all just files — real, readable, and yours. The agent writes a block's four; everything else
-        is the standard WordPress you already know. Click around.
+      <p class="lead" style="margin:1.5rem 0 0;max-width:48ch" data-reveal>
+        Teach your agent the workflow once. After that you describe, it builds — and every file stays plain WordPress you can open and own.
       </p>
     </div>
-    <div class="wrap--wide">
-      <div class="ide" data-reveal>
-          <div class="ide__bar">
-            <span class="terminal__dot terminal__dot--r"></span>
-            <span class="terminal__dot terminal__dot--y"></span>
-            <span class="terminal__dot terminal__dot--g"></span>
-            <span class="ide__title">brmbh-theme</span>
-          </div>
-          <div class="ide__main" data-ide>
-            <div class="ide__explorer">
-              <div class="ft">
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">my-acf-blocks</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">hero</span><span class="ft-tag">agent-built</span></div>
-                  <div class="ft-children">
-                    <div class="ft-row ft-file ft--json" data-file="block.json" data-agent><span class="ft-name">block.json</span></div>
-                    <div class="ft-row ft-file ft--php" data-file="fields.php" data-agent><span class="ft-name">fields.php</span></div>
-                    <div class="ft-row ft-file ft--php" data-file="template.php" data-agent><span class="ft-name">template.php</span></div>
-                    <div class="ft-row ft-file ft--scss" data-file="_style.scss" data-agent><span class="ft-name">_style.scss</span></div>
-                  </div>
-                  <div class="ft-row ft-file ft--php" data-file="loader.php"><span class="ft-name">loader.php</span></div>
-                </div>
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">inc</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-file ft--php" data-file="inc/scaffold.php"><span class="ft-name">scaffold.php</span></div>
-                  <div class="ft-row ft-file ft--php" data-file="inc/block-patterns.php"><span class="ft-name">block-patterns.php</span></div>
-                  <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">post-types</span></div>
-                  <div class="ft-children">
-                    <div class="ft-row ft-file ft--php" data-file="inc/post-types/speaker.php"><span class="ft-name">speaker.php</span></div>
-                  </div>
-                  <div class="ft-row ft-file ft--php" data-file="inc/dependencies.php"><span class="ft-name">dependencies.php</span></div>
-                </div>
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">template-parts</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-file ft--php" data-file="template-parts/content.php"><span class="ft-name">content.php</span></div>
-                </div>
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">assets/src/scss</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-file ft--scss" data-file="assets/src/scss/style.scss"><span class="ft-name">style.scss</span></div>
-                  <div class="ft-row ft-file ft--scss" data-file="assets/src/scss/_tokens.scss"><span class="ft-name">_tokens.scss</span></div>
-                </div>
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">AGENTS</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-file ft--md" data-file="AGENTS/create-block.md"><span class="ft-name">create-block.md</span></div>
-                  <div class="ft-row ft-file ft--md" data-file="AGENTS/deploy.md"><span class="ft-name">deploy.md</span></div>
-                </div>
-                <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">tools</span></div>
-                <div class="ft-children">
-                  <div class="ft-row ft-file ft--sh" data-file="tools/deploy.sh"><span class="ft-name">deploy.sh</span></div>
-                  <div class="ft-row ft-file ft--js" data-file="tools/sync-tokens.mjs"><span class="ft-name">sync-tokens.mjs</span></div>
-                </div>
-                <div class="ft-row ft-file ft--css" data-file="style.css"><span class="ft-name">style.css</span></div>
-                <div class="ft-row ft-file ft--php" data-file="functions.php"><span class="ft-name">functions.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="index.php"><span class="ft-name">index.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="front-page.php"><span class="ft-name">front-page.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="header.php"><span class="ft-name">header.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="footer.php"><span class="ft-name">footer.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="page.php"><span class="ft-name">page.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="single.php"><span class="ft-name">single.php</span></div>
-                <div class="ft-row ft-file ft--php" data-file="404.php"><span class="ft-name">404.php</span></div>
-                <div class="ft-row ft-file ft--json" data-file="theme.json"><span class="ft-name">theme.json</span></div>
-                <div class="ft-row ft-file ft--json" data-file="package.json"><span class="ft-name">package.json</span></div>
-                <div class="ft-row ft-file ft--img" data-file="screenshot.png"><span class="ft-name">screenshot.png</span></div>
-              </div>
+    <div class="scrolly-track" id="scrolly-track">
+      <div class="scrolly-pin">
+        <div class="scrolly-inner wrap">
+
+          <!-- left: narrative steps -->
+          <div class="scrolly-steps">
+            <div class="scrolly-step" data-step="1">
+              <span class="scrolly-step__num">01</span>
+              <h3 class="scrolly-step__title">Add the agent skills</h3>
+              <p class="scrolly-step__body">One command and your agent knows the full brmbh workflow — scaffold, blocks, deploy, DB sync. Works on Claude Code, Cursor, Windsurf, and 30+ others.</p>
             </div>
-            <div class="ide__info" data-ide-info>
-              <div class="ide__info-head">
-                <span class="ide__info-name" data-info-name>template.php</span>
-                <span class="ide__info-role" data-info-role hidden></span>
-              </div>
-              <p class="ide__info-desc" data-info-desc></p>
-              <div class="ide__info-note" data-info-note hidden><span aria-hidden="true">✦</span> One of the 4 files the agent generates for a block</div>
+            <div class="scrolly-step" data-step="2">
+              <span class="scrolly-step__num">02</span>
+              <h3 class="scrolly-step__title">Your agent scaffolds</h3>
+              <p class="scrolly-step__body">Hand your agent the project name. It clones the theme, installs dependencies, builds assets, activates it in WordPress, and wires its own skills into the repo.</p>
+            </div>
+            <div class="scrolly-step" data-step="3">
+              <span class="scrolly-step__num">03</span>
+              <h3 class="scrolly-step__title">Start implementing</h3>
+              <p class="scrolly-step__body">Every block is one conversation. Point at a Figma frame. The agent writes the four files, builds the styles, and registers the block. You review and ship.</p>
             </div>
           </div>
+
+          <!-- right: IDE -->
+          <div class="scrolly-visual">
+            <div class="ide">
+              <div class="ide__bar">
+                <span class="terminal__dot terminal__dot--r"></span>
+                <span class="terminal__dot terminal__dot--y"></span>
+                <span class="terminal__dot terminal__dot--g"></span>
+                <span class="ide__title" id="ide-title">npx skills add</span>
+              </div>
+              <div class="ide__main">
+                <!-- file tree: the spine. empty → full across the journey -->
+                <div class="ide__explorer">
+                  <div class="ft">
+                    <div class="ft-row ft-folder"><span class="ft-chevron">▾</span><span class="ft-name">themes</span></div>
+                    <div class="ft-children">
+                      <div class="ft-row ft-folder build-item"><span class="ft-chevron">▾</span><span class="ft-name">my-site</span></div>
+                      <div class="ft-children">
+                        <div class="ft-row ft-file ft--css build-item"><span class="ft-name">style.css</span></div>
+                        <div class="ft-row ft-file ft--php build-item"><span class="ft-name">functions.php</span></div>
+                        <div class="ft-row ft-file ft--php build-item"><span class="ft-name">front-page.php</span></div>
+                        <div class="ft-row ft-folder build-item"><span class="ft-chevron">▾</span><span class="ft-name">my-acf-blocks</span></div>
+                        <div class="ft-children">
+                          <div class="ft-row ft-file ft--php build-item"><span class="ft-name">loader.php</span></div>
+                          <div class="ft-row ft-folder build-item step3-highlight"><span class="ft-chevron">▾</span><span class="ft-name">hero</span><span class="ft-tag">new</span></div>
+                          <div class="ft-children">
+                            <div class="ft-row ft-file ft--json build-item step3-highlight"><span class="ft-name">block.json</span></div>
+                            <div class="ft-row ft-file ft--php build-item step3-highlight"><span class="ft-name">fields.php</span></div>
+                            <div class="ft-row ft-file ft--php build-item step3-highlight"><span class="ft-name">template.php</span></div>
+                            <div class="ft-row ft-file ft--scss build-item step3-highlight"><span class="ft-name">_style.scss</span></div>
+                          </div>
+                        </div>
+                        <div class="ft-row ft-folder build-item"><span class="ft-chevron">▾</span><span class="ft-name">AGENTS</span></div>
+                        <div class="ft-children">
+                          <div class="ft-row ft-file ft--md build-item"><span class="ft-name">create-block.md</span></div>
+                          <div class="ft-row ft-file ft--md build-item"><span class="ft-name">deploy.md</span></div>
+                        </div>
+                        <div class="ft-row ft-file ft--json build-item"><span class="ft-name">package.json</span></div>
+                        <div class="ft-row ft-file ft--json build-item"><span class="ft-name">theme.json</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- stage: morphs per step -->
+                <div class="ide__stage">
+                  <!-- Scene 1: install the skill -->
+                  <div class="scene is-active" data-scene="1">
+                    <span class="scene__cap">Run once in your terminal</span>
+                    <div class="term">
+                      <div class="term-line term-cmd term-copy" data-copy="npx skills add brmbh/wordpress">
+                        <span class="term-cmd__txt"><span class="term-sym">$</span> npx skills add brmbh/wordpress</span>
+                        <button class="copy copy--sm" type="button">Copy</button>
+                      </div>
+                      <div class="term-line term-ok">✓ fetched brmbh/wordpress</div>
+                      <div class="term-line term-ok">✓ installed skill — wordpress</div>
+                      <div class="term-line term-dim">&nbsp;&nbsp;Claude Code · Cursor · Windsurf · +30 agents</div>
+                      <div class="term-line term-accent">✦ your agent now speaks brmbh</div>
+                    </div>
+                  </div>
+                  <!-- Scene 2: agent scaffolds -->
+                  <div class="scene" data-scene="2">
+                    <span class="scene__cap">You ask your agent</span>
+                    <div class="prompt-bar" data-copy="create a new brmbh theme called my-site">
+                      <span class="prompt-bar__spark" aria-hidden="true">✦</span>
+                      <span class="prompt-bar__text">create a new brmbh theme called my-site</span>
+                      <button class="copy copy--sm copy--bar" type="button">Copy</button>
+                    </div>
+                    <div class="term">
+                      <div class="term-line term-cmd term-copy" data-copy="npx create-brmbh my-site">
+                        <span class="term-cmd__txt"><span class="term-sym">$</span> npx create-brmbh my-site</span>
+                        <button class="copy copy--sm" type="button">Copy</button>
+                      </div>
+                      <div class="term-line term-ok">✓ cloned brmbh/wordpress</div>
+                      <div class="term-line term-ok">✓ npm install — 42 packages</div>
+                      <div class="term-line term-ok">✓ activated in WordPress</div>
+                      <div class="term-line term-accent">✦ theme ready — start building</div>
+                    </div>
+                  </div>
+                  <!-- Scene 3: implement a block -->
+                  <div class="scene" data-scene="3">
+                    <span class="scene__cap">You ask your agent</span>
+                    <div class="prompt-bar" data-copy="create a hero block from this Figma frame">
+                      <span class="prompt-bar__spark" aria-hidden="true">✦</span>
+                      <span class="prompt-bar__text">create a hero block from this Figma frame</span>
+                      <button class="copy copy--sm copy--bar" type="button">Copy</button>
+                    </div>
+                    <div class="editor">
+                      <div class="editor__tab"><span class="ft-dot ft--php"></span> hero/template.php</div>
+<pre class="editor__code"><span class="c-tag">&lt;?php</span>
+<span class="c-cmt">// hero — agent-built from your Figma frame</span>
+<span class="c-var">$title</span>    = get_field(<span class="c-str">'title'</span>);
+<span class="c-var">$subtitle</span> = get_field(<span class="c-str">'subtitle'</span>); <span class="c-tag">?&gt;</span>
+
+<span class="c-tag">&lt;section</span> <span class="c-atr">class</span>=<span class="c-str">"hero py-6 bg-dark text-white"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-atr">class</span>=<span class="c-str">"container"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;h1</span> <span class="c-atr">class</span>=<span class="c-str">"display-3"</span><span class="c-tag">&gt;</span><span class="c-tag">&lt;?=</span> esc_html(<span class="c-var">$title</span>) <span class="c-tag">?&gt;</span><span class="c-tag">&lt;/h1&gt;</span>
+    <span class="c-tag">&lt;p</span> <span class="c-atr">class</span>=<span class="c-str">"lead"</span><span class="c-tag">&gt;</span><span class="c-tag">&lt;?=</span> esc_html(<span class="c-var">$subtitle</span>) <span class="c-tag">?&gt;</span><span class="c-tag">&lt;/p&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/section&gt;</span></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
     </div>
   </section>
 
