@@ -37,17 +37,19 @@ function brmbh_scaffold_home_content(): string {
 	$attrs = array(
 		'name' => 'acf/example-hero',
 		'data' => array(
-			'eyebrow'  => 'Agentic WP Suite',
+			'eyebrow'  => 'Agentic WordPress',
 			'_eyebrow' => 'field_example_hero_eyebrow',
-			'heading'  => 'Build sections with an ACF block factory.',
+			'heading'  => 'Ask for a section. Your agent builds the block.',
 			'_heading' => 'field_example_hero_heading',
-			'body'     => 'Drop a folder with four files into my-acf-blocks/ and it registers itself. No manual wiring, no central registry. Ask your agent for a block and it writes all four.',
+			'body'     => 'Every block is four files following one convention — so your agent has a pattern to follow instead of improvising, and you review a diff instead of writing boilerplate. Open your editor and ask for a hero built from a Figma frame.',
 			'_body'    => 'field_example_hero_body',
 		),
 		'mode' => 'preview',
 	);
 
-	return '<!-- wp:acf/example-hero ' . wp_json_encode( $attrs ) . ' /-->';
+	// JSON_UNESCAPED_UNICODE keeps the em dash literal instead of \u2014, which
+	// keeps the stored markup readable. The slashing is handled by the caller.
+	return '<!-- wp:acf/example-hero ' . wp_json_encode( $attrs, JSON_UNESCAPED_UNICODE ) . ' /-->';
 }
 
 /**
@@ -137,7 +139,10 @@ function brmbh_scaffold_run( bool $dry_run = false ): array {
 			'post_name'    => $page_def['slug'],
 			'post_type'    => 'page',
 			'post_status'  => $page_def['status'] ?? 'publish',
-			'post_content' => $page_def['content'] ?? '',
+			// wp_insert_post() unslashes what it is given, so block-attribute JSON
+			// must be slashed on the way in — otherwise every backslash is eaten
+			// and \u2014 lands as 'u2014', escaped quotes break the attributes.
+			'post_content' => wp_slash( $page_def['content'] ?? '' ),
 		) );
 
 		if ( is_wp_error( $post_id ) ) {

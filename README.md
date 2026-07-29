@@ -61,8 +61,10 @@ or a theme with no ACF dependency.
 
 ### 1. 🧱 An ACF block factory that registers itself
 
-A block is a folder of four files. Drop it into `my-acf-blocks/` and it's live — no
-`register_block_type()` calls, no central registry, no manual ACF group wiring.
+A block is a folder of four files in `my-acf-blocks/`, and it registers itself the moment it
+exists — no `register_block_type()` calls, no central registry, no manual ACF group wiring.
+That convention is what lets your agent add a block reliably: it has one pattern to follow, and
+you get a diff to review instead of boilerplate to write.
 
 ```
 my-acf-blocks/{block-name}/
