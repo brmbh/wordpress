@@ -36,7 +36,7 @@
   "homepage": "https://github.com/brmbh/wordpress",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brmbh/wordpress.git",
+    "url": "git+https://github.com/brmbh/wordpress.git",
     "directory": "packages/cli"
   }
 }
