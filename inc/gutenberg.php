@@ -3,7 +3,7 @@
  * Gutenberg / block editor customizations
  * Derives color palette and spacing from theme brand tokens.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 /**

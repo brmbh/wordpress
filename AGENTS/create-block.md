@@ -1,6 +1,6 @@
 # /create-block
 
-Create a new ACF block in `my-acf-blocks/{block-name}/` with the four-file convention used by `brmbh-agentic-wp-suite`. **Ask all questions first, write files last.**
+Create a new ACF block in `my-acf-blocks/{block-name}/` with the four-file convention used by `brmbh`. **Ask all questions first, write files last.**
 
 ## Workflow
 

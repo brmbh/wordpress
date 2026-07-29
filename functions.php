@@ -1,10 +1,10 @@
 <?php
 /**
- * brmbh-agentic-wp-suite — theme functions
+ * brmbh — theme functions
  *
  * Agentic WordPress starter: Bootstrap 5 + Gutenberg + ACF block factory.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 define( 'BRMBH_VERSION', '0.1.0' );
@@ -15,7 +15,7 @@ define( 'BRMBH_URI', get_template_directory_uri() );
 // Theme setup
 // ---------------------------------------------------------------------------
 function brmbh_setup() {
-	load_theme_textdomain( 'brmbh-agentic-wp-suite', BRMBH_DIR . '/languages' );
+	load_theme_textdomain( 'brmbh', BRMBH_DIR . '/languages' );
 
 	add_theme_support( 'automatic-feed-links' );
 	add_theme_support( 'title-tag' );
@@ -25,8 +25,8 @@ function brmbh_setup() {
 	add_theme_support( 'align-wide' );
 
 	register_nav_menus( array(
-		'menu-primary'  => __( 'Primary Navigation', 'brmbh-agentic-wp-suite' ),
-		'menu-footer-1' => __( 'Footer Navigation', 'brmbh-agentic-wp-suite' ),
+		'menu-primary'  => __( 'Primary Navigation', 'brmbh' ),
+		'menu-footer-1' => __( 'Footer Navigation', 'brmbh' ),
 	) );
 }
 add_action( 'after_setup_theme', 'brmbh_setup' );

@@ -11,7 +11,7 @@
  * Drop a new folder with these four files and it works — no manual registration.
  * fields.php alone is valid for ACF groups without a custom block.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -43,10 +43,10 @@ This clones the theme, runs `npm install`, builds assets, wires agent skills for
 
 ### Offline / local checkout
 
-If the user already has a local clone of `brmbh-agentic-wp-suite`:
+If the user already has a local clone of the theme repo (`brmbh/wordpress`):
 
 ```bash
-brmbh create <theme-name> --from /path/to/brmbh-agentic-wp-suite
+brmbh create <theme-name> --from /path/to/brmbh-wordpress
 ```
 
 ### Skip steps

@@ -2,7 +2,7 @@
 /**
  * Footer menu registration and render helpers
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 /**

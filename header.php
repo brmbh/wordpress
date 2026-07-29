@@ -2,7 +2,7 @@
 /**
  * Header template — site head + sticky nav.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 ?>
 <!doctype html>
@@ -18,7 +18,7 @@
 
 <nav id="masthead" class="site-nav navbar navbar-expand-lg"
      role="navigation"
-     aria-label="<?php esc_attr_e( 'Primary navigation', 'brmbh-agentic-wp-suite' ); ?>">
+     aria-label="<?php esc_attr_e( 'Primary navigation', 'brmbh' ); ?>">
 	<div class="container">
 
 		<?php
@@ -34,16 +34,16 @@
 
 		<button class="navbar-toggler site-nav__toggler" type="button"
 		        data-bs-toggle="collapse" data-bs-target="#mainNavMenu"
-		        data-label-open="<?php esc_attr_e( 'Open menu', 'brmbh-agentic-wp-suite' ); ?>"
-		        data-label-close="<?php esc_attr_e( 'Close menu', 'brmbh-agentic-wp-suite' ); ?>"
+		        data-label-open="<?php esc_attr_e( 'Open menu', 'brmbh' ); ?>"
+		        data-label-close="<?php esc_attr_e( 'Close menu', 'brmbh' ); ?>"
 		        aria-controls="mainNavMenu" aria-expanded="false"
-		        aria-label="<?php esc_attr_e( 'Open menu', 'brmbh-agentic-wp-suite' ); ?>">
+		        aria-label="<?php esc_attr_e( 'Open menu', 'brmbh' ); ?>">
 			<span class="site-nav__toggler-lines" aria-hidden="true">
 				<span></span>
 				<span></span>
 				<span></span>
 			</span>
-			<span class="site-nav__toggler-label"><?php esc_html_e( 'Menu', 'brmbh-agentic-wp-suite' ); ?></span>
+			<span class="site-nav__toggler-label"><?php esc_html_e( 'Menu', 'brmbh' ); ?></span>
 		</button>
 
 		<div class="collapse navbar-collapse site-nav__collapse" id="mainNavMenu">

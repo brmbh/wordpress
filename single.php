@@ -2,7 +2,7 @@
 /**
  * Single post template — minimal fallback (this theme is not blog-driven)
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 get_header();

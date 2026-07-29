@@ -5,7 +5,7 @@
  * Logo: Customizer Site Identity, or assets/img/logo.svg fallback (see
  * inc/template-functions.php). Copyright + footer nav are filterable.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 ?>
 	<footer id="colophon" class="site-footer">
@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="site-footer__bottom">
-			<span><?php echo esc_html( apply_filters( 'brmbh_footer_copyright', '© ' . gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) . '. ' . __( 'All rights reserved.', 'brmbh-agentic-wp-suite' ) ) ); ?></span>
+			<span><?php echo esc_html( apply_filters( 'brmbh_footer_copyright', '© ' . gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) . '. ' . __( 'All rights reserved.', 'brmbh' ) ) ); ?></span>
 		</div>
 
 	</footer>

@@ -5,7 +5,7 @@
  * Brmbh_Bootstrap_Nav_Walker : primary nav  → .site-nav__menu .nav-item .site-nav__link
  * Brmbh_Footer_Nav_Walker    : footer nav   → .site-footer__nav li a
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 if ( ! class_exists( 'Brmbh_Bootstrap_Nav_Walker' ) ) :

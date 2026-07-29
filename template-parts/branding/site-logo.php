@@ -2,7 +2,7 @@
 /**
  * Site logo — Custom Logo (Customizer) or theme SVG fallback.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  *
  * @var array $args {
  *     @type string $class      CSS class on the <img>.

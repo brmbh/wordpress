@@ -2,7 +2,7 @@
 /**
  * Template helper functions — logo, body classes, FOUC guard.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 /**

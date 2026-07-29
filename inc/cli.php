@@ -5,7 +5,7 @@
  * Thin wrappers around scaffold + shell scripts. Same code surface, two faces:
  * humans call `wp brmbh ...` directly; agents call the same via SSH or skills.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {

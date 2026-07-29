@@ -1,4 +1,4 @@
-# brmbh Agentic WP Suite
+# brmbh — agentic WordPress suite
 
 **An agentic WordPress starter theme: Bootstrap 5 + Gutenberg + a self-registering ACF block
 factory, built to be driven by a coding agent.**

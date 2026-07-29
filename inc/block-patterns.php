@@ -11,7 +11,7 @@
  *   2. Register pattern category "Sections"
  *   3. Patterns: White, Highlighted (beige), Dark, Image + Text
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 // ── Block category for ACF custom blocks ─────────────────────────────────────
@@ -21,7 +21,7 @@ add_filter( 'block_categories_all', function ( $categories ) {
 		array(
 			array(
 				'slug'  => 'brmbh-sections',
-				'title' => __( 'Sections', 'brmbh-agentic-wp-suite' ),
+				'title' => __( 'Sections', 'brmbh' ),
 				'icon'  => 'layout',
 			),
 		),
@@ -34,8 +34,8 @@ add_filter( 'block_categories_all', function ( $categories ) {
 add_action( 'init', function () {
 
 	register_block_pattern_category( 'brmbh-sections', array(
-		'label'       => __( 'Sections', 'brmbh-agentic-wp-suite' ),
-		'description' => __( 'Full-width section templates. Background extends edge-to-edge; content constrained to 1272px.', 'brmbh-agentic-wp-suite' ),
+		'label'       => __( 'Sections', 'brmbh' ),
+		'description' => __( 'Full-width section templates. Background extends edge-to-edge; content constrained to 1272px.', 'brmbh' ),
 	) );
 
 	// ── Pattern: Section — White ──────────────────────────────────────────────
@@ -44,8 +44,8 @@ add_action( 'init', function () {
 	// via the block toolbar.
 
 	register_block_pattern( 'brmbh/section-white', array(
-		'title'       => __( 'Section — White', 'brmbh-agentic-wp-suite' ),
-		'description' => __( 'Full-width section, white bg, content constrained to 1272px.', 'brmbh-agentic-wp-suite' ),
+		'title'       => __( 'Section — White', 'brmbh' ),
+		'description' => __( 'Full-width section, white bg, content constrained to 1272px.', 'brmbh' ),
 		'categories'  => array( 'brmbh-sections' ),
 		'content'     => '<!-- wp:group {"align":"full","className":"section","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull section">
@@ -67,8 +67,8 @@ add_action( 'init', function () {
 	// USP grids, alternating content rows, "featured" feel without dark bg.
 
 	register_block_pattern( 'brmbh/section-highlighted', array(
-		'title'       => __( 'Section — Highlighted', 'brmbh-agentic-wp-suite' ),
-		'description' => __( 'Full-width section, beige bg (secondary-light), content constrained to 1272px.', 'brmbh-agentic-wp-suite' ),
+		'title'       => __( 'Section — Highlighted', 'brmbh' ),
+		'description' => __( 'Full-width section, beige bg (secondary-light), content constrained to 1272px.', 'brmbh' ),
 		'categories'  => array( 'brmbh-sections' ),
 		'content'     => '<!-- wp:group {"align":"full","backgroundColor":"secondary-light","className":"section","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull section has-secondary-light-background-color has-background">
@@ -94,8 +94,8 @@ add_action( 'init', function () {
 	// high-contrast CTA sections or event backgrounds.
 
 	register_block_pattern( 'brmbh/section-dark', array(
-		'title'       => __( 'Section — Dark', 'brmbh-agentic-wp-suite' ),
-		'description' => __( 'Full-width section, dark brand bg (primary-darker), white text, content constrained to 1272px.', 'brmbh-agentic-wp-suite' ),
+		'title'       => __( 'Section — Dark', 'brmbh' ),
+		'description' => __( 'Full-width section, dark brand bg (primary-darker), white text, content constrained to 1272px.', 'brmbh' ),
 		'categories'  => array( 'brmbh-sections' ),
 		'content'     => '<!-- wp:group {"align":"full","backgroundColor":"primary-darker","textColor":"white","className":"section","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull section has-primary-darker-background-color has-white-color has-text-color has-background">
@@ -118,8 +118,8 @@ add_action( 'init', function () {
 	// the editor. Add .imagetext-content class to the text column for gap spacing.
 
 	register_block_pattern( 'brmbh/image-text', array(
-		'title'       => __( 'Image + Text', 'brmbh-agentic-wp-suite' ),
-		'description' => __( '50/50 image-left + text-right section. Stacks on mobile. Flip columns to move image right.', 'brmbh-agentic-wp-suite' ),
+		'title'       => __( 'Image + Text', 'brmbh' ),
+		'description' => __( '50/50 image-left + text-right section. Stacks on mobile. Flip columns to move image right.', 'brmbh' ),
 		'categories'  => array( 'brmbh-sections' ),
 		'content'     => '<!-- wp:group {"align":"full","className":"section bg-white","layout":{"type":"default"}} -->
 <div class="wp-block-group alignfull section bg-white">

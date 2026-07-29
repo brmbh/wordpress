@@ -2,7 +2,7 @@
 /**
  * Main template — generic fallback. This theme is page/block-driven, not blog-driven.
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 get_header();

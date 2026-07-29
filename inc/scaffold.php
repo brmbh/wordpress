@@ -16,7 +16,7 @@
  * - Block templates (per-block, via /create-block skill)
  * - DB sync across environments (deferred — see Phase 2)
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

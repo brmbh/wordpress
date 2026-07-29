@@ -18,7 +18,7 @@
  *   4. Frontend: a `wp_die()` is NOT used — site renders bare but functional
  *      so a logged-in admin can still reach the dashboard to fix it
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,7 +55,7 @@ function brmbh_acf_dependency_message(): string {
 	if ( ! defined( 'ACF_PRO' ) ) {
 		return sprintf(
 			/* translators: %s: required SCF version */
-			__( '<strong>brmbh-agentic-wp-suite</strong> requires <strong>Secure Custom Fields (SCF) %s or higher</strong>. SCF is not installed or not active. Install it free at <a href="https://wordpress.org/plugins/secure-custom-fields/" target="_blank" rel="noopener">wordpress.org/plugins/secure-custom-fields</a>. ACF Pro also works.', 'brmbh-agentic-wp-suite' ),
+			__( '<strong>brmbh</strong> requires <strong>Secure Custom Fields (SCF) %s or higher</strong>. SCF is not installed or not active. Install it free at <a href="https://wordpress.org/plugins/secure-custom-fields/" target="_blank" rel="noopener">wordpress.org/plugins/secure-custom-fields</a>. ACF Pro also works.', 'brmbh' ),
 			BRMBH_REQUIRED_ACF_VERSION
 		);
 	}
@@ -63,12 +63,12 @@ function brmbh_acf_dependency_message(): string {
 		$version = acf_get_setting( 'version' );
 		return sprintf(
 			/* translators: 1: installed SCF/ACF version, 2: required version */
-			__( '<strong>brmbh-agentic-wp-suite</strong> requires Secure Custom Fields (SCF) <strong>%2$s</strong> or higher. Installed version: <strong>%1$s</strong>. Please update SCF.', 'brmbh-agentic-wp-suite' ),
+			__( '<strong>brmbh</strong> requires Secure Custom Fields (SCF) <strong>%2$s</strong> or higher. Installed version: <strong>%1$s</strong>. Please update SCF.', 'brmbh' ),
 			esc_html( $version ),
 			BRMBH_REQUIRED_ACF_VERSION
 		);
 	}
-	return __( '<strong>brmbh-agentic-wp-suite</strong> requires Secure Custom Fields (SCF). SCF is installed but not loaded — check the plugin is active.', 'brmbh-agentic-wp-suite' );
+	return __( '<strong>brmbh</strong> requires Secure Custom Fields (SCF). SCF is installed but not loaded — check the plugin is active.', 'brmbh' );
 }
 
 /**
@@ -104,7 +104,7 @@ function brmbh_acf_dependency_post_activate_notice(): void {
 	}
 	delete_transient( 'brmbh_acf_missing_on_activate' );
 	echo '<div class="notice notice-error is-dismissible">';
-	echo '<p><strong>⚠️ ' . esc_html__( 'Theme activated, but Secure Custom Fields (SCF) is missing.', 'brmbh-agentic-wp-suite' ) . '</strong></p>';
+	echo '<p><strong>⚠️ ' . esc_html__( 'Theme activated, but Secure Custom Fields (SCF) is missing.', 'brmbh' ) . '</strong></p>';
 	echo '<p>' . wp_kses_post( brmbh_acf_dependency_message() ) . '</p>';
 	echo '</div>';
 }

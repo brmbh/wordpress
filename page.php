@@ -2,7 +2,7 @@
 /**
  * Page template — renders Gutenberg/ACF block content for any page
  *
- * @package brmbh-agentic-wp-suite
+ * @package brmbh
  */
 
 get_header();

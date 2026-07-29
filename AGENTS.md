@@ -1,4 +1,4 @@
-# Agent operating contract — brmbh Agentic WP Suite
+# Agent operating contract — brmbh
 
 This file is the canonical instruction set for any coding agent working in this theme. Other
 agents (Claude, Cursor, Windsurf) point here. Read it before making changes.
