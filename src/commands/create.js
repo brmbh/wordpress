@@ -3,7 +3,7 @@
  *
  * The "slick install": one command turns an empty folder into a working,
  * agent-ready brmbh theme. Each step is best-effort and reported clearly;
- * environment gaps (no wp-cli, no ACF Pro yet) warn but never abort the build.
+ * environment gaps (no wp-cli, no SCF yet) warn but never abort the build.
  */
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
@@ -76,12 +76,12 @@ export async function run(ctx, args) {
     ui.ok(`Agent skills wired (${gen.skills} skills → ${gen.wrappers} wrappers across .claude/.cursor/.windsurf)`);
   }
 
-  // 5. ACF Pro check
+  // 5. SCF check (Secure Custom Fields — free drop-in, ACF Pro also works)
   const acf = await acfStatus(ctx.cwd);
-  if (acf === 'active') ui.ok('ACF Pro detected and active');
-  else if (acf === 'installed') ui.warn('ACF Pro installed but not active — activate it before editing blocks');
-  else if (acf === 'missing') ui.warn('ACF Pro / Secure Custom Fields not found — required for blocks (bring your own license)');
-  else ui.info('Could not verify ACF (no wp-cli) — ensure ACF Pro is installed');
+  if (acf === 'active') ui.ok('SCF / ACF detected and active');
+  else if (acf === 'installed') ui.warn('SCF installed but not active — activate it before editing blocks');
+  else if (acf === 'missing') ui.warn('Secure Custom Fields (SCF) not found — install free from wordpress.org/plugins/secure-custom-fields');
+  else ui.info('Could not verify SCF (no wp-cli) — ensure Secure Custom Fields is installed');
 
   // 6. activate theme via wp-cli when we're inside a real WP install
   if (!args['skip-activate']) {
@@ -98,7 +98,7 @@ export async function run(ctx, args) {
 
   const next = [
     !steps.installed && !args['skip-install'] ? `cd ${slug} && npm install && npm run build` : null,
-    acf === 'missing' ? 'Install ACF Pro (or Secure Custom Fields) and activate it' : null,
+    acf === 'missing' ? 'Install Secure Custom Fields (SCF) — free at wordpress.org/plugins/secure-custom-fields' : null,
     !steps.activated ? `Activate the "${slug}" theme in WordPress` : null,
     'Open your editor + Claude/Cursor and try: "create a hero block from this Figma frame"',
     'Build assets while you work: brmbh dev',

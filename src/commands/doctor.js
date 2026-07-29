@@ -43,8 +43,8 @@ export async function run(ctx, args) {
   const wpcli = await hasWpCli();
   add('wp-cli', wpcli ? 'ok' : 'warn', wpcli ? 'available' : 'not found (optional but recommended)');
   const acf = await acfStatus(ctx.cwd);
-  add('acf-pro', acf === 'active' ? 'ok' : acf === 'unknown' ? 'warn' : 'fail',
-    acf === 'active' ? 'active' : acf === 'installed' ? 'installed, not active' : acf === 'unknown' ? (wpcli ? 'cannot verify (run from the WP install)' : 'cannot verify (no wp-cli)') : 'missing — required for blocks');
+  add('scf', acf === 'active' ? 'ok' : acf === 'unknown' ? 'warn' : 'fail',
+    acf === 'active' ? 'active' : acf === 'installed' ? 'installed, not active' : acf === 'unknown' ? (wpcli ? 'cannot verify (run from the WP install)' : 'cannot verify (no wp-cli)') : 'missing — install free from wordpress.org/plugins/secure-custom-fields');
 
   const hasFail = checks.some((c) => c.status === 'fail');
   const hasWarn = checks.some((c) => c.status === 'warn');

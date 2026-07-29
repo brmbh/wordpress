@@ -33,13 +33,10 @@ export async function themesDir(wpRoot) {
 
 /** Heuristically decide whether `dir` is a brmbh theme. */
 export async function isBrmbhTheme(dir) {
-  if (await isDir(path.join(dir, 'my-acf-blocks'))) return true;
-  const styleCss = path.join(dir, 'style.css');
-  if (await exists(styleCss)) {
-    const txt = await readText(styleCss).catch(() => '');
-    if (/brmbh/i.test(txt)) return true;
-  }
-  return false;
+  // Primary signal: the ACF block factory directory — unique to brmbh themes
+  if (!(await isDir(path.join(dir, 'my-acf-blocks')))) return false;
+  // Secondary signal: must also have a package.json (built theme, not just any dir with that folder name)
+  return exists(path.join(dir, 'package.json'));
 }
 
 /**
@@ -66,7 +63,7 @@ export async function hasWpCli() {
 }
 
 /**
- * Check ACF Pro (or the Secure Custom Fields fork) via wp-cli when available.
+ * Check SCF (Secure Custom Fields) or ACF Pro via wp-cli when available.
  * @returns {Promise<'active'|'installed'|'missing'|'unknown'>}
  */
 export async function acfStatus(cwd) {
