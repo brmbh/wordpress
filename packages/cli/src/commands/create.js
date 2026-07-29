@@ -149,10 +149,15 @@ async function stripStarterScaffolding(dest, ui) {
 
   // paths that only make sense in the monorepo
   const drop = [
-    'packages',       // the @brmbh/cli source — consumed from npm instead
-    'skills',         // pre-scaffold skill, distributed via `npx skills add`
-    'skills.sh.json', // its manifest
-    '.github',        // the starter's own CI
+    'packages',          // the @brmbh/cli source — consumed from npm instead
+    'skills',            // pre-scaffold skill, distributed via `npx skills add`
+    'skills.sh.json',    // its manifest
+    '.github',           // the starter's own CI
+    // The starter's lockfile records @brmbh/cli as a *workspace link*. Copied
+    // into a scaffold it makes npm recreate node_modules/@brmbh/cli as a
+    // symlink to the packages/ dir we just deleted — a dangling link, and the
+    // registry version never gets fetched. npm regenerates this on install.
+    'package-lock.json',
   ];
   for (const rel of drop) {
     const target = path.join(dest, rel);
