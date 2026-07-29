@@ -1,13 +1,21 @@
 # @brmbh/cli
 
-The command-line front door to the **[brmbh agentic WordPress suite](https://github.com/Schmandarine/brmbh-agentic-wp-suite)** — a modern Bootstrap 5 + Gutenberg + ACF block-factory starter theme with built-in agent skills.
+> [!IMPORTANT]
+> **This repo is moving into [brmbh/wordpress](https://github.com/brmbh/wordpress).**
+> The CLI is becoming a devDependency of the theme rather than a separate scaffolder, so that
+> tooling *and* agent skills stay updatable via `npm update`. See
+> [brmbh/wordpress#8](https://github.com/brmbh/wordpress/issues/8) for the plan. This repo will
+> be archived once the migration lands; `@brmbh/cli` continues to publish from the new location.
+>
+> To start a new theme today, prefer: `npx skills add brmbh/wordpress`, then ask your agent for a
+> new brmbh theme.
+
+The command-line front door to the **[brmbh agentic WordPress suite](https://github.com/brmbh/wordpress)** — a modern Bootstrap 5 + Gutenberg + ACF block-factory starter theme with built-in agent skills.
 
 One command turns an empty folder into a working, agent-ready theme. A handful of verbs cover the whole lifecycle: scaffold → build → ship.
 
 ```bash
-npm create brmbh@latest my-site     # scaffold + install + build + skills + activate
-# or
-npx @brmbh/cli create my-site
+npx -y -p @brmbh/cli create-brmbh my-site   # scaffold + install + build + skills + activate
 ```
 
 ## Why
@@ -20,10 +28,10 @@ The CLI keeps the human experience tiny (one install command + ~5 verbs) while e
 
 ```
 1.  cd wp-content/themes
-2.  npx create-brmbh my-site
+2.  npx -y -p @brmbh/cli create-brmbh my-site
        → clones the theme, npm install + build
        → wires the agent skills into .claude/ .cursor/ .windsurf/
-       → checks for ACF Pro, activates the theme (when wp-cli is present)
+       → checks for SCF, activates the theme (when wp-cli is present)
 3.  Open your editor + Claude/Cursor — the skills are right there:
        "create a hero block from this Figma frame"
 4.  brmbh deploy staging          → ship it
@@ -38,9 +46,10 @@ The CLI keeps the human experience tiny (one install command + ~5 verbs) while e
 | `add cpt <name>` | One-file custom post type | Scaffolding |
 | `add skills` | (Re)generate agent skill wrappers from canonical `AGENTS/` | Scaffolding |
 | `dev [--once]` | Build / watch the theme's CSS + JS | Dev ops |
-| `doctor` | Health check (node, theme, build, ACF Pro, env) | Dev ops |
+| `doctor` | Health check (node, theme, build, SCF, env) | Dev ops |
 | `deploy <env>` | Deploy to staging/prod (wraps `tools/deploy.sh`) | Cloud deploy |
 | `db pull\|push <env>` | Migrate the database between environments | DB / sync |
+| `uploads pull\|push <env> [--delete]` | Sync `wp-content/uploads` between environments | DB / sync |
 
 Introspection is built in:
 
@@ -66,16 +75,16 @@ Commands declare a *level* describing their envelope: **L1** data, **L2** a `cla
 
 - Node ≥ 18
 - `git` (to clone the theme; or use `--from <local-checkout>` offline)
-- ACF Pro **or** Secure Custom Fields (bring your own — required for ACF blocks)
+- [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) — free, required for ACF blocks (ACF Pro also works)
 - `wp-cli` (optional; enables auto-activation + ACF detection)
 
 ## Local development
 
 ```bash
-git clone https://github.com/Schmandarine/brmbh-cli && cd brmbh-cli
+git clone https://github.com/brmbh/cli && cd cli
 node bin/brmbh.js help
 # scaffold from a local theme checkout (offline):
-node bin/brmbh.js create demo --from ../brmbh-agentic-wp-suite
+node bin/brmbh.js create demo --from ../wordpress
 ```
 
 ## License
