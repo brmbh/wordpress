@@ -24,6 +24,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Gutenberg markup for the seeded home page: one example-hero block.
+ *
+ * ACF blocks carry their field values in the block attributes — `data` holds
+ * name => value, and each `_name` key points at the field key so ACF can
+ * resolve the group. Keep these in sync with
+ * my-acf-blocks/example-hero/fields.php.
+ *
+ * @return string
+ */
+function brmbh_scaffold_home_content(): string {
+	$attrs = array(
+		'name' => 'acf/example-hero',
+		'data' => array(
+			'eyebrow'  => 'Agentic WP Suite',
+			'_eyebrow' => 'field_example_hero_eyebrow',
+			'heading'  => 'Build sections with an ACF block factory.',
+			'_heading' => 'field_example_hero_heading',
+			'body'     => 'Drop a folder with four files into my-acf-blocks/ and it registers itself. No manual wiring, no central registry. Ask your agent for a block and it writes all four.',
+			'_body'    => 'field_example_hero_body',
+		),
+		'mode' => 'preview',
+	);
+
+	return '<!-- wp:acf/example-hero ' . wp_json_encode( $attrs ) . ' /-->';
+}
+
+/**
  * The scaffold definition for this site.
  * Edit this array to declare what should exist on the site. Then run:
  *   wp brmbh scaffold
@@ -38,6 +65,11 @@ function brmbh_scaffold_definition(): array {
 				'title'             => 'Home',
 				'status'            => 'publish',
 				'set_as_front_page' => true,
+				// Seeded so a fresh install renders something real instead of an
+				// empty page. The theme's nav is fixed and transparent, designed to
+				// sit over a hero — with no content the header collapses onto the
+				// footer and the site looks broken on first load.
+				'content'           => brmbh_scaffold_home_content(),
 			),
 			array(
 				'slug'   => 'sample-page',
@@ -105,7 +137,7 @@ function brmbh_scaffold_run( bool $dry_run = false ): array {
 			'post_name'    => $page_def['slug'],
 			'post_type'    => 'page',
 			'post_status'  => $page_def['status'] ?? 'publish',
-			'post_content' => '',
+			'post_content' => $page_def['content'] ?? '',
 		) );
 
 		if ( is_wp_error( $post_id ) ) {
