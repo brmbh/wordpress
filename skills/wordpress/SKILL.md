@@ -195,6 +195,7 @@ Once doctor reports `class: ready` and the theme is active, the in-theme `AGENTS
 | `/deploy` | Ship the built theme to a remote environment over SSH |
 | `/sync-db` | Pull or push the database between environments |
 | `/sync-plugins` | Mirror active plugins to a remote environment |
+| `/sync-uploads` | Sync `wp-content/uploads` between environments (push is guarded + destructive) |
 | `/check-versions` | Report PHP / WordPress / theme / plugin version drift |
 
 Invoke them directly (e.g. `/create-block`) or let the agent pick them up from context.
@@ -212,6 +213,7 @@ brmbh add skills                    # regenerate agent skill wrappers
 brmbh dev [--once]                  # build/watch CSS + JS
 brmbh deploy <staging|prod>         # deploy over SSH
 brmbh db pull|push <staging|prod>   # sync database
+brmbh uploads pull|push <staging|prod> [--delete]  # sync wp-content/uploads
 ```
 
 All commands accept `--json` for a structured envelope (always exit 0, `ok` field signals success):

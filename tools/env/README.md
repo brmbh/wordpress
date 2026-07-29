@@ -23,11 +23,13 @@ source tools/env/staging.env && ./tools/db-verify.sh   # safe — connection tes
 source tools/env/staging.env && ./tools/deploy.sh       # rsync theme → server
 source tools/env/staging.env && ./tools/db-push.sh      # local DB → remote (if allowed)
 source tools/env/production.env && ./tools/db-pull.sh   # remote DB → local
+source tools/env/staging.env && ./tools/uploads-pull.sh # remote uploads → local
+source tools/env/staging.env && ./tools/uploads-push.sh # local uploads → remote (if allowed)
 ```
 
 ## The `CANONICAL_ENV` guard
 
-`db-push.sh` overwrites the remote database, so it's gated:
+`db-push.sh` and `uploads-push.sh` overwrite/mirror the remote, so both are gated:
 
 - `CANONICAL_ENV=local` → push allowed (local dev is the source of truth, pre-launch).
 - `CANONICAL_ENV=remote` → push **blocked** (production is the source of truth, post-launch).

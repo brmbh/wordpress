@@ -1,0 +1,6 @@
+---
+description: Sync wp-content/uploads between local and a remote environment. Apply when the user asks to sync uploads, media, or wp-content/uploads with a remote environment.
+alwaysApply: false
+---
+
+Read `AGENTS/sync-uploads.md` and follow it exactly.

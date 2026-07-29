@@ -26,6 +26,7 @@ preconditions and guardrails.
 | `/deploy` | Ship theme code to a remote env | `tools/deploy.sh` |
 | `/sync-db` | Pull/push the database (push is destructive) | `tools/db-*.sh` |
 | `/sync-plugins` | Mirror active plugins to a remote env | `tools/sync-plugins.sh` |
+| `/sync-uploads` | Sync `wp-content/uploads` (push is destructive) | `tools/uploads-*.sh` |
 | `/check-versions` | Report PHP/WP/theme/plugin drift | `tools/version-check.sh` |
 
 Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `inc/scaffold.php`).
@@ -33,8 +34,9 @@ Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `in
 **Operations guardrails (deploy + sync):** these touch live servers and databases.
 - Always `npm run build` before `/deploy`.
 - Always run `db-verify.sh` (or `/check-versions`) before a DB sync.
-- `/sync-db` push is **destructive** and guarded by `CANONICAL_ENV` — never bypass the guard or
-  set `SKIP_CONFIRM` on the user's behalf; if a push is blocked, stop and ask.
+- `/sync-db` and `/sync-uploads` pushes are **destructive** and guarded by `CANONICAL_ENV` —
+  never bypass the guard or set `SKIP_CONFIRM` on the user's behalf; if a push is blocked,
+  stop and ask.
 - Real `tools/env/*.env` files are gitignored — never commit them or echo their secrets.
 
 ## Design system — the rules
