@@ -39,9 +39,9 @@ function brmbh_scaffold_home_content(): string {
 		'data' => array(
 			'eyebrow'  => 'Agentic WordPress',
 			'_eyebrow' => 'field_example_hero_eyebrow',
-			'heading'  => 'Ask for a section. Your agent builds the block.',
+			'heading'  => 'Show your agent a design. Get a Gutenberg block with the fields to match.',
 			'_heading' => 'field_example_hero_heading',
-			'body'     => 'Every block is four files following one convention — so your agent has a pattern to follow instead of improvising, and you review a diff instead of writing boilerplate. Open your editor and ask for a hero built from a Figma frame.',
+			'body'     => 'It reads the frame, maps the content to ACF fields, and writes the block — markup, styles, fields and registration. Four files, one convention, so the result is reviewable as a diff instead of taken on trust.',
 			'_body'    => 'field_example_hero_body',
 		),
 		'mode' => 'preview',
