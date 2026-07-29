@@ -1,6 +1,0 @@
----
-description: Audit all registered ACF blocks and field groups. Apply when the user asks to list, show, or audit existing blocks.
-alwaysApply: false
----
-
-Read `AGENTS/list-blocks.md` and follow it exactly.

@@ -18,3 +18,8 @@ npm-debug.log*
 
 # Local WP-CLI / sandbox artifacts
 .debug-screenshots/
+
+# Agent skill wrappers — generated from @brmbh/cli AGENTS/ on install
+.claude/commands/
+.cursor/rules/
+.windsurf/rules/

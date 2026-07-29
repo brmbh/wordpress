@@ -1,6 +1,0 @@
----
-description: Delete an ACF block — folder, files, and SCSS import. Apply when the user asks to remove or delete a block.
-alwaysApply: false
----
-
-Read `AGENTS/delete-block.md` and follow it exactly.

@@ -1,6 +1,0 @@
----
-description: Sync Figma Variables to _tokens.scss via the Figma MCP. Apply when the user asks to sync tokens, update design tokens, or pull values from Figma.
-alwaysApply: false
----
-
-Read `AGENTS/sync-tokens.md` and follow it exactly.

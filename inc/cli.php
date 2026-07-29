@@ -81,10 +81,27 @@ class BRMBH_CLI {
 	 */
 	public function tokens( array $args, array $assoc_args ): void {
 		$theme_dir = get_template_directory();
-		$script    = $theme_dir . '/tools/sync-tokens.mjs';
 
-		if ( ! file_exists( $script ) ) {
-			WP_CLI::error( 'tools/sync-tokens.mjs not found in theme directory.' );
+		// sync-tokens.mjs ships in @brmbh/cli, installed as a devDependency.
+		// A project-local tools/ copy still wins, so a theme can override it.
+		$candidates = array(
+			$theme_dir . '/tools/sync-tokens.mjs',
+			$theme_dir . '/node_modules/@brmbh/cli/tools/sync-tokens.mjs',
+		);
+
+		$script = '';
+		foreach ( $candidates as $candidate ) {
+			if ( file_exists( $candidate ) ) {
+				$script = $candidate;
+				break;
+			}
+		}
+
+		if ( '' === $script ) {
+			WP_CLI::error(
+				"sync-tokens.mjs not found.\n" .
+				'Run `npm install` in the theme directory to install @brmbh/cli.'
+			);
 		}
 
 		$config = $theme_dir . '/.brmbh-config.json';

@@ -1,6 +1,0 @@
----
-description: Sync active plugins from local to a remote environment. Apply when the user asks to sync or install plugins on a remote environment.
-alwaysApply: false
----
-
-Read `AGENTS/sync-plugins.md` and follow it exactly.
