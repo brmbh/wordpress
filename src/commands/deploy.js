@@ -4,11 +4,17 @@
  * The CLI is a thin, predictable front for the existing rsync/CI scripts. If the
  * deploy suite isn't present (it ships separately), the command explains rather
  * than fails silently.
+ *
+ * deploy.sh doesn't take the environment as an argument — it reads already-
+ * `export`ed shell vars (see tools/env/*.env.example), meant to be `source`d
+ * first. The CLI composes that exact same `source && run` command rather
+ * than reimplementing env-file parsing in JS.
  */
 import path from 'node:path';
 import { LEVEL, ToolError } from '../tool.js';
 import { exists } from '../fsutil.js';
 import { findThemeDir } from '../wp.js';
+import { envFilePath, envFileName, sourceAndRun } from '../envfile.js';
 
 export const spec = {
   description: "Deploy the theme to an environment (wraps tools/deploy.sh)",
@@ -32,10 +38,19 @@ export async function run(ctx, args) {
     );
   }
 
+  const envFile = await envFilePath(themeDir, args.env);
+  if (!envFile) {
+    throw new ToolError(
+      'no_env_file',
+      `No tools/env/${envFileName(args.env)} in this theme.`,
+      `Copy tools/env/${envFileName(args.env)}.example to ${envFileName(args.env)} and fill in your values, then retry.`,
+    );
+  }
+
   ctx.ui.step(`Deploying → ${args.env}`);
-  const scriptArgs = [args.env];
-  if (args['dry-run']) scriptArgs.push('--dry-run');
-  const { code } = await ctx.run('bash', [script, ...scriptArgs], { cwd: themeDir });
+  const scriptArgs = args['dry-run'] ? ['--dry-run'] : [];
+  const cmd = sourceAndRun(envFile, script, scriptArgs);
+  const { code } = await ctx.run('bash', ['-c', cmd], { cwd: themeDir });
 
   const klass = code === 0 ? 'deployed' : 'failed';
   if (code !== 0) throw new ToolError('deploy_failed', `deploy.sh exited with code ${code}`);
