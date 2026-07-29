@@ -97,6 +97,14 @@ One command in each direction, every one agent-callable:
 Environments are tiny gitignored `tools/env/*.env` files (copy from the `.example`
 templates). See [`tools/env/README.md`](tools/env/README.md).
 
+Every one of these runs on your machine and acts on the server over SSH — the toolchain needs
+Node, the server only needs SSH, wp-cli and rsync. You can also inspect a deployed site without
+a local WordPress:
+
+```bash
+brmbh doctor --json --ssh host:/path/to/wordpress   # is the live site actually healthy?
+```
+
 ### 3. 🎨 A real Bootstrap 5 ↔ Gutenberg integration
 
 Bootstrap and the block editor share **one source of truth** for color, spacing, and

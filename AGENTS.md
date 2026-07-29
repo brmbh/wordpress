@@ -11,6 +11,17 @@ agents (Claude, Cursor, Windsurf) point here. Read it before making changes.
    warning, `blocked` → fix before doing anything else.
 3. No `wp-cli`? Say so. `/deploy`, `/sync-db`, `/sync-uploads` and SCF detection will not work.
 
+**Checking a site you deployed to,** rather than this working copy — the theme is local, the
+WordPress is on the server:
+
+```bash
+npx brmbh doctor --json --ssh host:/path/to/wordpress
+```
+
+Needs SSH access and wp-cli on the remote (most shared hosts have it); no WordPress locally.
+Use it after `/deploy` to confirm the live site is healthy — a deploy that "succeeded" is not
+the same as a site that works.
+
 ## Two different things are both called `brmbh`
 
 Do not confuse these — dropping or adding the `wp` prefix gets you "unknown command":
