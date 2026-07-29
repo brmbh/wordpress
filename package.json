@@ -4,10 +4,10 @@
   "description": "Agentic WordPress starter theme — Bootstrap 5 + Gutenberg + ACF block factory with agent-agnostic skills.",
   "license": "GPL-2.0-or-later",
   "author": "Jan Brombach",
-  "homepage": "https://github.com/Schmandarine/brmbh-agentic-wp-suite",
+  "homepage": "https://github.com/brmbh/wordpress",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Schmandarine/brmbh-agentic-wp-suite.git"
+    "url": "https://github.com/brmbh/wordpress.git"
   },
   "private": false,
   "scripts": {
