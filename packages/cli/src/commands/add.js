@@ -13,7 +13,7 @@ import { promises as fs } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { LEVEL, ToolError } from '../tool.js';
 import { exists, isDir, ensureDir, readText, writeText, render, slugify, titleCase } from '../fsutil.js';
-import { findThemeDir } from '../wp.js';
+import { findThemeDir, themeNotFoundDetail } from '../wp.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES = path.join(__dirname, '..', '..', 'templates');
@@ -35,7 +35,7 @@ export const spec = {
 export async function run(ctx, args) {
   const themeDir = await findThemeDir(ctx.cwd);
   if (!themeDir) {
-    throw new ToolError('no_theme', 'No brmbh theme found here.', 'Run from inside a brmbh theme, or scaffold one with `create-brmbh`.');
+    throw new ToolError('no_theme', 'No brmbh theme found here.', await themeNotFoundDetail(ctx.cwd));
   }
 
   switch (args.kind) {

@@ -6,7 +6,7 @@
 import path from 'node:path';
 import { LEVEL, ToolError } from '../tool.js';
 import { exists } from '../fsutil.js';
-import { findThemeDir } from '../wp.js';
+import { findThemeDir, themeNotFoundDetail } from '../wp.js';
 
 export const spec = {
   description: "Build or watch the theme's CSS + JS",
@@ -19,7 +19,7 @@ export const spec = {
 
 export async function run(ctx, args) {
   const themeDir = await findThemeDir(ctx.cwd);
-  if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.');
+  if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.', await themeNotFoundDetail(ctx.cwd));
   if (!(await exists(path.join(themeDir, 'package.json')))) {
     throw new ToolError('no_package', 'Theme has no package.json — nothing to build.');
   }

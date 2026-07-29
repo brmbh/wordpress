@@ -40,22 +40,65 @@ export async function isBrmbhTheme(dir) {
 }
 
 /**
- * Find the brmbh theme dir starting from cwd: the cwd itself, or scan
- * wp-content/themes/* for a brmbh theme.
+ * Find the brmbh theme dir for a given cwd.
+ *
+ * Order matters — an install can hold several brmbh-derived themes, and
+ * silently reporting on the wrong one is worse than finding none:
+ *   1. cwd is itself a brmbh theme          unambiguous
+ *   2. a brmbh theme at or above cwd        you are working inside it
+ *   3. the *active* theme (via wp-cli)      what WordPress is actually serving
+ *   4. sole brmbh theme in wp-content/themes
+ *   5. several candidates, none active      → null, caller must disambiguate
  */
 export async function findThemeDir(cwd) {
   if (await isBrmbhTheme(cwd)) return cwd;
+
+  // walk up: `brmbh dev` from a subdirectory of the theme should still work
+  let dir = path.resolve(cwd);
+  for (let i = 0; i < 8; i++) {
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+    if (await isBrmbhTheme(dir)) return dir;
+  }
+
   const wpRoot = await findWpRoot(cwd);
   const themes = await themesDir(wpRoot);
   if (!themes) return null;
+
   const { promises: fs } = await import('node:fs');
   const entries = await fs.readdir(themes, { withFileTypes: true }).catch(() => []);
+  const candidates = [];
   for (const e of entries) {
-    if (e.isDirectory() && (await isBrmbhTheme(path.join(themes, e.name)))) {
-      return path.join(themes, e.name);
-    }
+    if (e.isDirectory() && (await isBrmbhTheme(path.join(themes, e.name)))) candidates.push(e.name);
   }
+  if (!candidates.length) return null;
+  if (candidates.length === 1) return path.join(themes, candidates[0]);
+
+  // several — let WordPress break the tie
+  const active = await activeThemeSlug(wpRoot);
+  if (active && candidates.includes(active)) return path.join(themes, active);
   return null;
+}
+
+/** The active theme's directory name, or null when wp-cli can't tell us. */
+export async function activeThemeSlug(wpRoot) {
+  if (!wpRoot || !(await hasWpCli())) return null;
+  const { ok, stdout } = await capture('wp', ['option', 'get', 'stylesheet'], { cwd: wpRoot });
+  return ok && stdout ? stdout.trim() : null;
+}
+
+/** All brmbh themes under a WP root — for disambiguating error messages. */
+export async function listBrmbhThemes(cwd) {
+  const themes = await themesDir(await findWpRoot(cwd));
+  if (!themes) return [];
+  const { promises: fs } = await import('node:fs');
+  const entries = await fs.readdir(themes, { withFileTypes: true }).catch(() => []);
+  const found = [];
+  for (const e of entries) {
+    if (e.isDirectory() && (await isBrmbhTheme(path.join(themes, e.name)))) found.push(e.name);
+  }
+  return found;
 }
 
 export async function hasWpCli() {
@@ -86,4 +129,18 @@ export async function activateTheme(wpRoot, themeSlug) {
   if (!(await hasWpCli())) return false;
   const { ok } = await capture('wp', ['theme', 'activate', themeSlug], { cwd: wpRoot });
   return ok;
+}
+
+/**
+ * Human-readable reason `findThemeDir` came back empty. Distinguishes "none
+ * here" from "several, and WordPress couldn't tell me which" — the latter is
+ * the case that used to silently pick an arbitrary one.
+ */
+export async function themeNotFoundDetail(cwd) {
+  const found = await listBrmbhThemes(cwd);
+  if (found.length > 1) {
+    return `Found ${found.length} brmbh themes (${found.join(', ')}) and none is active. ` +
+      'cd into the one you mean, or pass --cwd <path-to-theme>.';
+  }
+  return 'Run from inside a brmbh theme, or scaffold one with `npx @brmbh/cli create <name>`.';
 }

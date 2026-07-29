@@ -12,7 +12,7 @@
  */
 import path from 'node:path';
 import { LEVEL, ToolError } from '../tool.js';
-import { findThemeDir } from '../wp.js';
+import { findThemeDir, themeNotFoundDetail } from '../wp.js';
 import { envFilePath, envFileName, sourceAndRun } from '../envfile.js';
 import { resolveToolScript } from '../toolscript.js';
 
@@ -28,7 +28,7 @@ export const spec = {
 
 export async function run(ctx, args) {
   const themeDir = await findThemeDir(ctx.cwd);
-  if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.');
+  if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.', await themeNotFoundDetail(ctx.cwd));
 
   const resolved = await resolveToolScript(themeDir, `db-${args.action}.sh`);
   if (!resolved) {

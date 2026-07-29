@@ -6,9 +6,10 @@
  *   - git clone    (default)       — shallow-clones the public OSS repo
  */
 import path from 'node:path';
+import os from 'node:os';
 import { promises as fs } from 'node:fs';
 import { copyDir, exists, isDir } from './fsutil.js';
-import { runOrThrow, has } from './exec.js';
+import { runOrThrow, has, capture } from './exec.js';
 
 export const THEME_REPO = 'https://github.com/brmbh/wordpress.git';
 
@@ -41,14 +42,29 @@ export async function materializeTheme({ dest, from, ref, ctx }) {
   }
 
   ui.step(`Cloning ${THEME_REPO}${ref ? ` (${ref})` : ''}`);
-  const args = ['clone', '--depth', '1'];
-  if (ref) args.push('--branch', ref);
-  args.push(THEME_REPO, dest);
-  await runOrThrow('git', args, { cwd: path.dirname(dest), json: ctx.json });
 
-  // Drop the upstream git history — the new project starts clean.
-  const gitDir = path.join(dest, '.git');
-  if (await exists(gitDir)) await fs.rm(gitDir, { recursive: true, force: true });
+  // Clone into a temp dir, then copy across. git refuses to clone into a
+  // non-empty directory, which made --force silently useless on this path
+  // while it worked fine via --from. Staging makes both paths behave alike.
+  const staging = await fs.mkdtemp(path.join(os.tmpdir(), 'brmbh-'));
+  const checkout = path.join(staging, 'theme');
+  try {
+    const args = ['clone', '--depth', '1'];
+    if (ref) args.push('--branch', ref);
+    args.push(THEME_REPO, checkout);
+    await runOrThrow('git', args, { cwd: staging, json: ctx.json });
 
-  return { source: 'git', repo: THEME_REPO, ref: ref ?? 'default' };
+    // Record where this scaffold came from before dropping the history.
+    let commit = null;
+    const head = await capture('git', ['rev-parse', 'HEAD'], { cwd: checkout });
+    if (head.ok) commit = head.stdout.trim();
+
+    // The new project starts clean — no upstream history.
+    await fs.rm(path.join(checkout, '.git'), { recursive: true, force: true });
+
+    await copyDir(checkout, dest);
+    return { source: 'git', repo: THEME_REPO, ref: ref ?? 'default', commit };
+  } finally {
+    await fs.rm(staging, { recursive: true, force: true }).catch(() => {});
+  }
 }
