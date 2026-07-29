@@ -10,12 +10,15 @@ import { LEVEL } from '../tool.js';
 import { exists } from '../fsutil.js';
 import { paint } from '../ui.js';
 import { findThemeDir, acfStatus, hasWpCli } from '../wp.js';
+import { SSH_FLAG } from '../wpremote.js';
 
 export const spec = {
   description: 'Check that the theme + environment are correctly wired',
   level: LEVEL.L2,
   positionals: [],
-  flags: {},
+  flags: {
+    ...SSH_FLAG,
+  },
 };
 
 export async function run(ctx, args) {
@@ -50,9 +53,9 @@ export async function run(ctx, args) {
   }
 
   // wp-cli + acf
-  const wpcli = await hasWpCli();
-  add('wp-cli', wpcli ? 'ok' : 'warn', wpcli ? 'available' : 'not found (optional but recommended)');
-  const acf = await acfStatus(ctx.cwd);
+  const wpcli = await hasWpCli(args.ssh);
+  add('wp-cli', wpcli ? 'ok' : 'warn', wpcli ? (args.ssh ? `available on ${args.ssh}` : 'available') : args.ssh ? `not reachable on ${args.ssh}` : 'not found (optional but recommended)');
+  const acf = await acfStatus(ctx.cwd, args.ssh);
   add('scf', acf === 'active' ? 'ok' : acf === 'unknown' ? 'warn' : 'fail',
     acf === 'active' ? 'active' : acf === 'installed' ? 'installed, not active' : acf === 'unknown' ? (wpcli ? 'cannot verify (run from the WP install)' : 'cannot verify (no wp-cli)') : 'missing — install free from wordpress.org/plugins/secure-custom-fields');
 

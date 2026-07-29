@@ -5,8 +5,20 @@
 import path from 'node:path';
 import { exists, isDir, readText } from './fsutil.js';
 import { capture, has } from './exec.js';
+import { wpCommand } from './wpremote.js';
 
 const ACF_PRO_PLUGINS = ['advanced-custom-fields-pro', 'secure-custom-fields'];
+
+/**
+ * Run a wp-cli command, locally or against a remote install over SSH.
+ * `ssh` is the raw --ssh target; when absent this is an ordinary local call.
+ */
+async function runWp(wpArgs, { cwd, ssh } = {}) {
+  const hasLocalWpCli = ssh ? await has('wp') : true;
+  const { cmd, args } = wpCommand(wpArgs, { ssh, hasLocalWpCli });
+  // A remote call must not inherit a local cwd — there is no WordPress there.
+  return capture(cmd, args, ssh ? {} : { cwd });
+}
 
 /**
  * Walk up from `start` to find a WordPress root (has wp-load.php) and/or the
@@ -82,9 +94,10 @@ export async function findThemeDir(cwd) {
 }
 
 /** The active theme's directory name, or null when wp-cli can't tell us. */
-export async function activeThemeSlug(wpRoot) {
-  if (!wpRoot || !(await hasWpCli())) return null;
-  const { ok, stdout } = await capture('wp', ['option', 'get', 'stylesheet'], { cwd: wpRoot });
+export async function activeThemeSlug(wpRoot, ssh) {
+  if (!ssh && !wpRoot) return null;
+  if (!(await hasWpCli(ssh))) return null;
+  const { ok, stdout } = await runWp(['option', 'get', 'stylesheet'], { cwd: wpRoot, ssh });
   return ok && stdout ? stdout.trim() : null;
 }
 
@@ -101,22 +114,29 @@ export async function listBrmbhThemes(cwd) {
   return found;
 }
 
-export async function hasWpCli() {
-  return has('wp');
+/**
+ * Is wp-cli usable for the target install?
+ * Remote: proven by actually running it there, since a local wp-cli says
+ * nothing about the remote and vice versa.
+ */
+export async function hasWpCli(ssh) {
+  if (!ssh) return has('wp');
+  const { ok } = await runWp(['--version'], { ssh });
+  return ok;
 }
 
 /**
  * Check SCF (Secure Custom Fields) or ACF Pro via wp-cli when available.
  * @returns {Promise<'active'|'installed'|'missing'|'unknown'>}
  */
-export async function acfStatus(cwd) {
-  if (!(await hasWpCli())) return 'unknown';
-  const list = await capture('wp', ['plugin', 'list', '--field=name', '--status=active'], { cwd });
+export async function acfStatus(cwd, ssh) {
+  if (!(await hasWpCli(ssh))) return 'unknown';
+  const list = await runWp(['plugin', 'list', '--field=name', '--status=active'], { cwd, ssh });
   if (list.ok) {
     const active = list.stdout.split('\n').map((s) => s.trim());
     if (ACF_PRO_PLUGINS.some((p) => active.includes(p))) return 'active';
   }
-  const all = await capture('wp', ['plugin', 'list', '--field=name'], { cwd });
+  const all = await runWp(['plugin', 'list', '--field=name'], { cwd, ssh });
   if (all.ok) {
     const installed = all.stdout.split('\n').map((s) => s.trim());
     if (ACF_PRO_PLUGINS.some((p) => installed.includes(p))) return 'installed';
@@ -125,9 +145,9 @@ export async function acfStatus(cwd) {
 }
 
 /** Activate a theme by directory name via wp-cli. Returns boolean success. */
-export async function activateTheme(wpRoot, themeSlug) {
-  if (!(await hasWpCli())) return false;
-  const { ok } = await capture('wp', ['theme', 'activate', themeSlug], { cwd: wpRoot });
+export async function activateTheme(wpRoot, themeSlug, ssh) {
+  if (!(await hasWpCli(ssh))) return false;
+  const { ok } = await runWp(['theme', 'activate', themeSlug], { cwd: wpRoot, ssh });
   return ok;
 }
 
