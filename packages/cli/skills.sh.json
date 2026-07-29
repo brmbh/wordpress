@@ -1,0 +1,10 @@
+{
+  "name": "@brmbh/cli",
+  "description": "Agent skills for the brmbh agentic WordPress suite",
+  "skills": [
+    {
+      "name": "wordpress",
+      "path": "skills/wordpress"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "acf/{{ SLUG }}",
+  "title": "{{ TITLE }}",
+  "description": "{{ TITLE }} block — scaffolded by brmbh add block.",
+  "category": "brmbh-sections",
+  "icon": "block-default",
+  "keywords": ["{{ SLUG }}"],
+  "textdomain": "brmbh-agentic-wp-suite",
+  "acf": {
+    "mode": "{{ MODE }}",
+    "renderTemplate": "template.php"
+  },
+  "supports": {
+    "align": ["full"],
+    "anchor": true,
+    "mode": true
+  }
+}
