@@ -8,8 +8,8 @@ from a Figma design — ACF blocks, design tokens, page scaffolding, and deploys
 hand-writing the boilerplate. Everything is a folder convention or a one-line command, so an
 agent (or a human) can extend it without reverse-engineering the theme first.
 
-It's a classic PHP theme — no build-step lock-in, no Blade, no Composer. Just Bootstrap, ACF
-Pro, vanilla WordPress, and a set of conventions that automate the repetitive parts.
+It's a classic PHP theme — no build-step lock-in, no Blade, no Composer. Just Bootstrap, SCF
+(free) or ACF Pro, vanilla WordPress, and a set of conventions that automate the repetitive parts.
 
 ---
 
@@ -88,6 +88,8 @@ One command in each direction, every one agent-callable:
 | `tools/db-pull.sh` | `/sync-db` | server → local | Export remote DB, import locally, URL search-replace, reconcile plugins + schema |
 | `tools/db-push.sh` | `/sync-db` | local → server | The reverse — guarded by `CANONICAL_ENV` so you can't clobber production |
 | `tools/sync-plugins.sh` | `/sync-plugins` | local → server | Install wp.org plugins remotely; rsync premium ones |
+| `tools/uploads-pull.sh` | `/sync-uploads` | server → local | rsync `wp-content/uploads` down, additive by default |
+| `tools/uploads-push.sh` | `/sync-uploads` | local → server | The reverse — mirrors (`--delete`), guarded by `CANONICAL_ENV` |
 | `tools/version-check.sh` | `/check-versions` | both | Report PHP / WordPress / theme / plugin version drift |
 
 Environments are tiny gitignored `tools/env/*.env` files (copy from the `.example`
@@ -110,18 +112,31 @@ editor loads the compiled theme CSS so block previews match production. Full-wid
 with container-constrained content work for both native Gutenberg patterns
 (`inc/block-patterns.php`) and ACF blocks.
 
-> ⚠️ **Requires Advanced Custom Fields PRO 6.0+.** The block layer is load-bearing — there is
+> ⚠️ **Requires [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) (SCF) 6.0+ — free.**
+> ACF Pro 6.0+ also works; both define `ACF_PRO`. The block layer is load-bearing — there is
 > no fallback path. `inc/dependencies.php` enforces it with admin notices and CLI guards.
 
 ---
 
 ## Quick start
 
+**With an agent** — install the skill once, then just ask:
+
+```bash
+npx skills add brmbh/wordpress
+```
+
+Then: *"create a new brmbh theme in this WordPress install"*. The skill checks your
+prerequisites, scaffolds, and hands off to the in-theme skills below. Works in Claude Code,
+Cursor, Copilot, Windsurf and 30+ agents via [agentskills.io](https://agentskills.io).
+
+**By hand:**
+
 ```bash
 # 1. Clone into your WordPress themes directory
-git clone https://github.com/Schmandarine/brmbh-agentic-wp-suite.git \
-  wp-content/themes/brmbh-agentic-wp-suite
-cd wp-content/themes/brmbh-agentic-wp-suite
+git clone https://github.com/brmbh/wordpress.git \
+  wp-content/themes/brmbh-theme
+cd wp-content/themes/brmbh-theme
 
 # 2. Install + build assets
 npm install
@@ -154,6 +169,7 @@ matching `AGENTS/{skill}.md` (wrappers in `.claude/commands/`, `.cursor/rules/`,
 | `/deploy` | Ship the built theme to a remote environment over SSH |
 | `/sync-db` | Pull or push the database between environments (push is guarded + destructive) |
 | `/sync-plugins` | Mirror active plugins to a remote environment |
+| `/sync-uploads` | Sync `wp-content/uploads` between environments (push is guarded + destructive) |
 | `/check-versions` | Report PHP / WordPress / theme / plugin drift between environments |
 
 The operating contract every agent follows is [AGENTS.md](AGENTS.md); Claude-specific workflow
