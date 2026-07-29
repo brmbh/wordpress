@@ -13,7 +13,9 @@
   "files": [
     "bin",
     "src",
-    "templates"
+    "templates",
+    "skills",
+    "skills.sh.json"
   ],
   "scripts": {
     "brmbh": "node bin/brmbh.js",
@@ -32,9 +34,9 @@
   ],
   "author": "Jan Brombach",
   "license": "MIT",
-  "homepage": "https://github.com/Schmandarine/brmbh-agentic-wp-suite",
+  "homepage": "https://github.com/brmbh/wordpress",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Schmandarine/brmbh-cli.git"
+    "url": "https://github.com/brmbh/cli.git"
   }
 }
