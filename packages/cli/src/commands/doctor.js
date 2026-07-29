@@ -35,7 +35,17 @@ export async function run(ctx, args) {
     add('dependencies', (await exists(path.join(themeDir, 'node_modules'))) ? 'ok' : 'warn', 'node_modules');
     const built = await exists(path.join(themeDir, 'assets', 'dist', 'css', 'style.css'));
     add('build', built ? 'ok' : 'warn', built ? 'assets/dist present' : 'run `brmbh dev --once`');
-    add('skills', (await exists(path.join(themeDir, 'AGENTS'))) ? 'ok' : 'warn', 'AGENTS/');
+    // Skills ship in @brmbh/cli; a theme-local AGENTS/ is an optional override.
+    const pkgSkills = await exists(path.join(themeDir, 'node_modules', '@brmbh', 'cli', 'AGENTS'));
+    const localSkills = await exists(path.join(themeDir, 'AGENTS'));
+    add(
+      'skills',
+      pkgSkills || localSkills ? 'ok' : 'warn',
+      pkgSkills && localSkills ? '@brmbh/cli + local overrides'
+        : pkgSkills ? '@brmbh/cli'
+        : localSkills ? 'local AGENTS/ only'
+        : 'none — run `npm install`',
+    );
     add('env', (await exists(path.join(themeDir, 'tools', 'env'))) ? 'ok' : 'warn', 'tools/env/*.env');
   }
 

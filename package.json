@@ -1,7 +1,7 @@
 {
   "name": "brmbh",
   "version": "0.1.0",
-  "description": "Agentic WordPress starter theme — Bootstrap 5 + Gutenberg + ACF block factory with agent-agnostic skills.",
+  "description": "Agentic WordPress starter theme \u2014 Bootstrap 5 + Gutenberg + ACF block factory with agent-agnostic skills.",
   "license": "GPL-2.0-or-later",
   "author": "Jan Brombach",
   "homepage": "https://github.com/brmbh/wordpress",
@@ -11,14 +11,16 @@
   },
   "private": false,
   "scripts": {
+    "postinstall": "brmbh add skills || true",
     "build:js": "webpack --config webpack.config.js",
-    "build:css": "./tools/sass-with-theme-flags.sh assets/src/scss/style.scss assets/dist/css/style.css --style=compressed --source-map && ./tools/sass-with-theme-flags.sh assets/src/scss/custom-bootstrap.scss assets/dist/css/custom-bootstrap.css --style=compressed --source-map",
+    "build:css": "node_modules/@brmbh/cli/tools/sass-with-theme-flags.sh assets/src/scss/style.scss assets/dist/css/style.css --style=compressed --source-map && node_modules/@brmbh/cli/tools/sass-with-theme-flags.sh assets/src/scss/custom-bootstrap.scss assets/dist/css/custom-bootstrap.css --style=compressed --source-map",
     "build": "npm run build:js && npm run build:css",
-    "watch:css": "./tools/sass-with-theme-flags.sh assets/src/scss/style.scss:assets/dist/css/style.css assets/src/scss/custom-bootstrap.scss:assets/dist/css/custom-bootstrap.css --watch --poll --style=compressed --source-map",
+    "watch:css": "node_modules/@brmbh/cli/tools/sass-with-theme-flags.sh assets/src/scss/style.scss:assets/dist/css/style.css assets/src/scss/custom-bootstrap.scss:assets/dist/css/custom-bootstrap.css --watch --poll --style=compressed --source-map",
     "watch:js": "webpack --config webpack.config.js --watch",
     "watch": "concurrently -n scss,js -c cyan,magenta \"npm run watch:css\" \"npm run watch:js\""
   },
   "devDependencies": {
+    "@brmbh/cli": "^1.0.0",
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "babel-loader": "^8.2.2",
@@ -30,5 +32,8 @@
   "dependencies": {
     "bootstrap": "^5.3.0",
     "gsap": "^3.14.2"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

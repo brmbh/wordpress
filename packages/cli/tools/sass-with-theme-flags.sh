@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Uses the project's local sass binary with Bootstrap 5.x deprecation silencing.
 # A global sass on PATH may not recognise the same --silence-deprecation IDs.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# This script ships inside @brmbh/cli but operates on the *consuming theme*, so
+# it must resolve paths from the invoking project, never from its own location.
+# npm scripts run with cwd = the theme root; BRMBH_THEME_DIR overrides.
+ROOT="${BRMBH_THEME_DIR:-$PWD}"
 SASS_BIN="$ROOT/node_modules/.bin/sass"
 
 if [ ! -x "$SASS_BIN" ]; then
-  echo "sass not found at $SASS_BIN — run npm install in the theme directory." >&2
+  echo "sass not found at $SASS_BIN — run \`npm install\` in the theme directory." >&2
   exit 1
 fi
 

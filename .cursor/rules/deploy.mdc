@@ -1,6 +1,0 @@
----
-description: Deploy the built theme to a remote environment (staging/production) via rsync over SSH. Apply when the user asks to deploy, ship, or publish the theme to staging or production.
-alwaysApply: false
----
-
-Read `AGENTS/deploy.md` and follow it exactly.

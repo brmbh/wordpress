@@ -83,14 +83,14 @@ One command in each direction, every one agent-callable:
 
 | Tool | Skill | Direction | What it does |
 |---|---|---|---|
-| `tools/sync-tokens.mjs` | `/sync-tokens` | Figma → repo | Pull Figma Variables into `_tokens.scss` as CSS custom properties |
-| `tools/deploy.sh` | `/deploy` | local → server | rsync the built theme over SSH — works with IP-restricted hosts where CI can't reach |
-| `tools/db-pull.sh` | `/sync-db` | server → local | Export remote DB, import locally, URL search-replace, reconcile plugins + schema |
-| `tools/db-push.sh` | `/sync-db` | local → server | The reverse — guarded by `CANONICAL_ENV` so you can't clobber production |
-| `tools/sync-plugins.sh` | `/sync-plugins` | local → server | Install wp.org plugins remotely; rsync premium ones |
-| `tools/uploads-pull.sh` | `/sync-uploads` | server → local | rsync `wp-content/uploads` down, additive by default |
-| `tools/uploads-push.sh` | `/sync-uploads` | local → server | The reverse — mirrors (`--delete`), guarded by `CANONICAL_ENV` |
-| `tools/version-check.sh` | `/check-versions` | both | Report PHP / WordPress / theme / plugin version drift |
+| `sync-tokens` | `/sync-tokens` | Figma → repo | Pull Figma Variables into `_tokens.scss` as CSS custom properties |
+| `deploy` | `/deploy` | local → server | rsync the built theme over SSH — works with IP-restricted hosts where CI can't reach |
+| `db-pull` | `/sync-db` | server → local | Export remote DB, import locally, URL search-replace, reconcile plugins + schema |
+| `db-push` | `/sync-db` | local → server | The reverse — guarded by `CANONICAL_ENV` so you can't clobber production |
+| `sync-plugins` | `/sync-plugins` | local → server | Install wp.org plugins remotely; rsync premium ones |
+| `uploads-pull` | `/sync-uploads` | server → local | rsync `wp-content/uploads` down, additive by default |
+| `uploads-push` | `/sync-uploads` | local → server | The reverse — mirrors (`--delete`), guarded by `CANONICAL_ENV` |
+| `version-check` | `/check-versions` | both | Report PHP / WordPress / theme / plugin version drift |
 
 Environments are tiny gitignored `tools/env/*.env` files (copy from the `.example`
 templates). See [`tools/env/README.md`](tools/env/README.md).
@@ -202,7 +202,7 @@ my-acf-blocks/        ACF block factory (loader + one example block)
 inc/                  scaffold, block patterns, editor config, ACF dependency guard, CLI
 assets/src/scss/      tokens → variables → Bootstrap bridge → globals → components
 assets/src/js/        Bootstrap + GSAP entry, scroll entrances, sticky nav
-tools/                deploy + DB-sync + Figma token-sync scripts; env templates
+tools/env/            per-project environment templates (the scripts ship in @brmbh/cli)
 AGENTS/               canonical agent skills (+ thin wrappers in .claude / .cursor / .windsurf)
 template-parts/       reusable partials (site logo)
 ```

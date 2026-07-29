@@ -12,9 +12,9 @@
  */
 import path from 'node:path';
 import { LEVEL, ToolError } from '../tool.js';
-import { exists } from '../fsutil.js';
 import { findThemeDir } from '../wp.js';
 import { envFilePath, envFileName, sourceAndRun } from '../envfile.js';
+import { resolveToolScript } from '../toolscript.js';
 
 export const spec = {
   description: 'Pull or push the database between environments (wraps tools/db-*.sh)',
@@ -30,14 +30,15 @@ export async function run(ctx, args) {
   const themeDir = await findThemeDir(ctx.cwd);
   if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.');
 
-  const script = path.join(themeDir, 'tools', `db-${args.action}.sh`);
-  if (!(await exists(script))) {
+  const resolved = await resolveToolScript(themeDir, `db-${args.action}.sh`);
+  if (!resolved) {
     throw new ToolError(
       'no_db_tooling',
-      `No tools/db-${args.action}.sh in this theme.`,
-      'The DB suite ships separately — add tools/db-*.sh + tools/env/*.env, then retry.',
+      `db-${args.action}.sh could not be located.`,
+      'It ships in @brmbh/cli — run `npm install` in the theme, or add your own tools/ override.',
     );
   }
+  const script = resolved.path;
 
   const envFile = await envFilePath(themeDir, args.env);
   if (!envFile) {

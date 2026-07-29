@@ -1,6 +1,0 @@
----
-description: Sync the WordPress database between local and remote (pull or push) — destructive on push. Apply when the user asks to sync, pull, or push the WordPress database between environments.
-alwaysApply: false
----
-
-Read `AGENTS/sync-db.md` and follow it exactly.

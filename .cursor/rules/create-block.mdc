@@ -1,6 +1,0 @@
----
-description: Create a new ACF block in my-acf-blocks/ following the brmbh convention. Apply when the user asks to create a block, section, ACF group, or new Gutenberg component.
-alwaysApply: false
----
-
-Read `AGENTS/create-block.md` and follow it exactly.

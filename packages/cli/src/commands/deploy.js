@@ -12,9 +12,9 @@
  */
 import path from 'node:path';
 import { LEVEL, ToolError } from '../tool.js';
-import { exists } from '../fsutil.js';
 import { findThemeDir } from '../wp.js';
 import { envFilePath, envFileName, sourceAndRun } from '../envfile.js';
+import { resolveToolScript } from '../toolscript.js';
 
 export const spec = {
   description: "Deploy the theme to an environment (wraps tools/deploy.sh)",
@@ -29,14 +29,15 @@ export async function run(ctx, args) {
   const themeDir = await findThemeDir(ctx.cwd);
   if (!themeDir) throw new ToolError('no_theme', 'No brmbh theme found here.');
 
-  const script = path.join(themeDir, 'tools', 'deploy.sh');
-  if (!(await exists(script))) {
+  const resolved = await resolveToolScript(themeDir, 'deploy.sh');
+  if (!resolved) {
     throw new ToolError(
       'no_deploy_suite',
-      'No tools/deploy.sh in this theme.',
-      'The deployment suite ships separately — add tools/deploy.sh + tools/env/*.env, then retry.',
+      'deploy.sh could not be located.',
+      'It ships in @brmbh/cli — run `npm install` in the theme, or add your own tools/ override.',
     );
   }
+  const script = resolved.path;
 
   const envFile = await envFilePath(themeDir, args.env);
   if (!envFile) {

@@ -1,6 +1,0 @@
----
-description: Edit an existing ACF block's config, fields, template, or styles. Apply when the user asks to modify, update, or change an existing block.
-alwaysApply: false
----
-
-Read `AGENTS/edit-block.md` and follow it exactly.

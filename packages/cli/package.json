@@ -1,11 +1,10 @@
 {
   "name": "@brmbh/cli",
-  "version": "0.1.0",
-  "description": "The brmbh agentic WordPress suite CLI — scaffold a modern Bootstrap 5 + Gutenberg + ACF block-factory theme with built-in agent skills, then build, deploy, and sync from one command.",
+  "version": "1.0.0",
+  "description": "Deterministic tooling and agent skills for the brmbh WordPress theme \u2014 scaffold, build, deploy, sync, and the AGENTS/ skill docs, consumed as a devDependency so they stay updatable.",
   "type": "module",
   "bin": {
-    "brmbh": "bin/brmbh.js",
-    "create-brmbh": "bin/create-brmbh.js"
+    "brmbh": "bin/brmbh.js"
   },
   "engines": {
     "node": ">=18"
@@ -14,8 +13,8 @@
     "bin",
     "src",
     "templates",
-    "skills",
-    "skills.sh.json"
+    "tools",
+    "AGENTS"
   ],
   "scripts": {
     "brmbh": "node bin/brmbh.js",
@@ -37,6 +36,7 @@
   "homepage": "https://github.com/brmbh/wordpress",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brmbh/cli.git"
+    "url": "https://github.com/brmbh/wordpress.git",
+    "directory": "packages/cli"
   }
 }

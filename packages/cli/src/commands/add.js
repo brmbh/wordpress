@@ -189,19 +189,44 @@ async function addSkills(ctx, themeDir) {
   };
 }
 
+/** Where a theme's skill sources can live, lowest precedence first. */
+const PACKAGE_AGENTS = path.join('node_modules', '@brmbh', 'cli', 'AGENTS');
+const LOCAL_AGENTS = 'AGENTS';
+
+/**
+ * Resolve the skill set for a theme.
+ *
+ * Skills ship inside @brmbh/cli, so `npm update` refreshes them. A theme may
+ * still keep its own AGENTS/<name>.md — a project-local file wins for that one
+ * skill only, so customising one never costs you updates to the others.
+ *
+ * @returns {Promise<Map<string, string>>} skill name → theme-relative source path
+ */
+async function resolveSkillSources(themeDir) {
+  const sources = new Map();
+  for (const base of [PACKAGE_AGENTS, LOCAL_AGENTS]) {
+    const dir = path.join(themeDir, base);
+    if (!(await isDir(dir))) continue;
+    const entries = await fs.readdir(dir).catch(() => []);
+    for (const f of entries) {
+      if (!f.endsWith('.md') || f.toLowerCase() === 'readme.md') continue;
+      sources.set(f.replace(/\.md$/, ''), path.join(base, f)); // later base overrides
+    }
+  }
+  return sources;
+}
+
 /**
  * Single source of truth → thin per-agent wrappers.
- * Reads AGENTS/<name>.md and emits matching wrappers for Claude, Cursor, Windsurf.
+ * Emits matching wrappers for Claude, Cursor, Windsurf. Wrappers are generated
+ * output, not content: they are gitignored and rebuilt on install.
  * Exported so `create` can call it during scaffolding.
  *
- * @returns {Promise<{ skills: number, wrappers: number, names: string[] }>}
+ * @returns {Promise<{ skills: number, wrappers: number, names: string[], overrides: string[] }>}
  */
 export async function generateSkillWrappers(themeDir) {
-  const agentsDir = path.join(themeDir, 'AGENTS');
-  if (!(await isDir(agentsDir))) return { skills: 0, wrappers: 0, names: [] };
-
-  const entries = await fs.readdir(agentsDir);
-  const skills = entries.filter((f) => f.endsWith('.md') && f.toLowerCase() !== 'readme.md');
+  const sources = await resolveSkillSources(themeDir);
+  if (!sources.size) return { skills: 0, wrappers: 0, names: [], overrides: [] };
 
   const targets = [
     { dir: ['.claude', 'commands'], ext: '.md', body: claudeWrapper },
@@ -211,18 +236,21 @@ export async function generateSkillWrappers(themeDir) {
 
   let wrappers = 0;
   const names = [];
-  for (const file of skills) {
-    const name = file.replace(/\.md$/, '');
+  const overrides = [];
+  for (const [name, relSource] of sources) {
     names.push(name);
-    const desc = deriveDescription(await readText(path.join(agentsDir, file)), name);
+    if (relSource.startsWith(LOCAL_AGENTS + path.sep)) overrides.push(name);
+    const desc = deriveDescription(await readText(path.join(themeDir, relSource)), name);
+    // POSIX separators: these paths are read by agents out of markdown, not by fs
+    const ref = relSource.split(path.sep).join('/');
     for (const t of targets) {
       const outDir = path.join(themeDir, ...t.dir);
       await ensureDir(outDir);
-      await writeText(path.join(outDir, name + t.ext), t.body(name, desc));
+      await writeText(path.join(outDir, name + t.ext), t.body(ref, desc));
       wrappers++;
     }
   }
-  return { skills: skills.length, wrappers, names };
+  return { skills: sources.size, wrappers, names, overrides };
 }
 
 function deriveDescription(md, fallback) {
@@ -234,14 +262,14 @@ function deriveDescription(md, fallback) {
   return `Run the ${fallback} skill`;
 }
 
-function claudeWrapper(name, desc) {
-  return `---\ndescription: ${desc}\n---\n\nRead \`AGENTS/${name}.md\` and execute the skill defined there.\n`;
+function claudeWrapper(ref, desc) {
+  return `---\ndescription: ${desc}\n---\n\nRead \`${ref}\` and execute the skill defined there.\n`;
 }
-function cursorWrapper(name, desc) {
-  return `---\ndescription: ${desc}\nalwaysApply: false\n---\n\nRead \`AGENTS/${name}.md\` and execute the skill defined there.\n`;
+function cursorWrapper(ref, desc) {
+  return `---\ndescription: ${desc}\nalwaysApply: false\n---\n\nRead \`${ref}\` and execute the skill defined there.\n`;
 }
-function windsurfWrapper(name, desc) {
-  return `---\ndescription: ${desc}\n---\n\nRead \`AGENTS/${name}.md\` and execute the skill defined there.\n`;
+function windsurfWrapper(ref, desc) {
+  return `---\ndescription: ${desc}\n---\n\nRead \`${ref}\` and execute the skill defined there.\n`;
 }
 
 export default { spec, run };

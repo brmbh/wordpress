@@ -45,7 +45,15 @@ export async function run(ctx, args) {
   const source = await materializeTheme({ dest, from: args.from, ref: args.ref, ctx });
   ui.ok(`Theme files ready (${source.source})`);
 
-  const steps = { installed: false, built: false, skills: 0, activated: false };
+  const steps = { installed: false, built: false, skills: 0, activated: false, stripped: [] };
+
+  // 2b. strip starter-repo scaffolding.
+  // The source repo is a monorepo: the theme at the root plus packages/cli,
+  // which is published to npm. A scaffolded project consumes @brmbh/cli from
+  // the registry, so it must not carry a copy of the package, and must not be
+  // a workspace root — otherwise npm resolves the dependency to the local copy
+  // and `npm update` can never reach it.
+  steps.stripped = await stripStarterScaffolding(dest, ui);
 
   // 3. install + build
   if (!args['skip-install']) {
@@ -69,11 +77,15 @@ export async function run(ctx, args) {
     ui.info('Skipped install/build (--skip-install)');
   }
 
-  // 4. (re)generate agent skill wrappers from the canonical AGENTS/ folder
-  if (await isDir(path.join(dest, 'AGENTS'))) {
-    const gen = await generateSkillWrappers(dest);
-    steps.skills = gen.wrappers;
+  // 4. (re)generate agent skill wrappers.
+  // Sources come from node_modules/@brmbh/cli/AGENTS (plus any local override),
+  // so this only produces anything once the install in step 3 has run.
+  const gen = await generateSkillWrappers(dest);
+  steps.skills = gen.wrappers;
+  if (gen.wrappers) {
     ui.ok(`Agent skills wired (${gen.skills} skills → ${gen.wrappers} wrappers across .claude/.cursor/.windsurf)`);
+  } else {
+    ui.warn('No skills wired yet — run `npm install && npx brmbh add skills` in the theme');
   }
 
   // 5. SCF check (Secure Custom Fields — free drop-in, ACF Pro also works)
@@ -119,6 +131,54 @@ export async function run(ctx, args) {
     acf,
     next, // L3: literal follow-up procedure for an agent to execute
   };
+}
+
+/**
+ * Remove the parts of the source repo that belong to the starter, not to a
+ * scaffolded project, and de-monorepo its package.json.
+ *
+ * Anything listed here is infrastructure for *publishing* brmbh; a client
+ * project neither needs nor should ship it. Stale copies are worse than
+ * missing ones — a vendored packages/cli would silently win over the
+ * registry version forever.
+ *
+ * @returns {Promise<string[]>} what was removed, for the result envelope
+ */
+async function stripStarterScaffolding(dest, ui) {
+  const removed = [];
+
+  // paths that only make sense in the monorepo
+  const drop = [
+    'packages',       // the @brmbh/cli source — consumed from npm instead
+    'skills',         // pre-scaffold skill, distributed via `npx skills add`
+    'skills.sh.json', // its manifest
+    '.github',        // the starter's own CI
+  ];
+  for (const rel of drop) {
+    const target = path.join(dest, rel);
+    if (await exists(target)) {
+      await fs.rm(target, { recursive: true, force: true });
+      removed.push(rel);
+    }
+  }
+
+  // a scaffolded theme is not a workspace root
+  const pkgPath = path.join(dest, 'package.json');
+  if (await exists(pkgPath)) {
+    try {
+      const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
+      if (pkg.workspaces) {
+        delete pkg.workspaces;
+        await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+        removed.push('package.json#workspaces');
+      }
+    } catch {
+      ui.warn('Could not parse package.json — leaving it untouched');
+    }
+  }
+
+  if (removed.length) ui.ok(`Stripped starter scaffolding (${removed.join(', ')})`);
+  return removed;
 }
 
 export default { spec, run };

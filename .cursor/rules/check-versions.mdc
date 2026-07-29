@@ -1,6 +1,0 @@
----
-description: Report PHP/WordPress/theme/plugin version drift between local and remote. Apply when the user asks whether environments are in sync or to check version drift.
-alwaysApply: false
----
-
-Read `AGENTS/check-versions.md` and follow it exactly.
