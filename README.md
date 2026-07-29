@@ -120,34 +120,57 @@ with container-constrained content work for both native Gutenberg patterns
 
 ## Quick start
 
-**With an agent** — install the skill once, then just ask:
+### The agent path
+
+Install the skill once per machine, then just ask:
 
 ```bash
 npx skills add brmbh/wordpress
 ```
 
-Then: *"create a new brmbh theme in this WordPress install"*. The skill checks your
-prerequisites, scaffolds, and hands off to the in-theme skills below. Works in Claude Code,
-Cursor, Copilot, Windsurf and 30+ agents via [agentskills.io](https://agentskills.io).
+> *"create a new brmbh theme in this WordPress install"*
 
-**By hand:**
+The skill checks your prerequisites, scaffolds, renames the theme to your project, installs,
+builds, wires the skills into your editor, and activates it. Works in Claude Code, Cursor,
+Copilot, Windsurf and 30+ agents via [agentskills.io](https://agentskills.io).
+
+### The command path
 
 ```bash
-# 1. Clone into your WordPress themes directory
-git clone https://github.com/brmbh/wordpress.git \
-  wp-content/themes/brmbh-theme
-cd wp-content/themes/brmbh-theme
-
-# 2. Install + build assets
-npm install
-npm run build            # or: npm run watch  (live rebuild)
-
-# 3. Activate the theme in wp-admin (SCF must be active).
-#    It scaffolds starter pages + menus once on activation.
-
-# 4. Re-run the scaffold any time — it's idempotent
-wp brmbh scaffold        # add --dry-run to preview
+cd wp-content/themes
+npx @brmbh/cli create acme-site
 ```
+
+Same thing, typed by hand. The scaffold is named and text-domained `acme-site`, not `brmbh`.
+
+### The clone path
+
+```bash
+git clone https://github.com/brmbh/wordpress.git wp-content/themes/acme-site
+cd wp-content/themes/acme-site
+npm install          # required — installs @brmbh/cli: tooling + skills + the CSS build
+npm run build
+```
+
+⚠️ Cloning gives you the **starter's** identity — it will call itself `brmbh` in WP Admin and
+share the `brmbh` text domain. Use `create` instead unless you specifically want the starter as-is.
+
+Then activate it in wp-admin (SCF must be active). Re-run the page/menu scaffold any time:
+
+```bash
+wp brmbh scaffold        # idempotent; --dry-run to preview
+```
+
+### What updates, and what is yours
+
+| | Where it lives | Updates? |
+|---|---|---|
+| Theme — PHP, blocks, templates, styles | your repo | No — it's yours, edit freely |
+| Tooling + agent skills | `@brmbh/cli`, a devDependency | **Yes — `npm update @brmbh/cli`** |
+
+Keep a project-local `AGENTS/<name>.md` or `tools/<name>` to override one skill or script; the
+rest keep updating. `.claude/`, `.cursor/` and `.windsurf/` are generated on install — never edit
+a wrapper, edit the skill it points at.
 
 Then ask your agent to **`/create-block`** and build your first section from a design.
 

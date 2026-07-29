@@ -3,6 +3,39 @@
 This file is the canonical instruction set for any coding agent working in this theme. Other
 agents (Claude, Cursor, Windsurf) point here. Read it before making changes.
 
+## Before anything else
+
+1. No `node_modules/`? Run `npm install`. This installs `@brmbh/cli`, which carries the tooling
+   **and** the skill docs — without it, deploy, DB sync, the CSS build and the skills are all absent.
+2. Then `npx brmbh doctor --json` and branch on `class`: `ready` → proceed, `warn` → read each
+   warning, `blocked` → fix before doing anything else.
+3. No `wp-cli`? Say so. `/deploy`, `/sync-db`, `/sync-uploads` and SCF detection will not work.
+
+## Two different things are both called `brmbh`
+
+Do not confuse these — dropping or adding the `wp` prefix gets you "unknown command":
+
+| You type | What it is | Where it lives |
+|---|---|---|
+| `npx brmbh …` | the **Node CLI** — `create`, `dev`, `doctor`, `deploy`, `db`, `uploads`, `add` | `@brmbh/cli`, a devDependency |
+| `wp brmbh …` | a **WP-CLI subcommand** this theme registers — `scaffold`, `tokens` | `inc/cli.php`, PHP, runs inside WordPress |
+
+Different languages, different runtimes, same word. They are unrelated programs.
+
+## Where things live
+
+Skills and tooling ship in `@brmbh/cli` so `npm update` refreshes them; a project-local copy
+always wins, so you can override one without losing updates to the rest.
+
+| | Installed (updatable) | Project-local override |
+|---|---|---|
+| Skills | `node_modules/@brmbh/cli/AGENTS/*.md` | `AGENTS/<name>.md` |
+| Scripts | `node_modules/@brmbh/cli/tools/*` | `tools/<name>` |
+
+`tools/env/*.env` is always project-local — it holds this project's servers and is gitignored.
+The `.claude/`, `.cursor/` and `.windsurf/` wrappers are **generated** on install: edit the skill
+source, never a wrapper.
+
 ## What this theme is
 
 An agentic WordPress starter: Bootstrap 5 + Gutenberg + an auto-registering ACF block factory.

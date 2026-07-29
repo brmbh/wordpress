@@ -12,6 +12,26 @@ metadata:
 
 brmbh is an agentic WordPress starter theme: Bootstrap 5 + Gutenberg + a self-registering ACF block factory, designed to be driven by a coding agent. This skill covers setup from scratch. Once the theme is scaffolded, in-theme skills in `AGENTS/` take over (see [Handoff to in-theme skills](#handoff-to-in-theme-skills)).
 
+## Installing this skill
+
+Users get this skill with:
+
+```bash
+npx skills add brmbh/wordpress
+```
+
+That is the intended entry point — after it, "make me a new brmbh theme" is enough. The command
+below is the fallback for someone who already knows brmbh exists.
+
+## Two different things are called `brmbh`
+
+| Command | What it is |
+|---|---|
+| `npx brmbh …` / `npx @brmbh/cli …` | the **Node CLI** — create, dev, doctor, deploy, db, uploads, add |
+| `wp brmbh …` | a **WP-CLI subcommand** the theme registers — scaffold, tokens |
+
+Unrelated programs. Dropping or adding the `wp` prefix gets you "unknown command".
+
 ## Prerequisites
 
 Check these before starting:
@@ -29,31 +49,32 @@ brmbh requires **Secure Custom Fields (SCF)** or ACF Pro in the WordPress instal
 Run from inside `wp-content/themes/` of an existing WordPress install:
 
 ```bash
-npx create-brmbh <theme-name>
+npx @brmbh/cli create <theme-name>
 ```
 
-Or with the CLI directly:
+No global install needed — `npx` fetches the current version on demand. Use the client's project
+name as `<theme-name>`: it becomes the theme name **and** the text domain.
 
-```bash
-npm install -g @brmbh/cli
-brmbh create <theme-name>
-```
+This clones the theme, strips the starter's own scaffolding, renames it to `<theme-name>`, runs
+`npm install`, builds assets, wires agent skills for Claude Code / Cursor / Windsurf, and
+attempts to activate the theme via wp-cli.
 
-This clones the theme, runs `npm install`, builds assets, wires agent skills for Claude Code / Cursor / Windsurf, and attempts to activate the theme via wp-cli.
+Afterwards the CLI is a devDependency of the theme, so use `npx brmbh <cmd>` from inside it —
+and `npm update @brmbh/cli` to pull newer tooling and skills into an existing project.
 
 ### Offline / local checkout
 
 If the user already has a local clone of the theme repo (`brmbh/wordpress`):
 
 ```bash
-brmbh create <theme-name> --from /path/to/brmbh-wordpress
+npx @brmbh/cli create <theme-name> --from /path/to/brmbh-wordpress
 ```
 
 ### Skip steps
 
 ```bash
-brmbh create <theme-name> --skip-install   # skip npm install + build
-brmbh create <theme-name> --skip-activate  # skip wp-cli theme activation
+npx @brmbh/cli create <theme-name> --skip-install   # skip npm install + build
+npx @brmbh/cli create <theme-name> --skip-activate  # skip wp-cli theme activation
 ```
 
 ## Step 2 — Run doctor
@@ -206,7 +227,7 @@ Invoke them directly (e.g. `/create-block`) or let the agent pick them up from c
 brmbh help                          # all commands
 brmbh schema                        # machine-readable command schema (JSON)
 brmbh doctor --json                 # structured environment check
-brmbh create <name> [--from <path>] # scaffold a new theme
+npx @brmbh/cli create <name>        # scaffold a new theme
 brmbh add block <name>              # add an ACF block (4-file convention)
 brmbh add cpt <name>                # add a custom post type
 brmbh add skills                    # regenerate agent skill wrappers
