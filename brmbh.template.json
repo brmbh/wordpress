@@ -1,0 +1,35 @@
+{
+  "_comment": "Scaffold contract. `brmbh create` reads this to turn the starter into a client project. It lives in the theme, not the CLI, so the theme can change its own identity without a CLI release. Deleted from scaffolds.",
+
+  "identifier": "brmbh",
+  "themeName": "brmbh",
+
+  "rewrite": {
+    "textDomain": {
+      "files": ["**/*.php", "my-acf-blocks/**/block.json", "assets/src/scss/style.scss"],
+      "_comment": "The i18n domain. Rewritten only where it is unambiguously a text domain: the trailing argument of an i18n call, load_theme_textdomain()'s first argument, block.json's textdomain key, and @package tags."
+    },
+    "styleHeader": "style.css",
+    "packageName": "package.json"
+  },
+
+  "preserve": {
+    "_comment": "Framework identifiers, NOT project identity. Renaming these breaks things for no benefit — only one theme is active at a time, so there is nothing to collide with.",
+    "wpCliNamespace": "wp brmbh …  — registered via WP_CLI::add_command( 'brmbh', … )",
+    "phpConstants": "BRMBH_VERSION, BRMBH_DIR, BRMBH_URI",
+    "functionPrefix": "brmbh_*",
+    "npmDependency": "@brmbh/cli"
+  },
+
+  "delete": {
+    "_comment": "Starter-repo infrastructure. A client project neither needs nor should ship it. Kept deliberately: AGENTS.md and CLAUDE.md, which are the agent operating contract and belong in every project.",
+    "paths": [
+      "packages",
+      "skills",
+      "skills.sh.json",
+      ".github",
+      "package-lock.json",
+      "brmbh.template.json"
+    ]
+  }
+}

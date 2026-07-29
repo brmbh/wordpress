@@ -12,6 +12,7 @@ import { exists, isDir, slugify } from '../fsutil.js';
 import { materializeTheme } from '../registry.js';
 import { findWpRoot, acfStatus, activateTheme, hasWpCli } from '../wp.js';
 import { generateSkillWrappers } from './add.js';
+import { readTemplateManifest, personalizeTheme } from '../personalize.js';
 
 export const spec = {
   description: 'Scaffold a new brmbh theme into a folder, install, build, and wire up skills',
@@ -53,7 +54,17 @@ export async function run(ctx, args) {
   // the registry, so it must not carry a copy of the package, and must not be
   // a workspace root — otherwise npm resolves the dependency to the local copy
   // and `npm update` can never reach it.
-  steps.stripped = await stripStarterScaffolding(dest, ui);
+  const manifest = await readTemplateManifest(dest);
+  steps.stripped = await stripStarterScaffolding(dest, ui, manifest);
+
+  // 2c. make it the client's theme, not a copy of the starter
+  const ident = await personalizeTheme(dest, slug, manifest);
+  steps.personalized = ident.replacements > 0;
+  if (steps.personalized) {
+    ui.ok(`Personalized as "${ident.themeName}" (text domain ${ident.textDomain}, ${ident.replacements} refs in ${ident.files} files)`);
+  } else if (!manifest) {
+    ui.warn('No brmbh.template.json in the theme — skipped renaming; it will identify as the starter');
+  }
 
   // 3. install + build
   if (!args['skip-install']) {
@@ -144,11 +155,12 @@ export async function run(ctx, args) {
  *
  * @returns {Promise<string[]>} what was removed, for the result envelope
  */
-async function stripStarterScaffolding(dest, ui) {
+async function stripStarterScaffolding(dest, ui, manifest) {
   const removed = [];
 
-  // paths that only make sense in the monorepo
-  const drop = [
+  // The theme declares what to drop; this list is the fallback for a theme
+  // that predates the manifest.
+  const drop = manifest?.delete?.paths ?? [
     'packages',          // the @brmbh/cli source — consumed from npm instead
     'skills',            // pre-scaffold skill, distributed via `npx skills add`
     'skills.sh.json',    // its manifest
@@ -158,6 +170,7 @@ async function stripStarterScaffolding(dest, ui) {
     // symlink to the packages/ dir we just deleted — a dangling link, and the
     // registry version never gets fetched. npm regenerates this on install.
     'package-lock.json',
+    'brmbh.template.json',
   ];
   for (const rel of drop) {
     const target = path.join(dest, rel);
