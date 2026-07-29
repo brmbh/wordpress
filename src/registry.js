@@ -10,7 +10,7 @@ import { promises as fs } from 'node:fs';
 import { copyDir, exists, isDir } from './fsutil.js';
 import { runOrThrow, has } from './exec.js';
 
-export const THEME_REPO = 'https://github.com/Schmandarine/brmbh-agentic-wp-suite.git';
+export const THEME_REPO = 'https://github.com/brmbh/wordpress.git';
 
 /**
  * @param {object} opts
