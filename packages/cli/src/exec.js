@@ -1,5 +1,7 @@
 /** Shell helpers built on child_process, with json-mode-aware stdio routing. */
 import { spawn } from 'node:child_process';
+import path from 'node:path';
+import { promises as fs, constants as fsConstants } from 'node:fs';
 
 /**
  * Run a command, streaming its output to the user.
@@ -54,10 +56,44 @@ export function capture(cmd, args = [], { cwd, env } = {}) {
   });
 }
 
-/** True if a binary is resolvable on PATH. */
+/**
+ * True if a binary is resolvable on PATH.
+ *
+ * Resolved by walking PATH directly rather than shelling out. The previous
+ * implementation spawned `command -v <bin>`, which only worked on macOS:
+ * macOS ships an actual /usr/bin/command executable, while on Linux (and in
+ * every container and CI runner) `command` is a shell builtin with no binary
+ * to exec. The spawn failed with ENOENT, so `has()` returned false for
+ * everything — which broke `create` outright on Linux, since it refuses to
+ * clone without git, and made doctor report wp-cli as missing even when
+ * present.
+ */
 export async function has(bin) {
-  const probe = process.platform === 'win32' ? 'where' : 'command';
-  const args = process.platform === 'win32' ? [bin] : ['-v', bin];
-  const { ok } = await capture(probe, args);
-  return ok;
+  if (path.isAbsolute(bin) || bin.includes(path.sep)) return isExecutable(bin);
+
+  const dirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
+  // On Windows a bare name resolves via PATHEXT (git -> git.exe, git.cmd, …)
+  const exts = process.platform === 'win32'
+    ? (process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean)
+    : [''];
+
+  for (const dir of dirs) {
+    for (const ext of exts) {
+      if (await isExecutable(path.join(dir, bin + ext))) return true;
+    }
+  }
+  return false;
+}
+
+async function isExecutable(file) {
+  try {
+    const st = await fs.stat(file);
+    if (!st.isFile()) return false;
+    // Windows has no executable bit; existence on PATH with a PATHEXT match is enough.
+    if (process.platform === 'win32') return true;
+    await fs.access(file, fsConstants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
