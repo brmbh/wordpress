@@ -64,6 +64,7 @@ preconditions and guardrails.
 |---|---|---|
 | `/create-block` | Build a new ACF block from a design | block factory |
 | `/edit-block` | Modify an existing block | block factory |
+| `/edit-block-content` | Change a block's **field values** on a live page | `parse_blocks()` |
 | `/list-blocks` | Audit blocks + missing SCSS imports | block factory |
 | `/delete-block` | Remove a block + its SCSS import | block factory |
 | `/sync-tokens` | Figma Variables → `_tokens.scss` | `wp brmbh tokens` |
@@ -118,9 +119,31 @@ Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `in
 
 **Hard rule:** scaffold never touches ACF; each block owns its own `fields.php`.
 
+## Never string-edit `post_content`
+
+A page's block content is **structured data, not text**: each ACF block stores its whole field set
+as JSON inside an HTML comment, and WordPress hex-escapes `&`, `<`, `>`, `--`, `"` (→ `&`,
+`<`, …) plus `\r\n` so the JSON can't break out of that comment.
+
+`sed`, `str_replace`, or `wp_update_post()` **without `wp_slash()`** strips one backslash level and
+every escape degrades into literal on-page text — `&` becomes `u0026`, a newline becomes `rn`.
+Nothing errors: it's still valid JSON, just the wrong string. It ships, and someone finds it weeks
+later. Worse, whoever finds it usually *deletes* the junk in the ACF field, which destroys the
+original character with no trace.
+
+**Always** `parse_blocks()` → modify → `serialize_blocks()` → `wp_slash()`, then verify:
+
+```bash
+wp post get <ID> --field=content | grep -oE '[^\\]u00[0-9a-f]{2}|[a-zäöüß]rn[A-ZÄÖÜ]'   # must print nothing
+```
+
+Full procedure in `AGENTS/edit-block-content.md`. Applies to any scripted content edit, however
+small — a one-line image-ID swap is exactly how this happened on a client site (Megaherz, 2026-07-30).
+
 ## What NOT to do
 
 - Don't add `register_block_type()` calls by hand — the loader does it.
+- Don't `sed`/`str_replace` a `post_content` that contains block comments — see above.
 - Don't introduce raw hex/px values in templates or block SCSS.
 - Don't bump a block to `apiVersion: 3`.
 - Don't rename token slugs — re-value them instead.

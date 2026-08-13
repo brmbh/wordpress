@@ -210,6 +210,7 @@ Once doctor reports `class: ready` and the theme is active, the in-theme `AGENTS
 |---|---|
 | `/create-block` | Build a new ACF block from a Figma node, screenshot, or field schema |
 | `/edit-block` | Modify an existing block's json / fields / template / scss |
+| `/edit-block-content` | Change a block's field **values** on a live page (never string-edit `post_content`) |
 | `/list-blocks` | Audit registered blocks, ACF groups, and missing SCSS imports |
 | `/delete-block` | Confirm + remove a block folder and its SCSS import |
 | `/sync-tokens` | Regenerate `_tokens.scss` from Figma Variables via MCP |
@@ -220,6 +221,22 @@ Once doctor reports `class: ready` and the theme is active, the in-theme `AGENTS
 | `/check-versions` | Report PHP / WordPress / theme / plugin version drift |
 
 Invoke them directly (e.g. `/create-block`) or let the agent pick them up from context.
+
+## Hard rule — never string-edit `post_content`
+
+Block content is structured data: each ACF block stores its field set as JSON inside an HTML
+comment, with `&`, `<`, `>`, `--`, `"` and newlines hex-escaped so the JSON can't break out of that
+comment. `sed`/`str_replace`, or `wp_update_post()` **without `wp_slash()`** (it calls `wp_unslash()`
+on its input), strips one backslash level — `&` silently becomes the literal text `u0026`,
+a newline becomes `rn`. It stays valid JSON, so nothing errors and it ships.
+
+Use `parse_blocks()` → modify → `serialize_blocks()` → `wp_slash()`, then verify:
+
+```bash
+wp post get <ID> --field=content | grep -oE '[^\\]u00[0-9a-f]{2}|[a-zäöüß]rn[A-ZÄÖÜ]'   # must print nothing
+```
+
+See `/edit-block-content` for the full procedure and recovery steps.
 
 ## CLI reference
 
