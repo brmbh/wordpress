@@ -9,9 +9,13 @@ RWP="$(rq "${REMOTE_WP_PATH:-}")"
 
 # rsync to/from the server with a path that may hold spaces or quotes:
 #   rsync "${RSYNC_REMOTE[@]}" … "$SSH_TARGET:$(rpath "$dir")/"
-# rsync ≥ 3 sends the path untouched with -s; the 2.6.9 macOS ships passes it through
-# the remote shell, so there it is escaped instead.
-if rsync --help 2>&1 | grep -q -- '--protect-args'; then
+# rsync ≥ 3.2.4 (has --old-args) sends paths untouched by default; 3.0–3.2.3 needs -s;
+# the 2.6.9 macOS ships passes the path through the remote shell, so there it is escaped.
+RSYNC_HELP="$(rsync --help 2>&1 || true)"
+if grep -q -- '--old-args' <<< "$RSYNC_HELP"; then
+  RSYNC_REMOTE=()
+  rpath() { printf '%s' "$1"; }
+elif grep -qE -- '--(protect|secluded)-args' <<< "$RSYNC_HELP"; then
   RSYNC_REMOTE=(-s)
   rpath() { printf '%s' "$1"; }
 else

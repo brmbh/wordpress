@@ -58,10 +58,13 @@ export async function run(ctx, args) {
   const target = `${env.path.replace(/\/$/, '')}/wp-content/themes/${theme}/`;
   const dest = env.ssh ? `${env.ssh}:${target}` : target;
   ui.banner(`brmbh deploy → ${resolved.name}`, dest);
-  // A remote path with spaces or quotes: rsync ≥ 3 sends it untouched with -s; the 2.6.9
-  // macOS ships passes it through the remote shell, so there it is escaped instead.
-  const protect = env.ssh && /--protect-args/.test((await ctx.capture('rsync', ['--help'])).stdout);
-  const rsyncDest = env.ssh && !protect ? `${env.ssh}:${shellEscape(target)}` : dest;
+  // A remote path with spaces or quotes: rsync ≥ 3.2.4 (has --old-args) sends it untouched by
+  // default, 3.0–3.2.3 needs -s, and the 2.6.9 macOS ships passes it through the remote shell,
+  // so there it is escaped instead.
+  const help = env.ssh ? (await ctx.capture('rsync', ['--help'])).stdout : '';
+  const modern = /--old-args/.test(help);
+  const protect = !modern && /--(protect|secluded)-args/.test(help);
+  const rsyncDest = env.ssh && !modern && !protect ? `${env.ssh}:${shellEscape(target)}` : dest;
 
   // 1. a commit, not a working tree
   const git = (a) => ctx.capture('git', ['-C', themeDir, ...a]);
