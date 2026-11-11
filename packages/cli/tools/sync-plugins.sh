@@ -14,6 +14,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/remote.sh"
 # The CLI passes BRMBH_THEME_DIR; guessing from SCRIPT_DIR is only right for a theme-local tools/ copy.
 THEME_DIR="${BRMBH_THEME_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 LOCAL_WP_PATH="${LOCAL_WP_PATH:-$(cd "$THEME_DIR/../../.." && pwd)}"
@@ -28,7 +29,7 @@ for var in SSH_TARGET REMOTE_WP_PATH; do
   fi
 done
 
-REMOTE_PLUGINS_DIR="$(ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp eval 'echo WP_PLUGIN_DIR;' --allow-root 2>/dev/null" || echo "$REMOTE_WP_PATH/wp-content/plugins")"
+REMOTE_PLUGINS_DIR="$(ssh "$SSH_TARGET" "cd $RWP && wp eval 'echo WP_PLUGIN_DIR;' --allow-root 2>/dev/null" || echo "$REMOTE_WP_PATH/wp-content/plugins")"
 
 echo ""
 echo "--- Plugin sync: local → production ---"
@@ -52,22 +53,22 @@ while IFS= read -r plugin; do
 
   # Try wp plugin install from wp.org first
   INSTALL_OUT=$(ssh "$SSH_TARGET" \
-    "wp plugin install '$plugin' --path=$REMOTE_WP_PATH --allow-root 2>&1" || true)
+    "wp plugin install '$plugin' --path=$RWP --allow-root 2>&1" || true)
 
   if echo "$INSTALL_OUT" | grep -qE "^Success:|already installed"; then
     ssh "$SSH_TARGET" \
-      "wp plugin activate '$plugin' --path=$REMOTE_WP_PATH --allow-root 2>/dev/null" || true
+      "wp plugin activate '$plugin' --path=$RWP --allow-root 2>/dev/null" || true
     INSTALLED+=("$plugin")
     echo "  ✅ installed from wp.org"
   else
     # Premium or unknown — rsync the directory directly
     LOCAL_DIR="$LOCAL_PLUGINS_DIR/$plugin"
     if [[ -d "$LOCAL_DIR" ]]; then
-      rsync -az --delete \
+      rsync "${RSYNC_REMOTE[@]}" -az --delete \
         "$LOCAL_DIR/" \
-        "$SSH_TARGET:$REMOTE_PLUGINS_DIR/$plugin/"
+        "$SSH_TARGET:$(rpath "$REMOTE_PLUGINS_DIR/$plugin")/"
       ssh "$SSH_TARGET" \
-        "wp plugin activate '$plugin' --path=$REMOTE_WP_PATH --allow-root 2>/dev/null" || true
+        "wp plugin activate '$plugin' --path=$RWP --allow-root 2>/dev/null" || true
       RSYNCED+=("$plugin")
       echo "  ✅ rsynced (premium/not on wp.org)"
     else

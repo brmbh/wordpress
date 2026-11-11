@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Push local database to remote. OVERWRITES the remote database.
 #
-# Blocked when CANONICAL_ENV=remote (remote is source of truth).
-# Set CANONICAL_ENV=local in your env file to enable.
+# Blocked unless the environment is "canonical": "local" in brmbh.json (CANONICAL_ENV=local).
 #
 # What this does:
 #   1. Export local DB to a temp file
@@ -15,8 +14,7 @@
 #   8. Run any pending DB schema upgrades on remote
 #
 # Usage:
-#   source tools/env/staging.env && ./tools/db-push.sh
-#   source tools/env/production.env && ./tools/db-push.sh
+#   npx brmbh db push <env> [--yes]   (the CLI sets the variables from brmbh.json)
 #
 # Set SKIP_CONFIRM=1 to suppress the confirmation prompt (CI/automation).
 
@@ -48,9 +46,10 @@ db_backup_remote
 echo "🚀 Pushing local DB to remote ($REMOTE_URL)..."
 TMP_DUMP=$(mktemp /tmp/wp-sync-XXXXXX.sql)
 $LOCAL_WP_CLI db export "$TMP_DUMP" --path="$LOCAL_WP_PATH"
-ssh "$SSH_TARGET" "cat > /tmp/wp-sync-import.sql" < "$TMP_DUMP"
+REMOTE_TMP=$(ssh "$SSH_TARGET" "mktemp /tmp/brmbh-import-XXXXXX")
+ssh "$SSH_TARGET" "cat > $REMOTE_TMP" < "$TMP_DUMP"
 rm -f "$TMP_DUMP"
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp db import /tmp/wp-sync-import.sql --allow-root && rm /tmp/wp-sync-import.sql"
+ssh "$SSH_TARGET" "cd $RWP && wp db import $REMOTE_TMP --allow-root; status=\$?; rm -f $REMOTE_TMP; exit \$status"
 
 echo ""
 echo "🔁 Running URL search-replace (with convergence pass)..."
@@ -58,14 +57,14 @@ remote_search_replace "$LOCAL_URL" "$REMOTE_URL"
 
 echo ""
 echo "🔧 Fixing siteurl, home, theme and cache..."
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp option update siteurl '$REMOTE_URL' --allow-root"
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp option update home '$REMOTE_URL' --allow-root"
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp theme activate '$REMOTE_THEME' --allow-root"
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp cache flush --allow-root"
+ssh "$SSH_TARGET" "cd $RWP && wp option update siteurl '$REMOTE_URL' --allow-root"
+ssh "$SSH_TARGET" "cd $RWP && wp option update home '$REMOTE_URL' --allow-root"
+ssh "$SSH_TARGET" "cd $RWP && wp theme activate '$REMOTE_THEME' --allow-root"
+ssh "$SSH_TARGET" "cd $RWP && wp cache flush --allow-root"
 
 echo ""
 echo "🗄️  Running any pending DB schema upgrades on remote..."
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp core update-db --allow-root 2>&1" \
+ssh "$SSH_TARGET" "cd $RWP && wp core update-db --allow-root 2>&1" \
   | grep -E "Success|already|Error" || true
 
 echo ""

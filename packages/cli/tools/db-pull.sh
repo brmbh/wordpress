@@ -8,13 +8,12 @@
 #   4. Fix siteurl + home options
 #   5. Activate local theme
 #   6. Flush object cache
-#   7. Reconcile plugin file versions with the imported DB
+#   7. Install the plugin versions the server runs (never newer ones)
 #   8. Run any pending DB schema upgrades (core + plugins)
 #   9. Run version drift check (local vs remote)
 #
 # Usage:
-#   source tools/env/staging.env && ./tools/db-pull.sh
-#   source tools/env/production.env && ./tools/db-pull.sh
+#   npx brmbh db pull <env>   (the CLI sets the variables from brmbh.json)
 
 set -e
 
@@ -30,7 +29,7 @@ fi
 db_backup_local
 
 echo "🔄 Pulling remote DB ($REMOTE_URL) to local..."
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp db export - --allow-root" \
+ssh "$SSH_TARGET" "cd $RWP && wp db export - --allow-root" \
   | $LOCAL_WP_CLI db import - --path="$LOCAL_WP_PATH"
 
 echo ""
@@ -45,9 +44,8 @@ $LOCAL_WP_CLI theme activate "$LOCAL_THEME"      --path="$LOCAL_WP_PATH"
 $LOCAL_WP_CLI cache flush                        --path="$LOCAL_WP_PATH"
 
 echo ""
-echo "🔌 Reconciling plugin file versions with imported DB..."
-$LOCAL_WP_CLI plugin update --all --path="$LOCAL_WP_PATH" 2>&1 \
-  | grep -E "Success|updated|No updates|Error" || true
+echo "🔌 Matching local plugin versions to the server..."
+match_plugin_versions
 
 echo ""
 echo "🗄️  Running any pending DB schema upgrades (core + plugins)..."

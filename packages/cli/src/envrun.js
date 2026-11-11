@@ -28,12 +28,16 @@ export async function resolveForScript(themeDir, envName, required = ['ssh', 'pa
 /**
  * @returns {Promise<{ code: number, env: string, source: string, script: string }>}
  */
-export async function runToolWithEnv(ctx, themeDir, envName, scriptName, scriptArgs = [], { required, extraEnv = {} } = {}) {
+export async function runToolWithEnv(ctx, themeDir, envName, scriptName, scriptArgs = [], { required, localRequired = [], extraEnv = {} } = {}) {
   const tool = await resolveToolScript(themeDir, scriptName);
   if (!tool) {
     throw new ToolError('no_tool', `${scriptName} could not be located.`, 'It ships in @brmbh/cli — run `npm install` in the theme, or add your own tools/ override.');
   }
   const { resolved, vars } = await resolveForScript(themeDir, envName, required);
+  const localMissing = localRequired.filter((k) => !resolved.local?.[k]);
+  if (localMissing.length) {
+    throw new ToolError('incomplete_environment', `This machine's settings are missing: local.${localMissing.join(', local.')}`, `Add them to brmbh.local.json, e.g. {"local": {"url": "https://my-site.local"}}. The database URLs are rewritten to local.url, so it is never guessed.`);
+  }
   if (resolved.source === 'legacy') ctx.ui.warn(`Using legacy tools/env/${resolved.name}.env — \`brmbh update\` moves it into brmbh.local.json`);
   const { code } = await ctx.run('bash', [tool.path, ...scriptArgs], { cwd: themeDir, env: { ...vars, ...extraEnv } });
   return { code, env: resolved.name, source: resolved.source, script: tool.source };
