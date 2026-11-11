@@ -31,6 +31,9 @@ class BRMBH_CLI {
 	 */
 	public function scaffold( $args, $assoc_args ): void {
 		brmbh_acf_dependency_cli_guard();
+		if ( ! function_exists( 'brmbh_scaffold_run' ) ) {
+			WP_CLI::error( 'This theme has no scaffold definition (inc/scaffold.php).' );
+		}
 		$dry_run = isset( $assoc_args['dry-run'] );
 		$report  = brmbh_scaffold_run( $dry_run );
 

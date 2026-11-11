@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * brmbh — agentic WordPress suite CLI.
- * One front door for: scaffold, add (block/cpt/skills), dev, doctor, deploy, db.
+ * One front door for: scaffold, add (block/cpt/skills), dev, doctor, update, deploy, db.
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -15,11 +15,12 @@ import doctor from '../src/commands/doctor.js';
 import deploy from '../src/commands/deploy.js';
 import db from '../src/commands/db.js';
 import uploads from '../src/commands/uploads.js';
+import update from '../src/commands/update.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 
-const commands = { create, add, dev, doctor, deploy, db, uploads };
+const commands = { create, add, dev, doctor, update, deploy, db, uploads };
 
 dispatch(commands, process.argv.slice(2), { version: pkg.version })
   .then((code) => process.exit(code))

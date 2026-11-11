@@ -46,7 +46,8 @@ The CLI keeps the human experience tiny (one install command + ~5 verbs) while e
 | `add cpt <name>` | One-file custom post type | Scaffolding |
 | `add skills` | (Re)generate agent skill wrappers from canonical `AGENTS/` | Scaffolding |
 | `dev [--once]` | Build / watch the theme's CSS + JS | Dev ops |
-| `doctor` | Health check (node, theme, build, SCF, env) | Dev ops |
+| `doctor` | Health check (node, theme, build, skills, core, SCF, env) | Dev ops |
+| `update [--latest] [--dry-run]` | Update `@brmbh/cli`, replace the theme core in `inc/core/`, run migrations on the site's own files | Updates |
 | `deploy <env>` | Deploy to staging/prod (wraps `tools/deploy.sh`) | Cloud deploy |
 | `db pull\|push <env>` | Migrate the database between environments | DB / sync |
 | `uploads pull\|push <env> [--delete]` | Sync `wp-content/uploads` between environments | DB / sync |

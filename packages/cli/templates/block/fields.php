@@ -2,7 +2,7 @@
 /**
  * ACF field group for the {{ TITLE }} block.
  *
- * Registered automatically by my-acf-blocks/loader.php on acf/init.
+ * Registered automatically by the block factory (inc/core/blocks.php) on acf/init.
  * Add fields below; keep `key` values unique and prefixed.
  */
 

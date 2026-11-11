@@ -28,12 +28,18 @@ Do not confuse these — dropping or adding the `wp` prefix gets you "unknown co
 
 | You type | What it is | Where it lives |
 |---|---|---|
-| `npx brmbh …` | the **Node CLI** — `create`, `dev`, `doctor`, `deploy`, `db`, `uploads`, `add` | `@brmbh/cli`, a devDependency |
-| `wp brmbh …` | a **WP-CLI subcommand** this theme registers — `scaffold`, `tokens` | `inc/cli.php`, PHP, runs inside WordPress |
+| `npx brmbh …` | the **Node CLI** — `create`, `dev`, `doctor`, `update`, `deploy`, `db`, `uploads`, `add` | `@brmbh/cli`, a devDependency |
+| `wp brmbh …` | a **WP-CLI subcommand** this theme registers — `scaffold`, `tokens` | `inc/core/cli.php`, PHP, runs inside WordPress |
 
 Different languages, different runtimes, same word. They are unrelated programs.
 
 ## Where things live
+
+**Never edit `inc/core/`.** It is the brmbh core (block factory loader, SCF guard, `wp brmbh`
+commands); it ships inside `@brmbh/cli` and `brmbh update` replaces the whole folder, so edits
+there are lost and `brmbh doctor` flags them. To change behaviour, use its hooks (e.g. the
+`brmbh/block_dirs` filter) from your own files in `inc/`; see `inc/core/README.md`. When the user
+asks to update brmbh, run the `/update` skill.
 
 Skills and tooling ship in `@brmbh/cli` so `npm update` refreshes them; a project-local copy
 always wins, so you can override one without losing updates to the rest.
@@ -52,7 +58,7 @@ source, never a wrapper.
 An agentic WordPress starter: Bootstrap 5 + Gutenberg + an auto-registering ACF block factory.
 Content is driven by ACF blocks and native Gutenberg patterns — not page templates.
 
-**Hard dependency:** SCF 6.0+ (Secure Custom Fields — free, wordpress.org/plugins/secure-custom-fields). ACF Pro also works — both define `ACF_PRO=true`. No fallback. `inc/dependencies.php` is the single source of truth (`brmbh_has_acf_pro()`); it surfaces admin notices and aborts `wp brmbh` commands when SCF is missing.
+**Hard dependency:** SCF 6.0+ (Secure Custom Fields — free, wordpress.org/plugins/secure-custom-fields). ACF Pro also works — both define `ACF_PRO=true`. No fallback. `inc/core/dependencies.php` is the single source of truth (`brmbh_has_acf_pro()`); it surfaces admin notices and aborts `wp brmbh` commands when SCF is missing.
 
 ## Skills — everything an agent can do here
 
@@ -101,7 +107,7 @@ Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `in
 ## The block factory
 
 - A block = a folder in `my-acf-blocks/{name}/` with `block.json`, `fields.php`, `template.php`,
-  `_style.scss`. `loader.php` auto-registers it. Zero manual registration.
+  `_style.scss`. The core's block factory (`inc/core/blocks.php`) auto-registers it. Zero manual registration.
 - **Every `block.json` ships `apiVersion: 2` + `supports.mode: true`.** Never `apiVersion: 3` —
   it iframes the editor canvas and ACF force-disables in-canvas editing. See
   `my-acf-blocks/ACF-BLOCK-EDIT-MODE.md`.

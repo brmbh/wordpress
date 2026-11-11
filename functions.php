@@ -74,9 +74,10 @@ add_action( 'wp_enqueue_scripts', 'brmbh_enqueue_assets' );
 // Includes
 // ---------------------------------------------------------------------------
 
-// Hard dependency check FIRST — must load before anything that touches ACF.
-// Defines brmbh_has_acf_pro() and surfaces admin notices everywhere.
-require BRMBH_DIR . '/inc/dependencies.php';
+// brmbh core FIRST — SCF/ACF guard, block factory, `wp brmbh` commands.
+// Ships in @brmbh/cli and is replaced by `brmbh update`: never edit inc/core/,
+// extend it with hooks (see inc/core/README.md).
+require BRMBH_DIR . '/inc/core/load.php';
 
 require BRMBH_DIR . '/inc/template-functions.php';
 require BRMBH_DIR . '/inc/block-patterns.php';
@@ -84,12 +85,5 @@ require BRMBH_DIR . '/inc/gutenberg.php';
 require BRMBH_DIR . '/inc/footer-menus.php';
 require BRMBH_DIR . '/inc/bootstrap-nav-walker.php';
 
-// ACF block factory — loader hooks itself onto init + acf/init and bails safely
-// if ACF isn't loaded. Drop a four-file folder into my-acf-blocks/ and it registers.
-require BRMBH_DIR . '/my-acf-blocks/loader.php';
-
-// Scaffold (pages + menus) + WP-CLI namespace.
+// Scaffold definition (pages + menus) — yours to edit; `wp brmbh scaffold` runs it.
 require BRMBH_DIR . '/inc/scaffold.php';
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require BRMBH_DIR . '/inc/cli.php';
-}

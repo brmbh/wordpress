@@ -1,7 +1,7 @@
 {
   "name": "@brmbh/cli",
-  "version": "1.2.0",
-  "description": "Deterministic tooling and agent skills for the brmbh WordPress theme \u2014 scaffold, build, deploy, sync, and the AGENTS/ skill docs, consumed as a devDependency so they stay updatable.",
+  "version": "1.3.0",
+  "description": "Deterministic tooling and agent skills for the brmbh WordPress theme — scaffold, build, deploy, sync, and the AGENTS/ skill docs, consumed as a devDependency so they stay updatable.",
   "type": "module",
   "bin": {
     "brmbh": "bin/brmbh.js"
@@ -14,11 +14,13 @@
     "src",
     "templates",
     "tools",
-    "AGENTS"
+    "AGENTS",
+    "core"
   ],
   "scripts": {
     "brmbh": "node bin/brmbh.js",
-    "test": "node --test test/"
+    "prepack": "node scripts/pack-core.mjs",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": [
     "wordpress",

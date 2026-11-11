@@ -74,7 +74,7 @@ my-acf-blocks/{block-name}/
   _style.scss    # block styles (auto-imported)
 ```
 
-`my-acf-blocks/loader.php` scans the folder and registers each block + field group on
+The block factory (`inc/core/blocks.php`) scans the folder and registers each block + field group on
 `init` / `acf/init`. The **`/create-block`** agent skill writes all four files from a Figma
 node or a screenshot, mapping the design to your tokens — never raw hex. Working reference:
 `my-acf-blocks/example-hero/`.
@@ -124,7 +124,7 @@ with container-constrained content work for both native Gutenberg patterns
 
 > ⚠️ **Requires [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) (SCF) 6.0+ — free.**
 > ACF Pro 6.0+ also works; both define `ACF_PRO`. The block layer is load-bearing — there is
-> no fallback path. `inc/dependencies.php` enforces it with admin notices and CLI guards.
+> no fallback path. `inc/core/dependencies.php` enforces it with admin notices and CLI guards.
 
 ---
 
@@ -175,8 +175,20 @@ wp brmbh scaffold        # idempotent; --dry-run to preview
 
 | | Where it lives | Updates? |
 |---|---|---|
-| Theme — PHP, blocks, templates, styles | your repo | No — it's yours, edit freely |
-| Tooling + agent skills | `@brmbh/cli`, a devDependency | **Yes — `npm update @brmbh/cli`** |
+| Theme — templates, blocks, styles, `theme.json`, your `inc/` files | your repo | No — it's yours, edit freely. A release that needs a change here ships a **migration** you review |
+| Core — block factory loader, SCF guard, `wp brmbh` commands | `inc/core/`, committed in your repo | **Yes — `brmbh update` replaces the whole folder.** Never edit it; extend it with hooks ([inc/core/README.md](inc/core/README.md)) |
+| Tooling + agent skills | `@brmbh/cli`, a devDependency | **Yes — `brmbh update`** (or `npm update @brmbh/cli`) |
+
+```bash
+npx brmbh update            # update @brmbh/cli in range, replace inc/core/, run migrations
+npx brmbh update --latest   # also take a new major version
+npx brmbh update --dry-run  # show what would change, write nothing
+```
+
+`brmbh update` changes nothing if a migration needs you first (e.g. a starter file you edited):
+it lists the file and what to do. `brmbh doctor` reports a missing, outdated or hand-edited core.
+The core ships inside `@brmbh/cli` and lives in the theme as plain PHP, so deploys need no
+Node or Composer on the server.
 
 Keep a project-local `AGENTS/<name>.md` or `tools/<name>` to override one skill or script; the
 rest keep updating. `.claude/`, `.cursor/` and `.windsurf/` are generated on install — never edit
@@ -204,6 +216,7 @@ matching `AGENTS/{skill}.md` (wrappers in `.claude/commands/`, `.cursor/rules/`,
 | `/sync-plugins` | Mirror active plugins to a remote environment |
 | `/sync-uploads` | Sync `wp-content/uploads` between environments (push is guarded + destructive) |
 | `/check-versions` | Report PHP / WordPress / theme / plugin drift between environments |
+| `/update` | Update `@brmbh/cli`, replace the core in `inc/core/`, run migrations, review the diff |
 
 The operating contract every agent follows is [AGENTS.md](AGENTS.md); Claude-specific workflow
 is in [CLAUDE.md](CLAUDE.md). Both are written to be read by an LLM as a system prompt for the
@@ -231,8 +244,9 @@ GPL-2.0-or-later.
 ## Project layout
 
 ```
-my-acf-blocks/        ACF block factory (loader + one example block)
-inc/                  scaffold, block patterns, editor config, ACF dependency guard, CLI
+inc/core/             the core — block factory loader, SCF guard, `wp brmbh` commands (replaced by `brmbh update`)
+my-acf-blocks/        your blocks (one example block)
+inc/                  your theme code — scaffold definition, block patterns, editor config, nav walkers
 assets/src/scss/      tokens → variables → Bootstrap bridge → globals → components
 assets/src/js/        Bootstrap + GSAP entry, scroll entrances, sticky nav
 tools/env/            per-project environment templates (the scripts ship in @brmbh/cli)

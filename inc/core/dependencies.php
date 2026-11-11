@@ -114,7 +114,7 @@ add_action( 'admin_notices', 'brmbh_acf_dependency_post_activate_notice' );
  * Surface 3 — Hard error in WP-CLI.
  *
  * Any `wp brmbh` subcommand aborts with a clear message if SCF/ACF is missing.
- * Called by inc/cli.php at the top of each subcommand.
+ * Called by inc/core/cli.php at the top of each subcommand.
  */
 function brmbh_acf_dependency_cli_guard(): void {
 	if ( brmbh_has_acf_pro() ) {

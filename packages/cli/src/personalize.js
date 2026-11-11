@@ -10,10 +10,14 @@
  * is left alone is framework plumbing — the `wp brmbh` command namespace, the
  * `BRMBH_*` constants, the `brmbh_` function prefix, the `@brmbh/cli`
  * dependency. Only one theme is active at a time, so those cannot collide.
+ *
+ * `inc/core/` is never touched: it ships in @brmbh/cli and `brmbh update`
+ * replaces it as a whole, which only works while it is identical in every site.
  */
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
 import { exists, readText, writeText, titleCase } from './fsutil.js';
+import { CORE_REL, rewriteTextDomainIn } from './core.js';
 
 const MANIFEST = 'brmbh.template.json';
 
@@ -48,7 +52,7 @@ export async function personalizeTheme(themeDir, slug, manifest) {
 
   bump(await rewriteStyleHeader(themeDir, from, slug, themeName, manifest));
   bump(await rewritePackageJson(themeDir, slug));
-  for (const file of await walk(themeDir)) {
+  for (const file of await walk(themeDir, themeDir)) {
     bump(await rewriteTextDomain(file, from, slug));
   }
 
@@ -57,40 +61,22 @@ export async function personalizeTheme(themeDir, slug, manifest) {
 
 /* ------------------------------------------------------------------ bits --- */
 
-async function walk(dir, out = []) {
+async function walk(dir, root, out = []) {
   const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => []);
   for (const e of entries) {
     if (e.name.startsWith('.') || SKIP_DIRS.has(e.name)) continue;
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) await walk(full, out);
+    if (e.isDirectory() && path.relative(root, full) === CORE_REL) continue; // the core is never personalized
+    if (e.isDirectory()) await walk(full, root, out);
     else if (CODE_EXT.has(path.extname(e.name))) out.push(full);
   }
   return out;
 }
 
-/**
- * Replace the text domain only where it is unambiguously a text domain.
- *
- * `add_command( 'brmbh', … )` registers the WP-CLI namespace and looks exactly
- * like `load_theme_textdomain( 'brmbh', … )`, so a blunt find/replace would
- * silently rename the command namespace. These patterns are deliberately
- * narrow rather than clever.
- */
+/** Rewrite the text domain in one file (rules: rewriteTextDomainIn in core.js). */
 async function rewriteTextDomain(file, from, to) {
   const before = await readText(file);
-  const q = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  let after = before
-    // trailing argument of an i18n call:  __( 'Menu', 'brmbh' )
-    .replace(new RegExp(`,(\\s*)'${q}'(\\s*\\))`, 'g'), `,$1'${to}'$2`)
-    .replace(new RegExp(`,(\\s*)"${q}"(\\s*\\))`, 'g'), `,$1"${to}"$2`)
-    // load_theme_textdomain( 'brmbh', … ) — domain is the *first* argument
-    .replace(new RegExp(`(load_theme_textdomain\\(\\s*)'${q}'`, 'g'), `$1'${to}'`)
-    // block.json
-    .replace(new RegExp(`("textdomain"\\s*:\\s*)"${q}"`, 'g'), `$1"${to}"`)
-    // docblocks
-    .replace(new RegExp(`(@package\\s+)${q}\\b`, 'g'), `$1${to}`)
-    // stylesheet banner comment
-    .replace(new RegExp(`^(\\s*\\*\\s*)${q}( — )`, 'gm'), `$1${to}$2`);
+  const after = rewriteTextDomainIn(before, from, to);
 
   if (after === before) return 0;
   const n = countDiff(before, after, from);
