@@ -1,6 +1,6 @@
 {
   "name": "@brmbh/cli",
-  "version": "1.4.1",
+  "version": "1.4.0",
   "description": "Deterministic tooling and agent skills for the brmbh WordPress theme — scaffold, build, deploy, sync, and the AGENTS/ skill docs, consumed as a devDependency so they stay updatable.",
   "type": "module",
   "bin": {
