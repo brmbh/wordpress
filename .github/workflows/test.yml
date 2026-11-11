@@ -1,0 +1,21 @@
+# Tests @brmbh/cli on Linux (rsync 3.x) for every PR and push to main.
+# macOS dev machines run rsync 2.6.9; this catches what only shows up on the other one.
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # test/core.test.js archives an old commit
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm test
+        working-directory: packages/cli

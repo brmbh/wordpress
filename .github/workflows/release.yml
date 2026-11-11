@@ -29,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0 # test/core.test.js archives an old commit
       - uses: actions/setup-node@v4
         with:
           node-version: 24
