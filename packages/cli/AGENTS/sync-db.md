@@ -43,8 +43,19 @@ npx brmbh db pull staging
 npx brmbh db push staging --yes
 ```
 
-Both pull and push run URL search-replace (http + https variants, convergence pass), fix
-`siteurl`/`home`, activate the right theme, flush cache, and run pending schema upgrades.
+What each one does, in order:
+
+- **pull:** check both connections → back up the local DB → stream the server's DB into the
+  local one → rewrite the server URL to `local.url` (http + https, then a convergence pass) →
+  set `siteurl`/`home`, activate the local theme, flush cache → install exactly the plugin
+  versions the server runs (never newer; premium plugins not on wordpress.org are named, copy
+  those by hand) → pending schema upgrades → version drift report.
+- **push:** canonical guard → confirmation → check both connections → back up the server's DB
+  → export locally, upload to a unique temp file, import, delete the temp file → rewrite the
+  local URL to the server URL → `siteurl`/`home`, theme, cache, schema upgrades on the server.
+
+`local.url` (in `brmbh.local.json`) is required: every URL in the database is rewritten to it,
+so the CLI refuses rather than guessing. Missing → ask the user for their local site URL.
 `db push` asks for confirmation; with `--json` it refuses without `--yes`. Pass `--yes` only
 after the user confirmed this exact target in the conversation — never for production on your
 own.
@@ -53,4 +64,6 @@ own.
 
 State the direction, environment, `REMOTE_URL`, and a summary of what the script reported
 (rows replaced, theme activated, schema upgrades). If a push was blocked by `CANONICAL_ENV`,
-report that and stop — don't work around it. Name the backup file the script printed.
+report that and stop — don't work around it. Name the backup file the script printed, and any
+plugin it could not match (premium). To undo: `wp db import <backup>` on the side that was
+overwritten.

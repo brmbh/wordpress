@@ -35,6 +35,7 @@ export async function run(ctx, args) {
   ctx.ui.step(`db ${args.action} ${args.action === 'pull' ? '←' : '→'} ${args.env}`);
   const res = await runToolWithEnv(ctx, themeDir, args.env, `db-${args.action}.sh`, [], {
     required: ['ssh', 'path', 'url'],
+    localRequired: ['url'],
     extraEnv: args.yes ? { SKIP_CONFIRM: '1' } : {},
   });
   if (res.code !== 0) throw new ToolError('db_failed', `db-${args.action}.sh exited with code ${res.code}`);

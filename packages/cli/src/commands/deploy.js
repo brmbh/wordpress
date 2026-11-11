@@ -58,6 +58,10 @@ export async function run(ctx, args) {
   const target = `${env.path.replace(/\/$/, '')}/wp-content/themes/${theme}/`;
   const dest = env.ssh ? `${env.ssh}:${target}` : target;
   ui.banner(`brmbh deploy → ${resolved.name}`, dest);
+  // A remote path with spaces or quotes: rsync ≥ 3 sends it untouched with -s; the 2.6.9
+  // macOS ships passes it through the remote shell, so there it is escaped instead.
+  const protect = env.ssh && /--protect-args/.test((await ctx.capture('rsync', ['--help'])).stdout);
+  const rsyncDest = env.ssh && !protect ? `${env.ssh}:${shellEscape(target)}` : dest;
 
   // 1. a commit, not a working tree
   const git = (a) => ctx.capture('git', ['-C', themeDir, ...a]);
@@ -107,7 +111,7 @@ export async function run(ctx, args) {
     ui.ok(`Staged commit ${commit.slice(0, 7)}${dirty ? ' + uncommitted changes' : ''}: ${files} tracked files + ${include.join(', ')}`);
 
     // 4. rsync: always a dry run first, for the report
-    const rsyncArgs = ['-rlcz', '--delete', '--itemize-changes', `${stage}/`, dest];
+    const rsyncArgs = [...(protect ? ['-s'] : []), '-rlcz', '--delete', '--itemize-changes', `${stage}/`, rsyncDest];
     const plan = await ctx.capture('rsync', ['-n', ...rsyncArgs]);
     if (!plan.ok) throw new ToolError('rsync_failed', 'rsync dry run failed', plan.stderr || plan.stdout);
     const changes = parseItemize(plan.stdout);
@@ -179,6 +183,11 @@ export function parseItemize(out) {
 
 function cap(c, n = 100) {
   return Object.fromEntries(Object.entries(c).map(([k, v]) => [k, v.length > n ? [...v.slice(0, n), `… ${v.length - n} more`] : v]));
+}
+
+/** Backslash-escape for a POSIX shell (what bash's printf %q does for plain paths). */
+export function shellEscape(s) {
+  return String(s).replace(/[^A-Za-z0-9_./-]/g, (c) => `\\${c}`);
 }
 
 function shq(s) {

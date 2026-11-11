@@ -1,14 +1,14 @@
 # /sync-uploads
 
-Sync `wp-content/uploads` between local and a remote environment. Wraps
-`tools/uploads-pull.sh` and `tools/uploads-push.sh`.
+Sync `wp-content/uploads` between local and a remote environment with
+`npx brmbh uploads pull|push <env>` (wraps `tools/uploads-pull.sh` / `uploads-push.sh`).
 
 ## ⚠️ Read this first — direction matters
 
 | Direction | Script | Risk | Effect |
 |---|---|---|---|
-| **pull** (remote → local) | `uploads-pull.sh` | Safe-ish, additive by default | Copies remote files to local. Nothing is deleted locally unless `--delete` is passed. |
-| **push** (local → remote) | `uploads-push.sh` | **Destructive** | Mirrors local to remote — files present remotely but not locally are **deleted there**. |
+| **pull** (remote → local) | `npx brmbh uploads pull <env>` | Safe-ish, additive by default | Copies remote files to local. Nothing is deleted locally unless `--delete` is passed. |
+| **push** (local → remote) | `npx brmbh uploads push <env> --yes` | **Destructive** | Mirrors local to remote — files present remotely but not locally are **deleted there**. Every replaced or deleted file is first moved to `~/.brmbh-backups/uploads-<env>-before-push-<time>/` on the server. |
 
 **Never run `uploads-push` to an environment where someone else (a client, an editor) is
 actively uploading content without explicit, unambiguous user confirmation naming the
@@ -42,7 +42,11 @@ npx brmbh uploads pull staging
 # Pull, mirroring remote exactly (deletes local files not on remote)
 npx brmbh uploads pull staging --delete
 
-# Push local → remote (mirror — only if canonical is "local" and the user confirmed the target)
+# Skip a folder for this run only (standing ones: the environment's `excludes`)
+npx brmbh uploads pull staging --exclude=videos
+
+# Push local → remote: dry run first, show the user the deletions, then send
+npx brmbh uploads push staging --dry-run
 npx brmbh uploads push staging --yes
 ```
 
@@ -51,11 +55,12 @@ patterns for anything project-specific that lands in
 `wp-content/uploads` but shouldn't sync (a backup plugin's own storage dir is the most common
 case). This is set per project in the config, never hardcoded in the script.
 
-`uploads push` asks for confirmation; with `--json` it refuses without `--yes`. Pass `--yes`
-only for the environment the user explicitly named.
+`uploads push` asks for confirmation; with `--json` it refuses without `--yes` (or
+`--dry-run`). Run `--dry-run` first and name the files it would delete; pass `--yes` only for
+the environment the user explicitly named, after they saw that list.
 
 ## Report
 
 State the direction, environment, `REMOTE_URL` (or path), and what rsync reported (files
 transferred, anything excluded). If a push was blocked by `CANONICAL_ENV`, report that and
-stop — don't work around it.
+stop — don't work around it. After a push, name the backup folder the script printed.

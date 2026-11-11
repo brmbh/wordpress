@@ -9,6 +9,7 @@
 # Requires: WP-CLI locally and on server, SSH access (same setup as db-pull/push)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/remote.sh"
 # The CLI passes BRMBH_THEME_DIR; guessing from SCRIPT_DIR is only right for a theme-local tools/ copy.
 THEME_DIR="${BRMBH_THEME_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 LOCAL_WP_PATH="${LOCAL_WP_PATH:-$(cd "$THEME_DIR/../../.." && pwd)}"
@@ -75,7 +76,7 @@ echo ""
 echo -e "${BOLD}[2/4] WordPress Core Version${RESET}"
 
 LOCAL_WP=$("${WP_LOCAL[@]}" core version 2>/dev/null | grep -v Deprecated | grep -v "^$" | head -1 || echo "unknown")
-REMOTE_WP=$(ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp core version --allow-root --skip-plugins --skip-themes 2>/dev/null" | head -1 || echo "unknown")
+REMOTE_WP=$(ssh "$SSH_TARGET" "cd $RWP && wp core version --allow-root --skip-plugins --skip-themes 2>/dev/null" | head -1 || echo "unknown")
 
 info "Local:  WP $LOCAL_WP"
 info "Remote: WP $REMOTE_WP"
@@ -88,7 +89,7 @@ else
   drift "WordPress version mismatch — Local: $LOCAL_WP / Remote: $REMOTE_WP"
   echo -e "    ${YELLOW}Fix: update both environments:${RESET}"
   echo -e "    ${CYAN}wp core update --path=\"$LOCAL_WP_PATH\"${RESET}"
-  echo -e "    ${CYAN}ssh $SSH_TARGET \"cd $REMOTE_WP_PATH && wp core update --allow-root\"${RESET}"
+  echo -e "    ${CYAN}ssh $SSH_TARGET \"cd $RWP && wp core update --allow-root\"${RESET}"
 fi
 echo ""
 
@@ -96,7 +97,7 @@ echo ""
 echo -e "${BOLD}[3/4] Theme Version${RESET}"
 
 LOCAL_THEME_VER=$("${WP_LOCAL[@]}" theme get "$LOCAL_THEME" --field=version 2>/dev/null | grep -v Deprecated | grep -v "^$" | head -1 || echo "unknown")
-REMOTE_THEME_VER=$(ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp theme get $REMOTE_THEME --field=version --allow-root --skip-plugins --skip-themes 2>/dev/null" | head -1 || echo "unknown")
+REMOTE_THEME_VER=$(ssh "$SSH_TARGET" "cd $RWP && wp theme get $REMOTE_THEME --field=version --allow-root --skip-plugins --skip-themes 2>/dev/null" | head -1 || echo "unknown")
 
 info "Local:  $LOCAL_THEME @ $LOCAL_THEME_VER"
 info "Remote: $REMOTE_THEME @ $REMOTE_THEME_VER"
@@ -120,7 +121,7 @@ TMP_PROD=$(mktemp /tmp/vc-prod-XXXXXX.csv)
 "${WP_LOCAL[@]}" plugin list --status=active --fields=name,version --format=csv 2>/dev/null \
   | grep -v Deprecated | grep -v "^name," | grep -v "^$" | sort > "$TMP_LOCAL"
 
-ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp plugin list --status=active --fields=name,version --format=csv --allow-root --skip-plugins --skip-themes 2>/dev/null" \
+ssh "$SSH_TARGET" "cd $RWP && wp plugin list --status=active --fields=name,version --format=csv --allow-root --skip-plugins --skip-themes 2>/dev/null" \
   | grep -v "^name," | grep -v "^$" | sort > "$TMP_PROD"
 
 MISMATCHES=$(join -t',' "$TMP_LOCAL" "$TMP_PROD" | awk -F',' '$2 != $3 { printf "%s  (Local: %s  →  Prod: %s)\n", $1, $2, $3 }')
