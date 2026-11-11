@@ -92,18 +92,17 @@ node bin/brmbh.js create demo --from ../wordpress
 
 ## Releasing
 
-Nobody runs `npm publish` by hand. `.github/workflows/release.yml` (release-please):
+Nobody runs `npm publish` by hand, and merging to `main` never publishes. Fixes collect on
+`main`; a release happens when someone decides to ship:
 
-1. Every push to `main` updates one open release PR. It picks the next version from the
-   Conventional Commits that touched `packages/cli` (`fix:` → patch, `feat:` → minor, `!` →
-   major) and bumps `package.json`, `CHANGELOG.md` and `inc/core/core.json` together.
-2. Merging the release PR tags `vX.Y.Z`, creates the GitHub release, runs the tests and
-   publishes to npm through trusted publishing (no token, provenance attached).
+```bash
+gh workflow run release.yml -f bump=patch   # or minor / major; also: Actions → release → Run workflow
+```
 
-Merge fixes as often as you like; release when there is a reason to. A change only in
-`inc/core/` (outside `packages/cli`) does not open a release by itself: add a `fix:` or
-`feat:` commit in `packages/cli` that says what changed for sites, or a `Release-As: x.y.z`
-footer.
+`.github/workflows/release.yml` bumps `package.json` and `inc/core/core.json` together, runs
+the tests, publishes to npm through trusted publishing (no token, provenance attached), then
+commits the bump to `main`, tags `vX.Y.Z` and creates the GitHub release with notes generated
+from the merged PRs.
 
 ## License
 
