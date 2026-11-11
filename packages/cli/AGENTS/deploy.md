@@ -31,8 +31,9 @@ config, agent dirs) then flushes the object cache on the server.
 
 ## Notes
 
-- **IP-restricted hosts:** `deploy.sh` runs from a machine whose IP is whitelisted for SSH.
-  CI runners with dynamic IPs are often blocked — local deploy is the supported path.
+- **Where it runs:** anywhere SSH to the server works — your machine or a CI runner with the
+  key stored as a secret. Some hosts only allow SSH from known IPs; that is a property of the
+  host, so check it per project.
 - This is a one-way code sync. It does not touch the DB, uploads, or plugins.
 - After deploying to a new environment, the DB may still point at the old URL — run
   `/sync-db` (pull or push) to reconcile URLs and content.
