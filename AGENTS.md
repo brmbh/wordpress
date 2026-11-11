@@ -107,7 +107,7 @@ Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `in
   `my-acf-blocks/ACF-BLOCK-EDIT-MODE.md`.
 - **Boolean attributes in `template.php` need a value:** `hidden="hidden"`, not bare `hidden`.
   The editor renders ACF previews through React, which drops an empty attribute, so an element
-  hidden on the frontend shows in the editor (found 2026-11-03, Megaherz `videos-grid`).
+  hidden on the frontend shows in the editor.
   The editor already has Bootstrap: `style.css` imports reboot + utilities itself.
 - To create/edit/remove a block, use the `/create-block`, `/edit-block`, `/delete-block` skills
   in `AGENTS/`. They keep `_loader.scss` imports in sync.
