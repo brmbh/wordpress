@@ -90,6 +90,21 @@ node bin/brmbh.js help
 node bin/brmbh.js create demo --from ../wordpress
 ```
 
+## Releasing
+
+Nobody runs `npm publish` by hand. `.github/workflows/release.yml` (release-please):
+
+1. Every push to `main` updates one open release PR. It picks the next version from the
+   Conventional Commits that touched `packages/cli` (`fix:` → patch, `feat:` → minor, `!` →
+   major) and bumps `package.json`, `CHANGELOG.md` and `inc/core/core.json` together.
+2. Merging the release PR tags `vX.Y.Z`, creates the GitHub release, runs the tests and
+   publishes to npm through trusted publishing (no token, provenance attached).
+
+Merge fixes as often as you like; release when there is a reason to. A change only in
+`inc/core/` (outside `packages/cli`) does not open a release by itself: add a `fix:` or
+`feat:` commit in `packages/cli` that says what changed for sites, or a `Release-As: x.y.z`
+footer.
+
 ## License
 
 MIT

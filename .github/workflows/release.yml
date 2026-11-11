@@ -1,0 +1,54 @@
+# Releases @brmbh/cli. Nothing is published until a person merges the release PR.
+#
+# 1. Every push to main: release-please keeps one open PR ("chore(main): release x.y.z")
+#    with the next version (from fix:/feat: commits in packages/cli), CHANGELOG.md,
+#    and inc/core/core.json bumped to match.
+# 2. Merging that PR tags vX.Y.Z, creates the GitHub release, and the publish job below
+#    tests and publishes to npm with trusted publishing (OIDC, no token; provenance attached).
+#
+# One-time setup: npmjs.com → @brmbh/cli → Settings → Trusted publishing → GitHub Actions,
+# repository brmbh/wordpress, workflow release.yml. GitHub → Settings → Actions → General:
+# "Allow GitHub Actions to create and approve pull requests".
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.rp.outputs['packages/cli--release_created'] }}
+      tag: ${{ steps.rp.outputs['packages/cli--tag_name'] }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: rp
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.released == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@11 # trusted publishing needs npm >= 11.5.1
+      - run: npm test
+        working-directory: packages/cli
+      - run: npm publish --access public
+        working-directory: packages/cli
