@@ -90,6 +90,20 @@ node bin/brmbh.js help
 node bin/brmbh.js create demo --from ../wordpress
 ```
 
+## Releasing
+
+Nobody runs `npm publish` by hand, and merging to `main` never publishes. Fixes collect on
+`main`; a release happens when someone decides to ship:
+
+```bash
+gh workflow run release.yml -f bump=patch   # or minor / major; also: Actions → release → Run workflow
+```
+
+`.github/workflows/release.yml` bumps `package.json` and `inc/core/core.json` together, runs
+the tests, publishes to npm through trusted publishing (no token, provenance attached), then
+commits the bump to `main`, tags `vX.Y.Z` and creates the GitHub release with notes generated
+from the merged PRs.
+
 ## License
 
 MIT
