@@ -19,14 +19,14 @@ Each mismatch is reported with a suggested fix; it exits non-zero if any drift i
 
 ## Preconditions
 
-Env file `tools/env/{environment}.env` exists with the SSH + path + URL vars, and WP-CLI is
-available on both ends. On macOS + Local by Flywheel set `LOCAL_WP_CLI="localwp"` in the env
-file; otherwise it defaults to `wp`.
+The environment exists in `brmbh.json` / `brmbh.local.json` with `ssh` + `path` (`npx brmbh env`), and WP-CLI is
+available on both ends. On macOS + Local by Flywheel set `"local": {"wpCli": "localwp"}` in
+`brmbh.local.json`; otherwise it defaults to `wp`.
 
 ## Run
 
 ```bash
-source tools/env/staging.env && ./tools/version-check.sh
+npx brmbh env run staging version-check
 ```
 
 ## Report

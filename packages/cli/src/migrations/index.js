@@ -13,6 +13,7 @@ import path from 'node:path';
 import { promises as fs } from 'node:fs';
 import { exists, readText } from '../fsutil.js';
 import { CORE_REL, fingerprint, themeTextDomain } from '../core.js';
+import { LOCAL_CONFIG, legacyEnvNames, parseEnvFile, fromLegacyVars } from '../environments.js';
 
 const KNOWN = JSON.parse(await fs.readFile(new URL('./pre-core-files.json', import.meta.url), 'utf8'));
 
@@ -106,8 +107,56 @@ export const coreAdopt = {
   },
 };
 
+/** Lines every brmbh site's .gitignore needs since ADR 009. */
+const GITIGNORE_LINES = ['brmbh.local.json', '.brmbh/'];
+
+/**
+ * tools/env/<name>.env → brmbh.local.json (ADR 009). The new file is gitignored like the
+ * old ones, so no host moves into git unless the user moves it to brmbh.json.
+ * The env files are only parsed, never executed. They are removed once their values
+ * are in brmbh.local.json; the .example templates stay untouched.
+ */
+export const envConfig = {
+  id: 'env-config',
+  description: 'Move tools/env/*.env into brmbh.local.json (gitignored), add .gitignore entries',
+  async applies(themeDir) {
+    return (await legacyEnvNames(themeDir)).length > 0;
+  },
+  async plan(themeDir) {
+    const plan = { writes: [], deletes: [], blocked: [] };
+    const localFile = path.join(themeDir, LOCAL_CONFIG);
+    let current = {};
+    if (await exists(localFile)) {
+      try {
+        current = JSON.parse(await readText(localFile));
+      } catch {
+        plan.blocked.push({ file: LOCAL_CONFIG, reason: 'invalid JSON', fix: `Fix or remove ${LOCAL_CONFIG}, then run \`brmbh update\` again.` });
+        return plan;
+      }
+    }
+    const environments = { ...(current.environments ?? {}) };
+    let local = { ...(current.local ?? {}) };
+    for (const name of await legacyEnvNames(themeDir)) {
+      const rel = path.join('tools', 'env', `${name}.env`);
+      const { env, local: l } = fromLegacyVars(parseEnvFile(await readText(path.join(themeDir, rel))));
+      environments[name] = { ...env, ...(environments[name] ?? {}) }; // values already in brmbh.local.json win
+      local = { ...l, ...local };
+      plan.deletes.push(rel);
+    }
+    plan.writes.push({ file: LOCAL_CONFIG, content: JSON.stringify({ ...current, environments, local }, null, 2) + '\n' });
+
+    const gi = path.join(themeDir, '.gitignore');
+    const text = (await exists(gi)) ? await readText(gi) : '';
+    const missing = GITIGNORE_LINES.filter((l) => !text.split('\n').some((x) => x.trim() === l));
+    if (missing.length) {
+      plan.writes.push({ file: '.gitignore', content: `${text}${text && !text.endsWith('\n') ? '\n' : ''}\n# brmbh: local environments + backups (ADR 009)\n${missing.join('\n')}\n` });
+    }
+    return plan;
+  },
+};
+
 /** In release order. */
-export const MIGRATIONS = [coreAdopt];
+export const MIGRATIONS = [coreAdopt, envConfig];
 
 /** Plan every migration that applies; nothing is written. */
 export async function planMigrations(themeDir) {

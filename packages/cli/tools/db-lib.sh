@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared library for DB sync scripts. Source this file — do not execute directly.
 #
-# Requires env vars (set via tools/env/*.env):
+# Requires env vars (set by `brmbh db …` from brmbh.json, or by sourcing a legacy tools/env/*.env):
 #   SSH_TARGET, REMOTE_WP_PATH, REMOTE_URL, LOCAL_URL,
 #   LOCAL_THEME, REMOTE_THEME, LOCAL_WP_PATH, LOCAL_WP_CLI
 #   CANONICAL_ENV — "local" (push allowed) | "remote" (push blocked, remote is truth)
@@ -11,7 +11,9 @@
 #   source "$SCRIPT_DIR/db-lib.sh"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-THEME_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# The CLI passes both. Guessing from SCRIPT_DIR only works for a theme-local tools/
+# copy; inside node_modules/@brmbh/cli/tools it would land in the wrong folder.
+THEME_DIR="${BRMBH_THEME_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 LOCAL_WP_PATH="${LOCAL_WP_PATH:-$(cd "$THEME_DIR/../../.." && pwd)}"
 LOCAL_WP_CLI="${LOCAL_WP_CLI:-wp}"
 
@@ -21,7 +23,7 @@ db_check_env() {
   for var in SSH_TARGET REMOTE_WP_PATH REMOTE_URL LOCAL_THEME REMOTE_THEME; do
     if [[ -z "${!var:-}" ]]; then
       echo "Error: $var is not set." >&2
-      echo "Source an env file first: source tools/env/staging.env" >&2
+      echo "Run through the CLI (npx brmbh db pull <env>) with the environment in brmbh.json." >&2
       exit 1
     fi
   done
@@ -44,6 +46,27 @@ db_check_canonical_for_push() {
     echo "" >&2
     exit 1
   fi
+}
+
+# ── Backups: the target of every import is saved first (ADR 009) ─────────────
+
+BACKUP_STAMP="$(date +%Y%m%d-%H%M%S)"
+
+# Local DB → <theme>/.brmbh/backups/local-<env>-<stamp>.sql.gz (gitignored)
+db_backup_local() {
+  local dir="$THEME_DIR/.brmbh/backups"
+  mkdir -p "$dir"
+  local file="$dir/local-before-${BRMBH_ENV:-pull}-$BACKUP_STAMP.sql"
+  echo "💾 Backing up the local DB first → ${file}.gz"
+  $LOCAL_WP_CLI db export "$file" --path="$LOCAL_WP_PATH" --quiet
+  gzip -f "$file"
+}
+
+# Remote DB → ~/.brmbh-backups/<env>-<stamp>.sql.gz on the server (outside the web root)
+db_backup_remote() {
+  local file="~/.brmbh-backups/${BRMBH_ENV:-remote}-before-push-$BACKUP_STAMP.sql.gz"
+  echo "💾 Backing up the remote DB first → $SSH_TARGET:$file"
+  ssh "$SSH_TARGET" "mkdir -p ~/.brmbh-backups && cd $REMOTE_WP_PATH && wp db export - --allow-root | gzip > $file && test -s $file"
 }
 
 # ── Connection check ───────────────────────────────────────────────────────────

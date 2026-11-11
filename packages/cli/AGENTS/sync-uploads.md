@@ -18,16 +18,16 @@ matching DB state (or vice versa) leaves orphaned files or broken attachment ref
 
 ## The `CANONICAL_ENV` guard
 
-`uploads-push.sh` is blocked when the env file sets `CANONICAL_ENV=remote` (remote is the
-source of truth) — same guard as `db-push.sh`, and for the same reason: if someone else is
-adding content directly on that remote, a push would silently wipe it. **Do not** edit the
-env file to bypass it just to make a push go through — if push is blocked, stop and ask the
+Push is blocked unless the environment says `"canonical": "local"` (unset means `remote`: the
+server is the source of truth) — same guard as `db-push.sh`, and for the same reason: if someone else is
+adding content directly on that remote, a push would silently wipe it. **Do not** edit
+`brmbh.json` / `brmbh.local.json` to bypass it just to make a push go through — if push is blocked, stop and ask the
 user; flipping the guard is their decision, not yours.
 
 ## Preconditions — check first
 
-1. Env file `tools/env/{environment}.env` exists (gitignored). If missing, have the user copy
-   from the `.example` and fill in SSH + path vars.
+1. The environment exists (`npx brmbh env`). If not, ask the user for `ssh` + `path` and add it
+   to `brmbh.local.json` (or `brmbh.json` if hosts may be committed).
 2. You know **which direction** the user wants and **which environment**.
 3. If the remote host has no `rsync` binary (some shared hosts don't — check with
    `ssh <target> "which rsync"`), these scripts won't work as-is; fall back to a manual
@@ -37,23 +37,22 @@ user; flipping the guard is their decision, not yours.
 
 ```bash
 # Pull remote → local (additive — won't delete local-only files)
-source tools/env/staging.env && ./tools/uploads-pull.sh
+npx brmbh uploads pull staging
 
 # Pull, mirroring remote exactly (deletes local files not on remote)
-source tools/env/staging.env && ./tools/uploads-pull.sh --delete
+npx brmbh uploads pull staging --delete
 
-# Push local → remote (mirror — only if CANONICAL_ENV=local and the user confirmed the target)
-source tools/env/staging.env && ./tools/uploads-push.sh
+# Push local → remote (mirror — only if canonical is "local" and the user confirmed the target)
+npx brmbh uploads push staging --yes
 ```
 
-Both scripts respect an optional `UPLOADS_EXCLUDE` var in the env file — a comma-separated
-list of rsync exclude patterns for anything project-specific that lands in
+Both respect an optional `excludes` list on the environment in `brmbh.json` — rsync exclude
+patterns for anything project-specific that lands in
 `wp-content/uploads` but shouldn't sync (a backup plugin's own storage dir is the most common
-case). This is set per-project in the gitignored env file, never hardcoded in the script.
+case). This is set per project in the config, never hardcoded in the script.
 
-`uploads-push.sh` prompts for confirmation interactively unless `SKIP_CONFIRM=1` — do **not**
-set `SKIP_CONFIRM` on the user's behalf for a push to an environment other than the one the
-user explicitly named.
+`uploads push` asks for confirmation; with `--json` it refuses without `--yes`. Pass `--yes`
+only for the environment the user explicitly named.
 
 ## Report
 

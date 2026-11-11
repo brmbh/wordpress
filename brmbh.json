@@ -1,0 +1,6 @@
+{
+  "environments": {},
+  "deploy": {
+    "include": ["assets/dist"]
+  }
+}

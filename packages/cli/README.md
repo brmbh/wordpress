@@ -48,9 +48,11 @@ The CLI keeps the human experience tiny (one install command + ~5 verbs) while e
 | `dev [--once]` | Build / watch the theme's CSS + JS | Dev ops |
 | `doctor` | Health check (node, theme, build, skills, core, SCF, env) | Dev ops |
 | `update [--latest] [--dry-run]` | Update `@brmbh/cli`, replace the theme core in `inc/core/`, run migrations on the site's own files | Updates |
-| `deploy <env>` | Deploy to staging/prod (wraps `tools/deploy.sh`) | Cloud deploy |
-| `db pull\|push <env>` | Migrate the database between environments | DB / sync |
-| `uploads pull\|push <env> [--delete]` | Sync `wp-content/uploads` between environments | DB / sync |
+| `deploy <env> [--apply]` | Ship a commit: build, dry run (default) or send, verify the live site | Deploy |
+| `db pull\|push <env> [--yes]` | Database between this machine and an environment; target backed up first | DB / sync |
+| `env [list]` · `env run <env> <tool>` | List environments (`brmbh.json`); run `db-verify`, `sync-plugins` or `version-check` against one | DB / sync |
+| `add ci github` | Opt-in GitHub Actions workflow that runs `brmbh deploy` | Deploy |
+| `uploads pull\|push <env> [--delete] [--yes]` | Sync `wp-content/uploads` between this machine and an environment | DB / sync |
 
 Introspection is built in:
 

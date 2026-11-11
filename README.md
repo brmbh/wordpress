@@ -86,16 +86,39 @@ One command in each direction, every one agent-callable:
 | Tool | Skill | Direction | What it does |
 |---|---|---|---|
 | `sync-tokens` | `/sync-tokens` | Figma → repo | Pull Figma Variables into `_tokens.scss` as CSS custom properties |
-| `deploy` | `/deploy` | local → server | rsync the built theme over SSH — works with IP-restricted hosts where CI can't reach |
-| `db-pull` | `/sync-db` | server → local | Export remote DB, import locally, URL search-replace, reconcile plugins + schema |
-| `db-push` | `/sync-db` | local → server | The reverse — guarded by `CANONICAL_ENV` so you can't clobber production |
+| `deploy` | `/deploy` | local or CI → server | Ship a **commit**: build, dry run first, `--apply` sends, then the live site is checked for that commit |
+| `db pull` | `/sync-db` | server → local | Back up local DB, import the remote one, URL search-replace, reconcile plugins + schema |
+| `db push` | `/sync-db` | local → server | The reverse — remote DB backed up first; blocked unless the environment is `canonical: "local"` |
 | `sync-plugins` | `/sync-plugins` | local → server | Install wp.org plugins remotely; rsync premium ones |
-| `uploads-pull` | `/sync-uploads` | server → local | rsync `wp-content/uploads` down, additive by default |
-| `uploads-push` | `/sync-uploads` | local → server | The reverse — mirrors (`--delete`), guarded by `CANONICAL_ENV` |
+| `uploads pull` | `/sync-uploads` | server → local | rsync `wp-content/uploads` down, additive by default |
+| `uploads push` | `/sync-uploads` | local → server | The reverse — mirrors (`--delete`), same `canonical` guard |
 | `version-check` | `/check-versions` | both | Report PHP / WordPress / theme / plugin version drift |
 
-Environments are tiny gitignored `tools/env/*.env` files (copy from the `.example`
-templates). See [`tools/env/README.md`](tools/env/README.md).
+**Environments** are named in `brmbh.json` — as many as you like, any names. Hosts you'd rather
+keep out of git go in `brmbh.local.json` (gitignored), which overrides it per machine:
+
+```json
+{
+  "environments": {
+    "staging":    { "ssh": "deploy@staging.example.com", "path": "/var/www/html", "url": "https://staging.example.com", "canonical": "local" },
+    "production": { "ssh": "deploy@example.com", "path": "/var/www/html", "url": "https://example.com", "canonical": "remote" }
+  },
+  "deploy": { "include": ["assets/dist"] }
+}
+```
+
+`canonical` says which side holds the real content: code flows up, content flows down. Unset
+means `remote`, so pushing a database or uploads onto it is blocked. Secrets never go here — SSH
+keys come from your machine or a CI secret. `npx brmbh env` lists what's configured.
+
+```bash
+npx brmbh deploy staging            # dry run: what would change on the server
+npx brmbh deploy staging --apply    # build, send, verify the live site serves this commit
+npx brmbh add ci github             # optional: the same deploy from GitHub Actions
+```
+
+Older projects with `tools/env/*.env` keep working; `brmbh update` moves them into
+`brmbh.local.json`.
 
 Every one of these runs on your machine and acts on the server over SSH — the toolchain needs
 Node, the server only needs SSH, wp-cli and rsync. You can also inspect a deployed site without
@@ -249,7 +272,7 @@ my-acf-blocks/        your blocks (one example block)
 inc/                  your theme code — scaffold definition, block patterns, editor config, nav walkers
 assets/src/scss/      tokens → variables → Bootstrap bridge → globals → components
 assets/src/js/        Bootstrap + GSAP entry, scroll entrances, sticky nav
-tools/env/            per-project environment templates (the scripts ship in @brmbh/cli)
+brmbh.json            environments + deploy settings (brmbh.local.json overrides, gitignored)
 AGENTS/               canonical agent skills (+ thin wrappers in .claude / .cursor / .windsurf)
 template-parts/       reusable partials (site logo)
 ```

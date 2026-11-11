@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# LEGACY: `brmbh deploy <env>` (src/commands/deploy.js) replaced this script in 1.4 — it ships a
+# commit, dry-runs first and verifies the live site. Kept for projects that call it directly.
 # Deploy theme from local working tree to remote via rsync over SSH.
 #
 # Requires a whitelisted IP — run from a machine with SSH access to the server.
@@ -11,7 +13,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-THEME_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# The CLI passes BRMBH_THEME_DIR; guessing from SCRIPT_DIR is only right for a theme-local tools/ copy.
+THEME_DIR="${BRMBH_THEME_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 
 for var in SSH_TARGET REMOTE_WP_PATH REMOTE_THEME REMOTE_URL; do
   if [[ -z "${!var:-}" ]]; then

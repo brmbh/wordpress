@@ -7,9 +7,12 @@ assets/dist/
 # Local project config (Figma keys, tokens) — copy from the .example
 .brmbh-config.json
 
-# Environment files for deploy/DB-sync (server hosts + paths) — templates only are tracked
+# Environments: brmbh.json is committed; brmbh.local.json overrides it per machine (ADR 009)
+brmbh.local.json
+# DB backups written before every import
+.brmbh/
+# Legacy env files (pre-1.4) — `brmbh update` moves them into brmbh.local.json
 tools/env/*.env
-!tools/env/*.example
 
 # OS / editor cruft
 .DS_Store

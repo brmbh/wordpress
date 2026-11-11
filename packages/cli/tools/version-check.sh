@@ -9,7 +9,8 @@
 # Requires: WP-CLI locally and on server, SSH access (same setup as db-pull/push)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-THEME_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# The CLI passes BRMBH_THEME_DIR; guessing from SCRIPT_DIR is only right for a theme-local tools/ copy.
+THEME_DIR="${BRMBH_THEME_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 LOCAL_WP_PATH="${LOCAL_WP_PATH:-$(cd "$THEME_DIR/../../.." && pwd)}"
 
 # Local PHP binary for the version compare. On macOS + Local by Flywheel this

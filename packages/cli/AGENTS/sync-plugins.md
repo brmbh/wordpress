@@ -20,14 +20,14 @@ locally).
 
 ## Preconditions — check first
 
-1. Env file `tools/env/{environment}.env` exists with `SSH_TARGET` + `REMOTE_WP_PATH`.
+1. The environment exists in `brmbh.json` / `brmbh.local.json` with `ssh` + `path` (`npx brmbh env`).
 2. Premium plugins exist locally at `wp-content/plugins/{slug}` (the script rsyncs from there).
 3. Confirm the target environment with the user — this changes the remote plugin set.
 
 ## Run
 
 ```bash
-source tools/env/staging.env && ./tools/sync-plugins.sh
+npx brmbh env run staging sync-plugins
 ```
 
 ## Notes
