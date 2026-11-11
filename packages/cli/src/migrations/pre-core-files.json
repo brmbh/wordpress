@@ -1,0 +1,16 @@
+{
+  "_comment": "Fingerprints (rewriteTextDomainIn to brmbh, sha256) of every starter version of the files the core replaced, from git history of brmbh/wordpress plus the pre-open-source version delivered in 2026-06. Used by the core-adopt migration: a file whose fingerprint is listed is unedited and safe to remove.",
+  "inc/dependencies.php": [
+    "2368f8d0a0880c478426251903987fc523e6d533b15bd65965e64538b6c6963d",
+    "59774de29758116d55decbbc4d5919a9fba1628e015f82c1f17c2341432c6ce7",
+    "b6dc88f3feca79511b74c51b1b90e19af3777378f281d2fd1f44fa4ce3fef0a5",
+    "84e8fd3023fbcaa090df4e3a85ab967332d90c8914926a4d97d0388c697215e5"
+  ],
+  "inc/cli.php": [
+    "1c9d1e171c410062b310535d5efa92ff2d1bc22ef86d78b5c6fbbac27cd50335",
+    "5af4e7b91055c9d1dc52c51bdf4d0e0b2949e9131dc307ba3636e5a330c91856"
+  ],
+  "my-acf-blocks/loader.php": [
+    "e8f7d5680c6c49fa1e6267c16a6decfef798665af2e4c1bfb9ace2db26cd332d"
+  ]
+}

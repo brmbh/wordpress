@@ -13,6 +13,7 @@ import { materializeTheme } from '../registry.js';
 import { findWpRoot, acfStatus, activateTheme, hasWpCli } from '../wp.js';
 import { generateSkillWrappers } from './add.js';
 import { readTemplateManifest, personalizeTheme } from '../personalize.js';
+import { CORE_REL, coreSourceDir, writeCore, readCoreVersion } from '../core.js';
 
 export const spec = {
   description: 'Scaffold a new brmbh theme into a folder, install, build, and wire up skills',
@@ -86,6 +87,19 @@ export async function run(ctx, args) {
     }
   } else {
     ui.info('Skipped install/build (--skip-install)');
+  }
+
+  // 3b. the core comes from the installed @brmbh/cli, not from the cloned starter,
+  // so `brmbh update` and `doctor` agree with it from the first day (ADR 008)
+  if (steps.installed) {
+    const installedCore = await coreSourceDir();
+    const pkgCore = path.join(dest, 'node_modules', '@brmbh', 'cli', 'core');
+    const src = (await exists(path.join(pkgCore, 'core.json'))) ? pkgCore : installedCore;
+    if (src) {
+      await writeCore(dest, src);
+      steps.core = await readCoreVersion(path.join(dest, CORE_REL));
+      ui.ok(`Core ${steps.core} in inc/core/ (from @brmbh/cli)`);
+    }
   }
 
   // 4. (re)generate agent skill wrappers.

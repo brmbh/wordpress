@@ -11,6 +11,7 @@ import { exists } from '../fsutil.js';
 import { paint } from '../ui.js';
 import { findThemeDir, acfStatus, hasWpCli } from '../wp.js';
 import { SSH_FLAG } from '../wpremote.js';
+import { coreStatus } from '../core.js';
 
 export const spec = {
   description: 'Check that the theme + environment are correctly wired',
@@ -50,6 +51,16 @@ export async function run(ctx, args) {
         : 'none — run `npm install`',
     );
     add('env', (await exists(path.join(themeDir, 'tools', 'env'))) ? 'ok' : 'warn', 'tools/env/*.env');
+    // the shared core (inc/core/) against the one this CLI ships — ADR 008
+    const core = await coreStatus(themeDir);
+    const coreNote = {
+      current: `inc/core ${core.siteVersion}`,
+      missing: 'no inc/core — built before the core existed; run `brmbh update`',
+      outdated: `inc/core ${core.siteVersion ?? '?'}, @brmbh/cli ships ${core.sourceVersion} — run \`brmbh update\``,
+      edited: `inc/core edited locally (${(core.edited ?? []).join(', ')}) — move changes into your theme via hooks; \`brmbh update\` overwrites them`,
+      no_source: 'cannot compare: @brmbh/cli not installed (npm install)',
+    }[core.status];
+    add('core', core.status === 'current' ? 'ok' : 'warn', coreNote);
   }
 
   // wp-cli + acf

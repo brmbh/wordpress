@@ -2,7 +2,7 @@
 /**
  * ACF field group for the Example Hero block.
  *
- * Registered automatically by my-acf-blocks/loader.php on acf/init.
+ * Registered automatically by the block factory (inc/core/blocks.php) on acf/init.
  * The `key` must be unique and the location must match the block name.
  */
 

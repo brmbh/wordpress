@@ -202,7 +202,7 @@ $lorem_ipsum = get_field( 'lorem_ipsum' );
 }
 ```
 
-## Auto-registration (handled by `my-acf-blocks/loader.php`)
+## Auto-registration (handled by the core: `inc/core/blocks.php`)
 
 - `block.json` exists → `register_block_type()` on `init` (WordPress standard; ACF reads `acf.renderTemplate`)
 - `fields.php` exists → `acf_add_local_field_group()` on `acf/init`
