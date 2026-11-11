@@ -3,8 +3,7 @@
 # commit, dry-runs first and verifies the live site. Kept for projects that call it directly.
 # Deploy theme from local working tree to remote via rsync over SSH.
 #
-# Requires a whitelisted IP — run from a machine with SSH access to the server.
-# GitHub Actions cannot be used (server firewall blocks their IPs).
+# Runs wherever SSH to the server works: a laptop or a CI runner with the key as a secret.
 #
 # Usage:
 #   source tools/env/staging.env && ./tools/deploy.sh
