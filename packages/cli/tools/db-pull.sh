@@ -27,6 +27,8 @@ if ! db_check_connections "Pre-flight check"; then
   exit 1
 fi
 
+db_backup_local
+
 echo "🔄 Pulling remote DB ($REMOTE_URL) to local..."
 ssh "$SSH_TARGET" "cd $REMOTE_WP_PATH && wp db export - --allow-root" \
   | $LOCAL_WP_CLI db import - --path="$LOCAL_WP_PATH"

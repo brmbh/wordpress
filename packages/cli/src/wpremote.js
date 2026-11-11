@@ -16,11 +16,11 @@
  *      which shared hosts frequently have.
  *
  * Target syntax mirrors wp-cli's: `[user@]host[:port][/path]` or an
- * `~/.ssh/config` alias with an optional path — `allinkl:/www/htdocs/x/wp`.
+ * `~/.ssh/config` alias with an optional path — `myhost:/var/www/site`.
  */
 
 /**
- * @param {string} raw e.g. "allinkl:/www/htdocs/w00bc6c9/site" or "user@host/var/www"
+ * @param {string} raw e.g. "myhost:/var/www/site" or "user@host/var/www"
  * @returns {{ host: string, path: string|null, raw: string }}
  */
 export function parseSshTarget(raw) {

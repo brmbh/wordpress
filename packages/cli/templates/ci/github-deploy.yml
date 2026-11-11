@@ -1,0 +1,56 @@
+# Deploy with brmbh from GitHub Actions — written by `brmbh add ci github`.
+#
+# Runs the same command as on your machine: `brmbh deploy <env> --apply`
+# (commit-based, builds, verifies the live site). Started by hand from the
+# Actions tab; add a `push:` trigger yourself if you want deploys on merge.
+#
+# Needs, per GitHub environment (Settings → Environments) or as repo secrets:
+#   BRMBH_SSH_KEY          private key allowed to rsync into the theme folder
+#   BRMBH_SSH_KNOWN_HOSTS  output of `ssh-keyscan <host>` for the server
+# The environment itself (ssh, path, url) must be in brmbh.json — CI never sees
+# brmbh.local.json. If the server only allows SSH from known IPs, CI runners
+# can't reach it; deploy from your machine instead.
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment name from brmbh.json
+        required: true
+        default: staging
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: SSH access
+        env:
+          BRMBH_SSH_KEY: ${{ secrets.BRMBH_SSH_KEY }}
+          BRMBH_SSH_KNOWN_HOSTS: ${{ secrets.BRMBH_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$BRMBH_SSH_KEY" > ~/.ssh/id_brmbh && chmod 600 ~/.ssh/id_brmbh
+          printf '%s\n' "$BRMBH_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/id_brmbh\n  IdentitiesOnly yes\n' > ~/.ssh/config
+
+      - name: Deploy
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+        run: npx brmbh deploy "$TARGET_ENV" --apply

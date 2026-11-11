@@ -49,7 +49,8 @@ always wins, so you can override one without losing updates to the rest.
 | Skills | `node_modules/@brmbh/cli/AGENTS/*.md` | `AGENTS/<name>.md` |
 | Scripts | `node_modules/@brmbh/cli/tools/*` | `tools/<name>` |
 
-`tools/env/*.env` is always project-local — it holds this project's servers and is gitignored.
+Environments live in `brmbh.json` (committed) and `brmbh.local.json` (gitignored, per machine);
+`npx brmbh env` lists them. Never put keys or passwords in either.
 The `.claude/`, `.cursor/` and `.windsurf/` wrappers are **generated** on install: edit the skill
 source, never a wrapper.
 
@@ -82,12 +83,12 @@ preconditions and guardrails.
 Plus the scaffold: `wp brmbh scaffold` (idempotent pages + menus, defined in `inc/scaffold.php`).
 
 **Operations guardrails (deploy + sync):** these touch live servers and databases.
-- Always `npm run build` before `/deploy`.
+- `/deploy` ships a commit: commit first, run the dry run, then `--apply` after the user's go-ahead.
 - Always run `/check-versions` before a DB sync.
-- `/sync-db` and `/sync-uploads` pushes are **destructive** and guarded by `CANONICAL_ENV` —
-  never bypass the guard or set `SKIP_CONFIRM` on the user's behalf; if a push is blocked,
-  stop and ask.
-- Real `tools/env/*.env` files are gitignored — never commit them or echo their secrets.
+- `/sync-db` and `/sync-uploads` pushes are **destructive** and guarded by the environment's
+  `canonical` setting — never change it, and never pass `--yes`, on the user's behalf; if a push
+  is blocked, stop and ask.
+- `brmbh.local.json` is gitignored on purpose (hosts kept off git) — never commit it.
 
 ## Design system — the rules
 

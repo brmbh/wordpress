@@ -12,6 +12,7 @@ import { paint } from '../ui.js';
 import { findThemeDir, acfStatus, hasWpCli } from '../wp.js';
 import { SSH_FLAG } from '../wpremote.js';
 import { coreStatus } from '../core.js';
+import { listEnvironments, CONFIG } from '../environments.js';
 
 export const spec = {
   description: 'Check that the theme + environment are correctly wired',
@@ -50,7 +51,18 @@ export async function run(ctx, args) {
         : localSkills ? 'local AGENTS/ only'
         : 'none — run `npm install`',
     );
-    add('env', (await exists(path.join(themeDir, 'tools', 'env'))) ? 'ok' : 'warn', 'tools/env/*.env');
+    // environments (ADR 009): brmbh.json / brmbh.local.json; legacy tools/env/*.env still read
+    try {
+      const { names, legacy } = await listEnvironments(themeDir);
+      add(
+        'environments',
+        legacy.length ? 'warn' : 'ok',
+        legacy.length ? `legacy tools/env/${legacy.join(', ')}.env — run \`brmbh update\` to move them into brmbh.local.json`
+          : names.length ? names.join(', ') : `none yet (optional) — add them to ${CONFIG} to deploy or sync`,
+      );
+    } catch (e) {
+      add('environments', 'fail', e.message);
+    }
     // the shared core (inc/core/) against the one this CLI ships — ADR 008
     const core = await coreStatus(themeDir);
     const coreNote = {

@@ -16,11 +16,12 @@ import deploy from '../src/commands/deploy.js';
 import db from '../src/commands/db.js';
 import uploads from '../src/commands/uploads.js';
 import update from '../src/commands/update.js';
+import env from '../src/commands/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 
-const commands = { create, add, dev, doctor, update, deploy, db, uploads };
+const commands = { create, add, dev, doctor, update, env, deploy, db, uploads };
 
 dispatch(commands, process.argv.slice(2), { version: pkg.version })
   .then((code) => process.exit(code))

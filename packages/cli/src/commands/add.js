@@ -4,6 +4,7 @@
  *   add block <name>   four-file ACF block (factory convention)
  *   add cpt   <name>   one-file custom post type
  *   add skills         (re)generate agent skill wrappers from canonical AGENTS/
+ *   add ci github      opt-in GitHub Actions workflow that runs `brmbh deploy` (ADR 009)
  *
  * Deterministic file generation only. The *reasoning* (turning a design into
  * fields/markup) is the agent skill's job — this just lays down the skeleton.
@@ -19,11 +20,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES = path.join(__dirname, '..', '..', 'templates');
 
 export const spec = {
-  description: 'Add a block, custom post type, or (re)generate agent skill wrappers',
+  description: 'Add a block, custom post type, CI deploy workflow, or (re)generate agent skill wrappers',
   level: LEVEL.L3,
   positionals: [
-    { name: 'kind', required: true, choices: ['block', 'cpt', 'skills'], description: 'What to add' },
-    { name: 'name', required: false, description: 'Name (required for block/cpt)' },
+    { name: 'kind', required: true, choices: ['block', 'cpt', 'skills', 'ci'], description: 'What to add' },
+    { name: 'name', required: false, description: 'Name (required for block/cpt; ci: the provider, `github`)' },
   ],
   flags: {
     mode: { type: 'string', choices: ['preview', 'edit'], default: 'preview', description: 'block: default editor display' },
@@ -45,9 +46,37 @@ export async function run(ctx, args) {
       return addCpt(ctx, themeDir, args);
     case 'skills':
       return addSkills(ctx, themeDir);
+    case 'ci':
+      return addCi(ctx, themeDir, args);
     default:
       throw new ToolError('bad_input', `Unknown kind: ${args.kind}`);
   }
+}
+
+/* ------------------------------------------------------------------- ci --- */
+
+const CI = { github: { template: 'ci/github-deploy.yml', dest: '.github/workflows/deploy.yml' } };
+
+async function addCi(ctx, themeDir, args) {
+  const provider = args.name || 'github';
+  const ci = CI[provider];
+  if (!ci) throw new ToolError('bad_input', `No CI template for "${provider}"`, `Available: ${Object.keys(CI).join(', ')}`);
+  const dest = path.join(themeDir, ci.dest);
+  if ((await exists(dest)) && !args.force) {
+    throw new ToolError('exists', `${ci.dest} already exists`, 'Pass --force to overwrite.');
+  }
+  await ensureDir(path.dirname(dest));
+  await fs.copyFile(path.join(TEMPLATES, ci.template), dest);
+  ctx.ui.ok(`Wrote ${ci.dest}`);
+  return {
+    message: `Added ${provider} deploy workflow`,
+    file: ci.dest,
+    next: [
+      'Put the environments CI deploys to in brmbh.json (CI never sees brmbh.local.json)',
+      'Add secrets BRMBH_SSH_KEY (deploy key) and BRMBH_SSH_KNOWN_HOSTS (`ssh-keyscan <host>`) in the repo or per GitHub environment',
+      'Commit .github/workflows/deploy.yml, then run it from the Actions tab',
+    ],
+  };
 }
 
 /* ---------------------------------------------------------------- block --- */

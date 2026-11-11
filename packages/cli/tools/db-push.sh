@@ -43,6 +43,8 @@ if ! db_check_connections "Pre-flight check"; then
   exit 1
 fi
 
+db_backup_remote
+
 echo "🚀 Pushing local DB to remote ($REMOTE_URL)..."
 TMP_DUMP=$(mktemp /tmp/wp-sync-XXXXXX.sql)
 $LOCAL_WP_CLI db export "$TMP_DUMP" --path="$LOCAL_WP_PATH"
